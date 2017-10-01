@@ -3,18 +3,13 @@ import java.util.Scanner;
 
 public class BMIGraphical {
 	public static void main(String[] Args) {
-
-		double weight = 0;
-		double height = 0;
-		
 		String weightInput = JOptionPane.showInputDialog("What is your weight:");
 		Scanner weightScanner = new Scanner(weightInput);
-		
-		weight = weightScanner.nextDouble();
+		double weight = weightScanner.nextDouble();
 		
 		String heightInput = JOptionPane.showInputDialog("What is your height:");
 		Scanner heightScanner = new Scanner(heightInput);
-		height = heightScanner.nextDouble();
+		double height = heightScanner.nextDouble();
 		
 		weightScanner.close();
 		heightScanner.close();
