@@ -14,7 +14,7 @@ public class LotteryGame
         System.out.println("Would you like to partake in the Lottery Game");
         yes = scanIn.nextLine();
         
-        while(yes != "yes"){
+        
         System.out.print("\f");
         int guess;
         int guess2;
@@ -79,8 +79,7 @@ public class LotteryGame
      
         }
         
-        System.out.println("Would you like to try again? Yes/No>");
-        yes = scanIn.nextLine();
-    }
+     
+  
     }   
 }
