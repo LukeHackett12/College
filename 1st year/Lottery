@@ -10,6 +10,8 @@ public class LotteryGame
         Random random = new Random();
         String yes;
         
+        
+        
         System.out.print("\f");       
         System.out.println("Would you like to partake in the Lottery Game");
         yes = scanIn.nextLine();
@@ -79,7 +81,9 @@ public class LotteryGame
      
         }
         
-     
-  
+    
     }   
 }
+
+
+
