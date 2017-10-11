@@ -1,3 +1,3 @@
-# TutorialSolutions
-Solutions to all tutorials I have done in ICS Trinity
+# College Work
+All the work I'm doing during my time at Trinity college
 
