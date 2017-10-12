@@ -67,7 +67,7 @@ public class InflationCalculatorHandling{
 		double newPennySum = oldPenceInNewPence + oldShillingsInNewPence + oldPoundsInNewPence;
 
 		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK);	
-		String finalConversion = currencyFormat.format(newPennySum / 100);
+		String finalConversion = currencyFormat.format(newPennySum / NEW_PENCE_IN_NEW_POUND);
 		System.out.println(oldPounds + " old pound, " + oldShillings + " old shilling and " + oldPence + " old pence = " + finalConversion);
 
 	}
