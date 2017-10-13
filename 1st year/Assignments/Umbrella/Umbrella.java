@@ -29,7 +29,7 @@ public class Umbrella {
 			boolean raining = (answer == JOptionPane.YES_OPTION);
 			
 			if(raining)
-				JOptionPane.showMessageDialog(null, "Open your umbrealla!");
+				JOptionPane.showMessageDialog(null, "Open your umbrella!");
 			else
 				JOptionPane.showMessageDialog(null, "You don't need to open your umbrella just yet.");
 		} else 
