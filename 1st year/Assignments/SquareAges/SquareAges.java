@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 
 public class SquareAges
 {
-	public static final int CURRENT_YEAR = 2017;
+    public static final int CURRENT_YEAR = 2017;
     public static final int MAX_AGE = 123;
 
     public static void main(String[] args)
