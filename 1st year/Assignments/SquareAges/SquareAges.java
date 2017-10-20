@@ -29,17 +29,13 @@ public class SquareAges
 
     public static void main(String[] args)
     {
-    	int maxYear = CURRENT_YEAR + MAX_AGE;
-    	int minYear = CURRENT_YEAR - MAX_AGE;
-
-      for(int age = 1; age <= MAX_AGE; age++)
-      {
-            int squaredAge = age * age;
-            if(squaredAge <= (maxYear - age) && squaredAge >= (minYear + age))
-            {
-              JOptionPane.showMessageDialog(null, "If you are age " + age + ", it is possible you will be alive in the year "
-              														+ "that is your age squared. This year is " + squaredAge);
-            }
-      }
+    	for(int age = 0; age <= MAX_AGE; age++)
+    	{
+    		int squaredAge = age * age;
+    		if(age + Math.abs(squaredAge - CURRENT_YEAR) <= MAX_AGE  && age + Math.abs(squaredAge - CURRENT_YEAR) >= 0)
+    		{
+    			System.out.println(age + " in " + squaredAge);
+    		}
+    	}
     }
 }
