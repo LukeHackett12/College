@@ -20,8 +20,6 @@
    Total Mark out of 100 (Add all the previous marks): 100
 */
 
-import javax.swing.JOptionPane;
-
 public class SquareAges
 {
     public static final int CURRENT_YEAR = 2017;
