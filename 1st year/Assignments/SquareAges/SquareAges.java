@@ -12,7 +12,7 @@
    6. Did I indent the code appropriately?
        Mark out of 10: 10
    7. Did I use an appropriate for loop to test all possibilities?  There should be only one.
-       Mark out of 20:  2
+       Mark out of 20:  20
    8. Did I correctly check if people alive today were or could be alive in a year that is the square of their age in that year.
        Mark out of 30:  30
    9. How well did I complete this self-assessment?
