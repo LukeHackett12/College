@@ -1,1 +1,0 @@
-.\asciivalue.o: AsciiValue.s

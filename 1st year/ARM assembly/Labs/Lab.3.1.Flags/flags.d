@@ -1,1 +1,0 @@
-.\flags.o: Flags.s

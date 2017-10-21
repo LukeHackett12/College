@@ -1,1 +1,0 @@
-.\asciiadd.o: AsciiAdd.s
