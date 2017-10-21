@@ -1,0 +1,109 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             Expressions, CODE, READONLY
+    2 00000000                 IMPORT           main
+    3 00000000                 EXPORT           start
+    4 00000000         
+    5 00000000         start
+    6 00000000 E3A01005        LDR              R1, =5      ; x = 5
+    7 00000004 E3A02006        LDR              R2, =6      ; y = 6
+    8 00000008 E3A03003        LDR              R3, =3
+    9 0000000C E3A04005        LDR              R4, =5
+   10 00000010         
+   11 00000010 E0000191        MUL              R0, R1, R1
+   12 00000014 E0000093        MUL              R0, R3, R0
+   13 00000018 E0050491        MUL              R5, R1, R4
+   14 0000001C E0800005        ADD              R0, R0, R5
+   15 00000020         
+   16 00000020         ;end of first sum
+   17 00000020         
+   18 00000020 E3A03002        LDR              R3, =2
+   19 00000024 E3A04006        LDR              R4, =6
+   20 00000028 E3A05003        LDR              R5, =3
+   21 0000002C         
+   22 0000002C E0000191        MUL              R0, R1, R1
+   23 00000030 E0000093        MUL              R0, R3, R0
+   24 00000034 E0060291        MUL              R6, R1, R2
+   25 00000038 E0060694        MUL              R6, R4, R6
+   26 0000003C E0860000        ADD              R0, R6, R0
+   27 00000040 E0070292        MUL              R7, R2, R2
+   28 00000044 E0070795        MUL              R7, R5, R7
+   29 00000048 E0870000        ADD              R0, R7, R0
+   30 0000004C         
+   31 0000004C E3E03003        LDR              R3, =-4
+   32 00000050 E3A04003        LDR              R4, =3
+   33 00000054 E3A05008        LDR              R5, =8
+   34 00000058         
+   35 00000058 E0000191        MUL              R0, R1, R1
+   36 0000005C E0000091        MUL              R0, R1, R0
+   37 00000060 E0060191        MUL              R6, R1, R1
+   38 00000064 E0060693        MUL              R6, R3, R6
+   39 00000068 E0860000        ADD              R0, R6, R0
+   40 0000006C E0070194        MUL              R7, R4, R1
+   41 00000070 E0870000        ADD              R0, R7, R0
+   42 00000074 E0800005        ADD              R0, R0, R5
+   43 00000078         
+   44 00000078         ; your program goes here
+   45 00000078         
+   46 00000078 EAFFFFFE 
+                       stop    B                stop
+   47 0000007C         
+   48 0000007C                 END
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\e
+xpressions.d -o.\expressions.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS
+\Include -IC:\Keil_v5\ARM\Inc\Philips --predefine="__EVAL SETA 1" --predefine="
+__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 516" --predefine="NO_CLO
+CK_SETUP SETA 1" --predefine="NO_EMC_SETUP SETA 1" --predefine="RAM_INTVEC SETA
+ 1" --predefine="RAM_MODE SETA 1" --predefine="REMAP SETA 1" --list=.\expressio
+ns.lst Expressions.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Expressions 00000000
+
+Symbol: Expressions
+   Definitions
+      At line 1 in file Expressions.s
+   Uses
+      None
+Comment: Expressions unused
+start 00000000
+
+Symbol: start
+   Definitions
+      At line 5 in file Expressions.s
+   Uses
+      At line 3 in file Expressions.s
+Comment: start used once
+stop 00000078
+
+Symbol: stop
+   Definitions
+      At line 46 in file Expressions.s
+   Uses
+      At line 46 in file Expressions.s
+Comment: stop used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file Expressions.s
+   Uses
+      None
+Comment: main unused
+1 symbol
+342 symbols in table
