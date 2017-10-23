@@ -36,9 +36,9 @@ start
 	LDR R1, =0x91004000
 	ADDS R2, R0, R1 ; 0x51005000 Carry, Overflow
 	
-	;LDR R0, =0x00000000
-	;LDR R1, =0x00000000
-	;ADDS R2, R0, R1 ; 0x00000000 Zero, Carry, Overflow
+	LDR R0, =0x80000000
+	LDR R1, =0x80000000
+	ADDS R2, R0, R1 ; 0x00000000 Zero, Carry, Overflow
 
 stop	B	stop
 
