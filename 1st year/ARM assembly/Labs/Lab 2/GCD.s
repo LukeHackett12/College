@@ -14,10 +14,12 @@ WHILE
 	CMP R2, R3
 	BGE AISGREATER ; BGE- Granch if greater, go to AISGREATER
 	SUB R3, R3, R2 ; b is greater then a, so b = b - a
-
+        B SKIP
+	
 AISGREATER
 	SUB R2, R2, R3 ; a is greater then b, so a = a - b
 
+SKIP
 	B WHILE ; branch back to top of while loop
 ENDWH
 
