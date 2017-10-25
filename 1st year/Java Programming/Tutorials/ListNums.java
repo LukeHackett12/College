@@ -9,8 +9,8 @@ public class temp
       int lowestNum = Integer.MAX_VALUE;
 
       Scanner input = new Scanner(System.in);
-	  String userInput = input.nextLine();
-	  Scanner parseInput = new Scanner(userInput);
+      String userInput = input.nextLine();
+	    Scanner parseInput = new Scanner(userInput);
 
       while(parseInput.hasNextInt()){
     	  	compareNum = parseInput.nextInt();
