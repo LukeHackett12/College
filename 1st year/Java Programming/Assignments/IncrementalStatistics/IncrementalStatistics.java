@@ -6,9 +6,12 @@ public class IncrementalStatistics {
     Scanner input = new Scanner(System.in);
     System.out.print("Enter a number(or type 'exit'): ");
     double number = 0;
+    int numCount = 0;
+
     //Check if number is valid as an integer
     if(input.hasNextInt()){
       number = input.nextInt();
+      numCount++;
     }
     else if(input.hasNext("exit") || input.hasNext("quit")){
       input.close();
@@ -23,12 +26,9 @@ public class IncrementalStatistics {
     double lastAvg = 0;
     double average = number;
     double variance = 0;
-
+    
     //Print out initial values
     System.out.println("So far the average is " + average + " and the variance is " + variance);
-
-    //Add a count of the numbers as needed in the formula
-    int numCount = 1;
 
     //Start while loop to compute additions to beginning
     boolean exit = false;
