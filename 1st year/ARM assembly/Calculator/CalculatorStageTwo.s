@@ -19,14 +19,39 @@ BL	sendchar	;   echo key back to console
 ;
 ; do any necessary processing of the key
 ;
+parseoperator
+    CMP R0, '*'
+    BEQ multiply
+    CMP R0, '+'
+    BEQ add
+    CMP R0, '-'
+    BEQ subtract
 
-MUL R4, R5, R4
-SUB R0, R0, #0x30
-ADD R4, R0, R4
+    MUL R4, R5, R4
+    SUB R0, R0, #0x30
+    ADD R4, R0, R4
+
+multiply
+    MOV R2, '*'
+    B readagain
+
+add
+    MOV R2, '+'
+    B readagain
+
+subtract
+    MOV R3, '-'
+    B readagain
 
 B	read		; }
 
 endRead
+
+readagain
+
+    
+
+endreadagain
 
 stop	B	stop
 
