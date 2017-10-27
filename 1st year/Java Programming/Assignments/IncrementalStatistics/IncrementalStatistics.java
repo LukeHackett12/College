@@ -8,7 +8,6 @@ public class IncrementalStatistics {
     double number = 0;
     int numCount = 0;
 
-    //Check if number is valid as an integer
     if(input.hasNextInt()){
       number = input.nextInt();
       numCount++;
@@ -22,15 +21,13 @@ public class IncrementalStatistics {
       input.close();
       System.exit(0);
     }
-    //Average is first number and no variance, easier to not compute.
+
     double lastAvg = 0;
     double average = number;
     double variance = 0;
-    
-    //Print out initial values
+
     System.out.println("So far the average is " + average + " and the variance is " + variance);
 
-    //Start while loop to compute additions to beginning
     boolean exit = false;
     while(!exit){
       System.out.print("Enter another number (or type 'exit'): ");
@@ -49,12 +46,10 @@ public class IncrementalStatistics {
         input.close();
       }
 
-      //Compute new average and variance
       lastAvg = average;
       average = average + (number - average)/numCount;
       variance = ((variance * (numCount - 1)) + (number - lastAvg) * (number - average)) / numCount;
 
-      //Print out computed values or a goodbye
       if(!exit) {
       	System.out.println("So far the average is " + average + " and the variance is " + variance);
       }
