@@ -1,4 +1,4 @@
-AREA	ConsoleInput, CODE, READONLY
+AREA	CalculatorStageOne, CODE, READONLY
 IMPORT	main
 IMPORT	getkey
 IMPORT	sendchar
