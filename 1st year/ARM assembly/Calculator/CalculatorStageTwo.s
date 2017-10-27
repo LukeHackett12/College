@@ -11,36 +11,37 @@ MOV R4,#0
 MOV R5, #10
 
 read
-BL	getkey		; read key from console
-CMP	R0, #0x0D  	; while (key != enter)
-BEQ	endRead		; {
-BL	sendchar	;   echo key back to console
+    BL	getkey		; read key from console
+    CMP	R0, #0x0D  	; while (key != enter)
+    BEQ	endRead		; {
+    BL	sendchar	;   echo key back to console
 
-;
-; do any necessary processing of the key
-;
+    ;
+    ; do any necessary processing of the key
+    ;
+
 parseoperator
     CMP R0, '*'
-    BEQ multiply
+    BEQ multiplyoperator
     CMP R0, '+'
-    BEQ add
+    BEQ addoperator
     CMP R0, '-'
-    BEQ subtract
+    BEQ subtractoperator
 
     MUL R4, R5, R4
     SUB R0, R0, #0x30
     ADD R4, R0, R4
 
-multiply
-    MOV R2, '*'
+multiplyoperator
+    MOV R1, '*'
     B readagain
 
-add
-    MOV R2, '+'
+addoperator
+    MOV R1, '+'
     B readagain
 
-subtract
-    MOV R3, '-'
+subtractoperator
+    MOV R1, '-'
     B readagain
 
 B	read		; }
@@ -49,9 +50,35 @@ endRead
 
 readagain
 
-    
+    BL	getkey		; read key from console
+    CMP	R0, #0x0D  	; while (key != enter)
+    BEQ	endReadagain		; {
+    BL	sendchar	;   echo key back to console
+
+    ;
+    ; do any necessary processing of the key
+    ;
+
+    MUL R4, R5, R4
+    SUB R0, R0, #0x30
+    ADD R4, R0, R4
 
 endreadagain
+
+;Ok, so at this point we have all the input and the operators and all that jazz, do what you have to do...
+;By that I mean calculate stuff, its called a calculator
+
+calculate
+    CMP R1,'*'
+    BEQ multiply
+    CMP R1,'+'
+    BEQ add
+    CMP R1,'-'
+    BEQ divide
+
+    B endcalculate
+    
+endcalculate
 
 stop	B	stop
 
