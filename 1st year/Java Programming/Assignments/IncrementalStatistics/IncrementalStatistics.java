@@ -28,8 +28,8 @@ public class IncrementalStatistics {
     double number = 0;
     int numCount = 0;
 
-    if(input.hasNextInt()){
-      number = input.nextInt();
+    if(input.hasNextDouble()){
+      number = input.nextDouble();
       numCount++;
     }
     else if(input.hasNext("exit") || input.hasNext("quit")){
@@ -53,7 +53,7 @@ public class IncrementalStatistics {
       System.out.print("Enter another number (or type 'exit'): ");
 
       if(input.hasNextDouble()){
-        number = input.nextInt();
+        number = input.nextDouble();
         numCount++;
       }
       else if(input.hasNext("exit") || input.hasNext("quit")){
