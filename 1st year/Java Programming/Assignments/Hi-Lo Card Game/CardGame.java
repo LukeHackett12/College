@@ -15,7 +15,7 @@ public class CardGame {
         boolean quit = false;
         int count = 0;
 
-        while(count < 4 && !quit){
+        while(count < 3 && !quit){
         	int lastCard = cardNum;
             cardNum = generator.nextInt(13) + 1;
 
@@ -43,7 +43,7 @@ public class CardGame {
             }
         }
 
-        if(count == 4) {
+        if(count == 3) {
         	System.out.println("You have won :)!!!!!!!!");
         }
         else if (cardGuess != 0){
