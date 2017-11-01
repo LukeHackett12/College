@@ -83,7 +83,7 @@ public class CardGame {
 
                 if(!Objects.equals(guess, "higher") && !Objects.equals(guess, "lower") && !Objects.equals(guess, "equal"))
                 {
-                    System.out.println("Sorry, we could not understand your input :/");
+                    System.out.println("Sorry, we could not understand your input.");
                     badInput = true;
                 }
             }
@@ -96,10 +96,10 @@ public class CardGame {
         }
 
         if(count == GUESS_NUM) {
-        	System.out.println("You have won :)!!!!!!!!");
+        	System.out.println("Congratulations.  You got them all correct.");
         }
         else if (!badInput){
-        	System.out.println("You lost the game :'(");
+        	System.out.println("You lost the game.");
         }
 
         input.close();
