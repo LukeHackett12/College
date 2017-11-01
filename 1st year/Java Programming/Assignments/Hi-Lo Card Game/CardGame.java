@@ -30,6 +30,11 @@ public class CardGame {
             }
             else {
                 quit = true;
+
+                if(cardGuess == 0)
+                {
+                    System.out.println("Sorry, we could not understand your input :/");
+                }
             }
 
             if(!quit){
@@ -41,7 +46,7 @@ public class CardGame {
         if(count == 4) {
         	System.out.println("You have won :)!!!!!!!!");
         }
-        else {
+        else if (cardGuess != 0){
         	System.out.println("You lost the game :'(");
         }
 
