@@ -7,14 +7,14 @@
 
 start
 
-	MOV R3, #10
-	MOV R4,#0
-	MOV R6, #0
+	LDR R3, =10
+	LDR R4,=0
+	LDR R6, =0
 
 read
     BL	getkey		; read key from console
     CMP	R0, #0x0D  	; while (key != enter)
-    BEQ	endRead		; {
+    BEQ	endReadAgain; {
     BL	sendchar	;   echo key back to console
 
     ;
@@ -66,9 +66,9 @@ readAgain
 	B readAgain
 
 endReadAgain
-
-;Ok, so at this point we have all the input and the operators and all that jazz, do what you have to do...
-;By that I mean calculate stuff, its called a calculator
+	
+	LDR R0, ='='
+	BL sendchar
 
     CMP R7,#1
     BEQ multiplyExp
@@ -91,21 +91,36 @@ subtractExp
 
 endCalculate
 
-;Print result to the terminal
-	LDR R8, =0x0 ; Quotient
-	LDR R9, =0x0 ; Remainder
-	LDR R10, =0X5 ; a
-	LDR R11, =0X2 ; b
+	LDR R10, =0X30 ;ASCII offset
 	
-	MOV R9, R10
+PRINT
+	LDR R8, =1 ;Power to test
+	LDR R9, =1 ;Actual power of number		
+	
+POWER
+	CMP R5, R8
+	BLE ENDPOWER
+	MOV R9, R8
+	MUL R8, R3, R8
+	B POWER
+ENDPOWER
 
-WHILE 
-	CMP R9, R11
-	BLO ENDWH
-	SUB R9, R9, R11
-	ADD R8, R8, #1
-	B WHILE
-ENDWH
+	LDR R11, =0 ; Quotient	
+	
+DIVIDE
+	CMP R5, R9 ; while(remainder >= power)
+	BLO ENDDIVIDE
+	SUB R5, R5, R9
+	ADD R11, R11, #1
+	B DIVIDE
+ENDDIVIDE
+	ADD R0, R10, R11
+	BL sendchar
+	
+	CMP R11, #0
+	BEQ ENDPRINT
+	B PRINT
+ENDPRINT
 
 stop	B	stop
 

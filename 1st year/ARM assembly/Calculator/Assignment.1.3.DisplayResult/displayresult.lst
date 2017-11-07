@@ -13,16 +13,16 @@ ARM Macro Assembler    Page 1
     7 00000000         
     8 00000000         start
     9 00000000         
-   10 00000000 E3A0300A        MOV              R3, #10
-   11 00000004 E3A04000        MOV              R4,#0
-   12 00000008 E3A06000        MOV              R6, #0
+   10 00000000 E3A0300A        LDR              R3, =10
+   11 00000004 E3A04000        LDR              R4,=0
+   12 00000008 E3A06000        LDR              R6, =0
    13 0000000C         
    14 0000000C         read
    15 0000000C EBFFFFFE        BL               getkey      ; read key from con
                                                             sole
    16 00000010 E350000D        CMP              R0, #0x0D   ; while (key != ent
                                                             er)
-   17 00000014 0A000010        BEQ              endRead     ; {
+   17 00000014 0A000018        BEQ              endReadAgain ; {
    18 00000018 EBFFFFFE        BL               sendchar    ;   echo key back t
                                                             o console
    19 0000001C         
@@ -85,40 +85,79 @@ ARM Macro Assembler    Page 2
    67 0000007C         
    68 0000007C         endReadAgain
    69 0000007C         
-   70 0000007C         ;Ok, so at this point we have all the input and the oper
+   70 0000007C E3A0003D        LDR              R0, ='='
+   71 00000080 EBFFFFFE        BL               sendchar
+   72 00000084         
+   73 00000084         ;Ok, so at this point we have all the input and the oper
                        ators and all that jazz, do what you have to do...
-   71 0000007C         ;By that I mean calculate stuff, its called a calculator
+   74 00000084         ;By that I mean calculate stuff, its called a calculator
                        
-   72 0000007C         
-   73 0000007C E3570001        CMP              R7,#1
-   74 00000080 0A000003        BEQ              multiplyExp
-   75 00000084 E3570002        CMP              R7,#2
-   76 00000088 0A000003        BEQ              addExp
-   77 0000008C E3570003        CMP              R7,#3
-   78 00000090 0A000003        BEQ              subtractExp
-   79 00000094         
-   80 00000094         multiplyExp
-   81 00000094 E0050694        MUL              R5, R4, R6
-   82 00000098 EA000003        B                endCalculate
-   83 0000009C         
-   84 0000009C         addExp
-   85 0000009C E0845006        ADD              R5, R4, R6
-   86 000000A0 EA000001        B                endCalculate
-   87 000000A4         
-   88 000000A4         subtractExp
-   89 000000A4 E0445006        SUB              R5, R4, R6
-   90 000000A8 EAFFFFFF        B                endCalculate
-   91 000000AC         
-   92 000000AC         endCalculate
-   93 000000AC         
-   94 000000AC         ;Print result to the terminal
-   95 000000AC EBFFFFFE        BL               sendchar
-   96 000000B0         
-   97 000000B0         
-   98 000000B0 EAFFFFFE 
+   75 00000084         
+   76 00000084 E3570001        CMP              R7,#1
+   77 00000088 0A000003        BEQ              multiplyExp
+   78 0000008C E3570002        CMP              R7,#2
+   79 00000090 0A000003        BEQ              addExp
+   80 00000094 E3570003        CMP              R7,#3
+   81 00000098 0A000003        BEQ              subtractExp
+   82 0000009C         
+   83 0000009C         multiplyExp
+   84 0000009C E0050694        MUL              R5, R4, R6
+   85 000000A0 EA000003        B                endCalculate
+   86 000000A4         
+   87 000000A4         addExp
+   88 000000A4 E0845006        ADD              R5, R4, R6
+   89 000000A8 EA000001        B                endCalculate
+   90 000000AC         
+   91 000000AC         subtractExp
+   92 000000AC E0445006        SUB              R5, R4, R6
+   93 000000B0 EAFFFFFF        B                endCalculate
+   94 000000B4         
+   95 000000B4         endCalculate
+   96 000000B4         
+   97 000000B4         ;Ok. So... we need to have a new variable that we keep l
+                       ooping, starting with ten and 
+   98 000000B4         ;multiplying by ten each time until its bigger than the 
+                       answer, and at that point we 
+   99 000000B4         ;know how many digits there are...? Maybe, I dunno kev
+  100 000000B4 E3A0C030        LDR              R12, =0X30  ;ASCII offset
+  101 000000B8         PRINT
+  102 000000B8 E3A08001        LDR              R8, =1      ;Power to test
+  103 000000BC E3A09001        LDR              R9, =1      ;Actual power of nu
+                                                            mber  
+  104 000000C0         POWER
+  105 000000C0 E1550008        CMP              R5, R8
+  106 000000C4 DA000002        BLE              ENDPOWER
+  107 000000C8 E1A09008        MOV              R9, R8
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  108 000000CC E0080893        MUL              R8, R3, R8
+  109 000000D0 EAFFFFFA        B                POWER
+  110 000000D4         ENDPOWER
+  111 000000D4 E3A0A000        LDR              R10, =0     ; Quotient 
+  112 000000D8         DIVIDE
+  113 000000D8 E1550009        CMP              R5, R9      ; while(remainder >
+                                                            = power)
+  114 000000DC 3A000002        BLO              ENDDIVIDE
+  115 000000E0 E0455009        SUB              R5, R5, R9
+  116 000000E4 E28AA001        ADD              R10, R10, #1
+  117 000000E8 EAFFFFFA        B                DIVIDE
+  118 000000EC         ENDDIVIDE
+  119 000000EC E08C000A        ADD              R0, R12, R10
+  120 000000F0 EBFFFFFE        BL               sendchar
+  121 000000F4         
+  122 000000F4 E35A0000        CMP              R10, #0
+  123 000000F8 0A000000        BEQ              ENDPRINT
+  124 000000FC EAFFFFED        B                PRINT
+  125 00000100         ENDPRINT
+  126 00000100         
+  127 00000100 EAFFFFFE 
                        stop    B                stop
-   99 000000B4         
-  100 000000B4                 END
+  128 00000104         
+  129 00000104                 END
 Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\d
 isplayresult.d -o.\displayresult.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\C
 MSIS\Include -IC:\Keil_v5\ARM\INC\Philips --predefine="__EVAL SETA 1" --predefi
@@ -132,6 +171,14 @@ ayresult.lst DisplayResult.s
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
+DIVIDE 000000D8
+
+Symbol: DIVIDE
+   Definitions
+      At line 112 in file DisplayResult.s
+   Uses
+      At line 117 in file DisplayResult.s
+Comment: DIVIDE used once
 DisplayResult 00000000
 
 Symbol: DisplayResult
@@ -140,13 +187,59 @@ Symbol: DisplayResult
    Uses
       None
 Comment: DisplayResult unused
-addExp 0000009C
+ENDDIVIDE 000000EC
+
+Symbol: ENDDIVIDE
+   Definitions
+      At line 118 in file DisplayResult.s
+   Uses
+      At line 114 in file DisplayResult.s
+Comment: ENDDIVIDE used once
+ENDPOWER 000000D4
+
+Symbol: ENDPOWER
+   Definitions
+      At line 110 in file DisplayResult.s
+   Uses
+      At line 106 in file DisplayResult.s
+Comment: ENDPOWER used once
+ENDPRINT 00000100
+
+Symbol: ENDPRINT
+   Definitions
+      At line 125 in file DisplayResult.s
+   Uses
+      At line 123 in file DisplayResult.s
+Comment: ENDPRINT used once
+POWER 000000C0
+
+Symbol: POWER
+   Definitions
+      At line 104 in file DisplayResult.s
+   Uses
+      At line 109 in file DisplayResult.s
+Comment: POWER used once
+PRINT 000000B8
+
+Symbol: PRINT
+   Definitions
+      At line 101 in file DisplayResult.s
+   Uses
+      At line 124 in file DisplayResult.s
+Comment: PRINT used once
+addExp 000000A4
 
 Symbol: addExp
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
    Definitions
-      At line 84 in file DisplayResult.s
+      At line 87 in file DisplayResult.s
    Uses
-      At line 76 in file DisplayResult.s
+      At line 79 in file DisplayResult.s
 Comment: addExp used once
 addOperator 0000004C
 
@@ -156,15 +249,15 @@ Symbol: addOperator
    Uses
       At line 27 in file DisplayResult.s
 Comment: addOperator used once
-endCalculate 000000AC
+endCalculate 000000B4
 
 Symbol: endCalculate
    Definitions
-      At line 92 in file DisplayResult.s
+      At line 95 in file DisplayResult.s
    Uses
-      At line 82 in file DisplayResult.s
-      At line 86 in file DisplayResult.s
-      At line 90 in file DisplayResult.s
+      At line 85 in file DisplayResult.s
+      At line 89 in file DisplayResult.s
+      At line 93 in file DisplayResult.s
 
 endRead 0000005C
 
@@ -172,7 +265,6 @@ Symbol: endRead
    Definitions
       At line 49 in file DisplayResult.s
    Uses
-      At line 17 in file DisplayResult.s
       At line 39 in file DisplayResult.s
       At line 43 in file DisplayResult.s
       At line 47 in file DisplayResult.s
@@ -183,21 +275,16 @@ Symbol: endReadAgain
    Definitions
       At line 68 in file DisplayResult.s
    Uses
+      At line 17 in file DisplayResult.s
       At line 55 in file DisplayResult.s
-Comment: endReadAgain used once
-multiplyExp 00000094
+
+multiplyExp 0000009C
 
 Symbol: multiplyExp
    Definitions
-      At line 80 in file DisplayResult.s
+      At line 83 in file DisplayResult.s
    Uses
-
-
-
-ARM Macro Assembler    Page 2 Alphabetic symbol ordering
-Relocatable symbols
-
-      At line 74 in file DisplayResult.s
+      At line 77 in file DisplayResult.s
 Comment: multiplyExp used once
 multiplyOperator 00000044
 
@@ -208,6 +295,12 @@ Symbol: multiplyOperator
       At line 25 in file DisplayResult.s
 Comment: multiplyOperator used once
 read 0000000C
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
 
 Symbol: read
    Definitions
@@ -231,21 +324,21 @@ Symbol: start
    Uses
       At line 5 in file DisplayResult.s
 Comment: start used once
-stop 000000B0
+stop 00000100
 
 Symbol: stop
    Definitions
-      At line 98 in file DisplayResult.s
+      At line 127 in file DisplayResult.s
    Uses
-      At line 98 in file DisplayResult.s
+      At line 127 in file DisplayResult.s
 Comment: stop used once
-subtractExp 000000A4
+subtractExp 000000AC
 
 Symbol: subtractExp
    Definitions
-      At line 88 in file DisplayResult.s
+      At line 91 in file DisplayResult.s
    Uses
-      At line 78 in file DisplayResult.s
+      At line 81 in file DisplayResult.s
 Comment: subtractExp used once
 subtractOperator 00000054
 
@@ -255,7 +348,7 @@ Symbol: subtractOperator
    Uses
       At line 29 in file DisplayResult.s
 Comment: subtractOperator used once
-14 symbols
+20 symbols
 
 
 
@@ -287,7 +380,8 @@ Symbol: sendchar
    Uses
       At line 18 in file DisplayResult.s
       At line 56 in file DisplayResult.s
-      At line 95 in file DisplayResult.s
+      At line 71 in file DisplayResult.s
+      At line 120 in file DisplayResult.s
 
 3 symbols
-355 symbols in table
+361 symbols in table
