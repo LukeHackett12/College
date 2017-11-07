@@ -93,9 +93,20 @@ endCalculate
 
 	LDR R10, =0X30 ;ASCII offset
 	
-PRINT
 	LDR R8, =1 ;Power to test
-	LDR R9, =1 ;Actual power of number		
+	LDR R12, =1 ;Actual power of number
+	
+DIGITS
+	CMP R5, R8
+	BLE ENDDIGITS
+	MUL R8, R3, R8
+	ADD R12, R12, #1
+	B DIGITS
+ENDDIGITS
+
+PRINT
+	MOV R8, #1 ;Power to test
+	MOV R9, #1 ;Actual number to divide
 	
 POWER
 	CMP R5, R8
@@ -114,12 +125,14 @@ DIVIDE
 	ADD R11, R11, #1
 	B DIVIDE
 ENDDIVIDE
+	
+	SUB R12, R12, #1
+	CMP R12, #0
+	BEQ ENDPRINT
 	ADD R0, R10, R11
 	BL sendchar
-	
-	CMP R11, #0
-	BEQ ENDPRINT
 	B PRINT
+
 ENDPRINT
 
 stop	B	stop

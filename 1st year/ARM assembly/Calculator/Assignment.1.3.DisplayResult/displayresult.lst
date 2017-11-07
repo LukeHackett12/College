@@ -88,76 +88,84 @@ ARM Macro Assembler    Page 2
    70 0000007C E3A0003D        LDR              R0, ='='
    71 00000080 EBFFFFFE        BL               sendchar
    72 00000084         
-   73 00000084         ;Ok, so at this point we have all the input and the oper
-                       ators and all that jazz, do what you have to do...
-   74 00000084         ;By that I mean calculate stuff, its called a calculator
-                       
-   75 00000084         
-   76 00000084 E3570001        CMP              R7,#1
-   77 00000088 0A000003        BEQ              multiplyExp
-   78 0000008C E3570002        CMP              R7,#2
-   79 00000090 0A000003        BEQ              addExp
-   80 00000094 E3570003        CMP              R7,#3
-   81 00000098 0A000003        BEQ              subtractExp
-   82 0000009C         
-   83 0000009C         multiplyExp
-   84 0000009C E0050694        MUL              R5, R4, R6
-   85 000000A0 EA000003        B                endCalculate
-   86 000000A4         
-   87 000000A4         addExp
-   88 000000A4 E0845006        ADD              R5, R4, R6
-   89 000000A8 EA000001        B                endCalculate
-   90 000000AC         
-   91 000000AC         subtractExp
-   92 000000AC E0445006        SUB              R5, R4, R6
-   93 000000B0 EAFFFFFF        B                endCalculate
-   94 000000B4         
-   95 000000B4         endCalculate
-   96 000000B4         
-   97 000000B4         ;Ok. So... we need to have a new variable that we keep l
-                       ooping, starting with ten and 
-   98 000000B4         ;multiplying by ten each time until its bigger than the 
-                       answer, and at that point we 
-   99 000000B4         ;know how many digits there are...? Maybe, I dunno kev
-  100 000000B4 E3A0C030        LDR              R12, =0X30  ;ASCII offset
-  101 000000B8         PRINT
-  102 000000B8 E3A08001        LDR              R8, =1      ;Power to test
-  103 000000BC E3A09001        LDR              R9, =1      ;Actual power of nu
-                                                            mber  
-  104 000000C0         POWER
-  105 000000C0 E1550008        CMP              R5, R8
-  106 000000C4 DA000002        BLE              ENDPOWER
-  107 000000C8 E1A09008        MOV              R9, R8
+   73 00000084 E3570001        CMP              R7,#1
+   74 00000088 0A000003        BEQ              multiplyExp
+   75 0000008C E3570002        CMP              R7,#2
+   76 00000090 0A000003        BEQ              addExp
+   77 00000094 E3570003        CMP              R7,#3
+   78 00000098 0A000003        BEQ              subtractExp
+   79 0000009C         
+   80 0000009C         multiplyExp
+   81 0000009C E0050694        MUL              R5, R4, R6
+   82 000000A0 EA000003        B                endCalculate
+   83 000000A4         
+   84 000000A4         addExp
+   85 000000A4 E0845006        ADD              R5, R4, R6
+   86 000000A8 EA000001        B                endCalculate
+   87 000000AC         
+   88 000000AC         subtractExp
+   89 000000AC E0445006        SUB              R5, R4, R6
+   90 000000B0 EAFFFFFF        B                endCalculate
+   91 000000B4         
+   92 000000B4         endCalculate
+   93 000000B4         
+   94 000000B4 E3A0A030        LDR              R10, =0X30  ;ASCII offset
+   95 000000B8         
+   96 000000B8 E3A08001        LDR              R8, =1      ;Power to test
+   97 000000BC E3A0C001        LDR              R12, =1     ;Actual power of nu
+                                                            mber
+   98 000000C0         
+   99 000000C0         DIGITS
+  100 000000C0 E1550008        CMP              R5, R8
+  101 000000C4 DA000002        BLE              ENDDIGITS
+  102 000000C8 E0080893        MUL              R8, R3, R8
+  103 000000CC E28CC001        ADD              R12, R12, #1
+  104 000000D0 EAFFFFFA        B                DIGITS
+  105 000000D4         ENDDIGITS
+  106 000000D4         
+  107 000000D4         PRINT
+  108 000000D4 E3A08001        MOV              R8, #1      ;Power to test
+  109 000000D8 E3A09001        MOV              R9, #1      ;Actual number to d
+                                                            ivide
+  110 000000DC         
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-  108 000000CC E0080893        MUL              R8, R3, R8
-  109 000000D0 EAFFFFFA        B                POWER
-  110 000000D4         ENDPOWER
-  111 000000D4 E3A0A000        LDR              R10, =0     ; Quotient 
-  112 000000D8         DIVIDE
-  113 000000D8 E1550009        CMP              R5, R9      ; while(remainder >
+  111 000000DC         POWER
+  112 000000DC E1550008        CMP              R5, R8
+  113 000000E0 DA000002        BLE              ENDPOWER
+  114 000000E4 E1A09008        MOV              R9, R8
+  115 000000E8 E0080893        MUL              R8, R3, R8
+  116 000000EC EAFFFFFA        B                POWER
+  117 000000F0         ENDPOWER
+  118 000000F0         
+  119 000000F0 E3A0B000        LDR              R11, =0     ; Quotient 
+  120 000000F4         
+  121 000000F4         DIVIDE
+  122 000000F4 E1550009        CMP              R5, R9      ; while(remainder >
                                                             = power)
-  114 000000DC 3A000002        BLO              ENDDIVIDE
-  115 000000E0 E0455009        SUB              R5, R5, R9
-  116 000000E4 E28AA001        ADD              R10, R10, #1
-  117 000000E8 EAFFFFFA        B                DIVIDE
-  118 000000EC         ENDDIVIDE
-  119 000000EC E08C000A        ADD              R0, R12, R10
-  120 000000F0 EBFFFFFE        BL               sendchar
-  121 000000F4         
-  122 000000F4 E35A0000        CMP              R10, #0
-  123 000000F8 0A000000        BEQ              ENDPRINT
-  124 000000FC EAFFFFED        B                PRINT
-  125 00000100         ENDPRINT
-  126 00000100         
-  127 00000100 EAFFFFFE 
+  123 000000F8 3A000002        BLO              ENDDIVIDE
+  124 000000FC E0455009        SUB              R5, R5, R9
+  125 00000100 E28BB001        ADD              R11, R11, #1
+  126 00000104 EAFFFFFA        B                DIVIDE
+  127 00000108         ENDDIVIDE
+  128 00000108         
+  129 00000108 E24CC001        SUB              R12, R12, #1
+  130 0000010C E35C0000        CMP              R12, #0
+  131 00000110 0A000002        BEQ              ENDPRINT
+  132 00000114 E08A000B        ADD              R0, R10, R11
+  133 00000118 EBFFFFFE        BL               sendchar
+  134 0000011C EAFFFFEC        B                PRINT
+  135 00000120         
+  136 00000120         ENDPRINT
+  137 00000120         
+  138 00000120 EAFFFFFE 
                        stop    B                stop
-  128 00000104         
-  129 00000104                 END
+  139 00000124         
+  140 00000124                 END
 Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\d
 isplayresult.d -o.\displayresult.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\C
 MSIS\Include -IC:\Keil_v5\ARM\INC\Philips --predefine="__EVAL SETA 1" --predefi
@@ -171,13 +179,21 @@ ayresult.lst DisplayResult.s
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-DIVIDE 000000D8
+DIGITS 000000C0
+
+Symbol: DIGITS
+   Definitions
+      At line 99 in file DisplayResult.s
+   Uses
+      At line 104 in file DisplayResult.s
+Comment: DIGITS used once
+DIVIDE 000000F4
 
 Symbol: DIVIDE
    Definitions
-      At line 112 in file DisplayResult.s
+      At line 121 in file DisplayResult.s
    Uses
-      At line 117 in file DisplayResult.s
+      At line 126 in file DisplayResult.s
 Comment: DIVIDE used once
 DisplayResult 00000000
 
@@ -187,49 +203,41 @@ Symbol: DisplayResult
    Uses
       None
 Comment: DisplayResult unused
-ENDDIVIDE 000000EC
+ENDDIGITS 000000D4
+
+Symbol: ENDDIGITS
+   Definitions
+      At line 105 in file DisplayResult.s
+   Uses
+      At line 101 in file DisplayResult.s
+Comment: ENDDIGITS used once
+ENDDIVIDE 00000108
 
 Symbol: ENDDIVIDE
    Definitions
-      At line 118 in file DisplayResult.s
+      At line 127 in file DisplayResult.s
    Uses
-      At line 114 in file DisplayResult.s
+      At line 123 in file DisplayResult.s
 Comment: ENDDIVIDE used once
-ENDPOWER 000000D4
+ENDPOWER 000000F0
 
 Symbol: ENDPOWER
    Definitions
-      At line 110 in file DisplayResult.s
+      At line 117 in file DisplayResult.s
    Uses
-      At line 106 in file DisplayResult.s
+      At line 113 in file DisplayResult.s
 Comment: ENDPOWER used once
-ENDPRINT 00000100
+ENDPRINT 00000120
 
 Symbol: ENDPRINT
    Definitions
-      At line 125 in file DisplayResult.s
+      At line 136 in file DisplayResult.s
    Uses
-      At line 123 in file DisplayResult.s
+      At line 131 in file DisplayResult.s
 Comment: ENDPRINT used once
-POWER 000000C0
+POWER 000000DC
 
 Symbol: POWER
-   Definitions
-      At line 104 in file DisplayResult.s
-   Uses
-      At line 109 in file DisplayResult.s
-Comment: POWER used once
-PRINT 000000B8
-
-Symbol: PRINT
-   Definitions
-      At line 101 in file DisplayResult.s
-   Uses
-      At line 124 in file DisplayResult.s
-Comment: PRINT used once
-addExp 000000A4
-
-Symbol: addExp
 
 
 
@@ -237,9 +245,25 @@ ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Relocatable symbols
 
    Definitions
-      At line 87 in file DisplayResult.s
+      At line 111 in file DisplayResult.s
    Uses
-      At line 79 in file DisplayResult.s
+      At line 116 in file DisplayResult.s
+Comment: POWER used once
+PRINT 000000D4
+
+Symbol: PRINT
+   Definitions
+      At line 107 in file DisplayResult.s
+   Uses
+      At line 134 in file DisplayResult.s
+Comment: PRINT used once
+addExp 000000A4
+
+Symbol: addExp
+   Definitions
+      At line 84 in file DisplayResult.s
+   Uses
+      At line 76 in file DisplayResult.s
 Comment: addExp used once
 addOperator 0000004C
 
@@ -253,11 +277,11 @@ endCalculate 000000B4
 
 Symbol: endCalculate
    Definitions
-      At line 95 in file DisplayResult.s
+      At line 92 in file DisplayResult.s
    Uses
-      At line 85 in file DisplayResult.s
-      At line 89 in file DisplayResult.s
-      At line 93 in file DisplayResult.s
+      At line 82 in file DisplayResult.s
+      At line 86 in file DisplayResult.s
+      At line 90 in file DisplayResult.s
 
 endRead 0000005C
 
@@ -280,11 +304,17 @@ Symbol: endReadAgain
 
 multiplyExp 0000009C
 
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+
 Symbol: multiplyExp
    Definitions
-      At line 83 in file DisplayResult.s
+      At line 80 in file DisplayResult.s
    Uses
-      At line 77 in file DisplayResult.s
+      At line 74 in file DisplayResult.s
 Comment: multiplyExp used once
 multiplyOperator 00000044
 
@@ -295,12 +325,6 @@ Symbol: multiplyOperator
       At line 25 in file DisplayResult.s
 Comment: multiplyOperator used once
 read 0000000C
-
-
-
-ARM Macro Assembler    Page 3 Alphabetic symbol ordering
-Relocatable symbols
-
 
 Symbol: read
    Definitions
@@ -324,31 +348,37 @@ Symbol: start
    Uses
       At line 5 in file DisplayResult.s
 Comment: start used once
-stop 00000100
+stop 00000120
 
 Symbol: stop
    Definitions
-      At line 127 in file DisplayResult.s
+      At line 138 in file DisplayResult.s
    Uses
-      At line 127 in file DisplayResult.s
+      At line 138 in file DisplayResult.s
 Comment: stop used once
 subtractExp 000000AC
 
 Symbol: subtractExp
    Definitions
-      At line 91 in file DisplayResult.s
+      At line 88 in file DisplayResult.s
    Uses
-      At line 81 in file DisplayResult.s
+      At line 78 in file DisplayResult.s
 Comment: subtractExp used once
 subtractOperator 00000054
 
 Symbol: subtractOperator
    Definitions
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
       At line 45 in file DisplayResult.s
    Uses
       At line 29 in file DisplayResult.s
 Comment: subtractOperator used once
-20 symbols
+22 symbols
 
 
 
@@ -381,7 +411,7 @@ Symbol: sendchar
       At line 18 in file DisplayResult.s
       At line 56 in file DisplayResult.s
       At line 71 in file DisplayResult.s
-      At line 120 in file DisplayResult.s
+      At line 133 in file DisplayResult.s
 
 3 symbols
-361 symbols in table
+363 symbols in table
