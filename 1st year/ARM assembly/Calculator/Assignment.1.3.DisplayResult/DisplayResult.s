@@ -7,6 +7,8 @@
 
 start
 
+startProgram
+
 	LDR R3, =10
 	LDR R4,=0
 	LDR R6, =0
@@ -15,7 +17,9 @@ read
     BL	getkey		; read key from console
     CMP	R0, #0x0D  	; while (key != enter)
     BEQ	endReadAgain; {
-    BL	sendchar	;   echo key back to console
+    CMP R0, #0x1B
+	BEQ endProgram
+	BL	sendchar	;   echo key back to console
 
     ;
     ; do any necessary processing of the key
@@ -96,45 +100,69 @@ endCalculate
 	LDR R8, =1 ;Power to test
 	LDR R12, =1 ;Actual power of number
 	
-DIGITS
+digits
 	CMP R5, R8
-	BLE ENDDIGITS
+	BLE endDigits
 	MUL R8, R3, R8
 	ADD R12, R12, #1
-	B DIGITS
-ENDDIGITS
+	B digits
+endDigits
 
-PRINT
+print
 	MOV R8, #1 ;Power to test
 	MOV R9, #1 ;Actual number to divide
 	
-POWER
+power
 	CMP R5, R8
-	BLE ENDPOWER
+	BLE endPower
 	MOV R9, R8
 	MUL R8, R3, R8
-	B POWER
-ENDPOWER
+	B power
+endPower
 
 	LDR R11, =0 ; Quotient	
 	
-DIVIDE
+divide
 	CMP R5, R9 ; while(remainder >= power)
-	BLO ENDDIVIDE
+	BLO endDivide
 	SUB R5, R5, R9
 	ADD R11, R11, #1
-	B DIVIDE
-ENDDIVIDE
+	B divide
+endDivide
 	
 	SUB R12, R12, #1
 	CMP R12, #0
-	BEQ ENDPRINT
+	BEQ endPrint
 	ADD R0, R10, R11
 	BL sendchar
-	B PRINT
+	B print
 
-ENDPRINT
+endPrint
 
+	LDR R0, =0xA
+	BL sendchar
+	
+	B startProgram
+	
+endProgram
+
+	LDR R0, =0x47
+	BL sendchar
+	LDR R0, =0x6F
+	BL sendchar
+	LDR R0, =0x6F
+	BL sendchar
+	LDR R0, =0x64
+	BL sendchar
+	LDR R0, =0x62
+	BL sendchar
+	LDR R0, =0x79
+	BL sendchar
+	LDR R0, =0x65
+	BL sendchar
+	LDR R0, =0x21
+	BL sendchar
+	
 stop	B	stop
 
 	END
