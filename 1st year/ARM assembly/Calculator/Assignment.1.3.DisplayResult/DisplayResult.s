@@ -14,15 +14,17 @@ startProgram	; do
 	LDR R4,=0 ; number1
 	LDR R6, =0 ; number2
 	LDR R7, =0 ; operator
-
+	
 read
     BL	getkey		; read key from console
+	CMP R0, #0x1B   ; 
+	BEQ endProgram	; 
     CMP	R0, #0x0D  	; while (key != enter)
     BEQ	endReadAgain; {
-    CMP R0, #0x1B
-	BEQ endProgram
+	CMP R0, #0x8	; 	 if(key == backspace)
+	BEQ backspace 	; 		 check()
 	BL	sendchar	;   echo key back to console
-
+		
     ;
     ; do any necessary processing of the key
     ;
@@ -37,7 +39,8 @@ read
 	BEQ divideOperator	;	divideOperator()
 
     MUL R4, R3, R4		; number1 *= 10
-    SUB R0, R0, #0x30	; input -= 48
+    SUB R0, R0, #0x30	; input -= ASCII Offset
+	MOV R5, R0			; lastDigit = input
     ADD R4, R0, R4		; number1 += input
 
 	B read	; read next digit
@@ -56,15 +59,41 @@ subtractOperator 	; subtractOperator()
 
 divideOperator		; divideOperator()
     LDR R7,= 4 		; 	operator = 4
+	B endRead
+
+backspace
+	BL sendchar		; print backspace
+	LDR R0, =0x20	;
+	BL sendchar		; print space
+	LDR R0, =0x8	;	
+	BL sendchar		; print backspace
+	SUB R4, R4, R5
+	
+	;Now there is a zero on the end, divide by ten
+	;to remove it and start again
+	;R4 will be quotient, R5 is a and remainder, 0xA is b,
+	MOV R5, R4
+	
+	LDR R4, =0
+	LDR R2, =0
+
+removePower
+	CMP R5, #10
+	BLO read
+	SUB R5, R5, #10
+	ADD R4, R4, #1
+	B removePower
 
 endRead
 
 readAgain
 
     BL	getkey		; read key from console
-    CMP	R0, #0x0D  	; while (key != enter)
-    BEQ	endReadAgain		; {
-    BL	sendchar	;   echo key back to console
+    CMP	R0, #0x0D  		; while (key != enter)
+    BEQ	endReadAgain	; {
+	CMP R0, #0x8		; 	 if(key == backspace)
+	BEQ backspaceSecond ; 		 check()
+    BL	sendchar	; echo key back to console
 
     ;
     ; do any necessary processing of the key
@@ -72,12 +101,34 @@ readAgain
 
     MUL R6, R3, R6		; number2 *= 10
     SUB R0, R0, #0x30	; input -= 48
+	MOV R5, R0			; lastDigit = input
     ADD R6, R0, R6		; number2 += input
-
+    
 	B readAgain
+	
+backspaceSecond
+	BL sendchar		; print backspace
+	LDR R0, =0x20	;
+	BL sendchar		; print space
+	LDR R0, =0x8	;	
+	BL sendchar		; print backspace
+	SUB R6, R6, R5
+	
+	MOV R5, R6
+	
+	LDR R6, =0
+	LDR R2, =0
+
+removePowerTwo
+	CMP R5, #10
+	BLO readAgain
+	SUB R5, R5, #10
+	ADD R6, R6, #1
+	B removePowerTwo
 
 endReadAgain
-	
+
+	LDR R5, =0x0	; result = 0
 	LDR R0, ='=' ; print '='
 	BL sendchar
 
@@ -103,7 +154,6 @@ subtractExp
     B endCalculate
 
 divideExp
-	LDR R5, =0x0	; result = 0
 	LDR R2, =0x0	; remainder = 0
 	
 	MOV R2, R4		; remainder = number1
@@ -163,7 +213,17 @@ endDivide
 	B print				;
 
 endPrint
+	
+	CMP R7, #4
+	BNE notDiv
+	LDR R0, =0x69		; print 'i'
+	BL sendchar			
+	LDR R0, =0x73		; print 's'
+	BL sendchar			
+	LDR R0, =0x68		; print 'h'
+	BL sendchar
 
+notDiv
 	LDR R0, =0xA		;
 	BL sendchar			; print new line
 	
