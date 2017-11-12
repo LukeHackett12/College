@@ -33,6 +33,8 @@ read
     BEQ addOperator			;	addOperator()
     CMP R0, #'-'			;else if(input == '-')
 	BEQ subtractOperator	;	subtractOperator()
+	CMP R0, #'/'			;else if(input == '/')
+	BEQ divideOperator	;	divideOperator()
 
     MUL R4, R3, R4		; number1 *= 10
     SUB R0, R0, #0x30	; input -= 48
@@ -51,6 +53,9 @@ addOperator 		; int addOperator()
 subtractOperator 	; subtractOperator()
     LDR R7,= 3 		; 	operator = 3
     B endRead
+
+divideOperator		; divideOperator()
+    LDR R7,= 4 		; 	operator = 4
 
 endRead
 
@@ -82,6 +87,8 @@ endReadAgain
     BEQ addExp		;	addExp()
     CMP R7,#3		;else if(operator == 3)
     BEQ subtractExp	;	subtractExp()
+	CMP R7,#4		;else if(operator == 4)
+    BEQ divideExp	;	divideExp()
 
 multiplyExp
     MUL R5, R4, R6	; result = number1 * number2
@@ -94,6 +101,19 @@ addExp
 subtractExp
     SUB R5, R4, R6	; result = number1 - number2
     B endCalculate
+
+divideExp
+	LDR R5, =0x0	;	
+	LDR R2, =0x0	;
+	
+	MOV R2, R4		;
+	
+subDivide			;
+	CMP R2, R6		;
+	BLO endCalculate;
+	SUB R2, R2, R6	;
+	ADD R5, R5, #1	;
+	B subDivide		;	
 
 endCalculate
 
