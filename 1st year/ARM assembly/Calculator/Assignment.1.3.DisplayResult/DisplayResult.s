@@ -67,22 +67,18 @@ backspace
 	BL sendchar		; print space
 	LDR R0, =0x8	;	
 	BL sendchar		; print backspace
-	SUB R4, R4, R5
+	SUB R4, R4, R5  ; number2 -= lastDigit
 	
-	;Now there is a zero on the end, divide by ten
-	;to remove it and start again
-	;R4 will be quotient, R5 is a and remainder, 0xA is b,
-	MOV R5, R4
+	MOV R5, R4		; R5 is now equal to the number to divide
 	
-	LDR R4, =0
-	LDR R2, =0
-
+	LDR R4, =0		; number1 = quotient
+	
 removePower
-	CMP R5, #10
-	BLO read
-	SUB R5, R5, #10
-	ADD R4, R4, #1
-	B removePower
+	CMP R5, #10			; while(remainder >= power)
+	BLO read      		; {
+	SUB R5, R5, #10		;	 remainder = remainder - 10
+	ADD R4, R4, #1		;	 number1++
+	B removePower       ; }
 
 endRead
 
@@ -112,19 +108,18 @@ backspaceSecond
 	BL sendchar		; print space
 	LDR R0, =0x8	;	
 	BL sendchar		; print backspace
-	SUB R6, R6, R5
+	SUB R6, R6, R5  ; number 2 -= lastDigit
 	
-	MOV R5, R6
+	MOV R5, R6 ; R5 now equal character to divide
 	
-	LDR R6, =0
-	LDR R2, =0
+	LDR R6, =0 ; number2 = quotient
 
 removePowerTwo
-	CMP R5, #10
-	BLO readAgain
-	SUB R5, R5, #10
-	ADD R6, R6, #1
-	B removePowerTwo
+	CMP R5, #10			; while(remainder >= power)
+	BLO readAgain		; {
+	SUB R5, R5, #10		;	 remainder = remainder - 10
+	ADD R6, R6, #1		;	 number2++
+	B removePowerTwo	; }
 
 endReadAgain
 
@@ -213,9 +208,15 @@ endDivide
 	B print				;
 
 endPrint
-	
+
 	CMP R7, #4
 	BNE notDiv
+	LDR R0, =0x2E		; print '.'
+	BL sendchar			
+	LDR R0, =0x2E		; print '.'
+	BL sendchar			
+	LDR R0, =0x2E		; print '.'
+	BL sendchar
 	LDR R0, =0x69		; print 'i'
 	BL sendchar			
 	LDR R0, =0x73		; print 's'
