@@ -125,8 +125,8 @@ endReadAgain
 
 	LDR R0, =0x20		; print ' '
 	BL sendchar
-	LDR R5, =0x0	; result = 0
-	LDR R0, ='=' ; print '='
+	LDR R5, =0x0		; result = 0
+	LDR R0, ='=' 		; print '='
 	BL sendchar
 	LDR R0, =0x20		; print ' '
 	BL sendchar
