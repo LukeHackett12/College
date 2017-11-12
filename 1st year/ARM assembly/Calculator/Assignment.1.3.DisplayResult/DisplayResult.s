@@ -36,7 +36,9 @@ read
     CMP R0, #'-'			;else if(input == '-')
 	BEQ subtractOperator	;	subtractOperator()
 	CMP R0, #'/'			;else if(input == '/')
-	BEQ divideOperator	;	divideOperator()
+	BEQ divideOperator		;	divideOperator()
+	CMP R0, #'^'			;else if(input == '/')
+	BEQ powerOperator		;	powerOperator()
 
     MUL R4, R3, R4		; number1 *= 10
     SUB R0, R0, #0x30	; input -= ASCII Offset
@@ -59,6 +61,10 @@ subtractOperator 	; subtractOperator()
 
 divideOperator		; divideOperator()
     LDR R7,= 4 		; 	operator = 4
+	B endRead
+	
+powerOperator		; divideOperator()
+    LDR R7,= 5 		; 	operator = 4
 	B endRead
 
 backspace
@@ -139,6 +145,8 @@ endReadAgain
     BEQ subtractExp	;	subtractExp()
 	CMP R7,#4		;else if(operator == 4)
     BEQ divideExp	;	divideExp()
+	CMP R7,#5		;else if(operator == 5)
+    BEQ powerExp	;	powerExp()
 
 multiplyExp
     MUL R5, R4, R6	; result = number1 * number2
@@ -164,6 +172,16 @@ subDivide			;
 	ADD R5, R5, #1	;	 result += 1
 	B subDivide		; }
 
+powerExp
+	MOV	R5, #1		; result = 1
+	
+calcPower			
+	CMP R6, #0
+	BEQ endCalculate; while(number2 != 0) {	 
+	MUL R5, R4, R5	;	 result = result * number1
+	SUB R6, R6, #1	; 	 number2 -= 1
+	B calcPower		; }
+	
 endCalculate
 
 	LDR R10, =0X30 ;ASCII offset
@@ -219,6 +237,9 @@ endPrint
 	BNE notDiv			; if(operator == /)
 	
 	LDR R7, =0			; operator - 0
+	
+	CMP R2, #0
+	BEQ notDiv
 	
 	LDR R0, =0x20		; print ' '
 	BL sendchar

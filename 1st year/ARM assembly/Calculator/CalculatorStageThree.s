@@ -36,7 +36,9 @@ BEQ addOperator			;	addOperator()
 CMP R0, #'-'			;else if(input == '-')
 BEQ subtractOperator	;	subtractOperator()
 CMP R0, #'/'			;else if(input == '/')
-BEQ divideOperator	;	divideOperator()
+BEQ divideOperator		;	divideOperator()
+CMP R0, #'^'			;else if(input == '/')
+BEQ powerOperator		;	powerOperator()
 
 MUL R4, R3, R4		; number1 *= 10
 SUB R0, R0, #0x30	; input -= ASCII Offset
@@ -59,6 +61,10 @@ B endRead
 
 divideOperator		; divideOperator()
 LDR R7,= 4 		; 	operator = 4
+B endRead
+
+powerOperator		; divideOperator()
+LDR R7,= 5 		; 	operator = 4
 B endRead
 
 backspace
@@ -123,8 +129,12 @@ B removePowerTwo	; }
 
 endReadAgain
 
-LDR R5, =0x0	; result = 0
-LDR R0, ='=' ; print '='
+LDR R0, =0x20		; print ' '
+BL sendchar
+LDR R5, =0x0		; result = 0
+LDR R0, ='=' 		; print '='
+BL sendchar
+LDR R0, =0x20		; print ' '
 BL sendchar
 
 CMP R7,#1		;if(operator == 1)
@@ -135,6 +145,8 @@ CMP R7,#3		;else if(operator == 3)
 BEQ subtractExp	;	subtractExp()
 CMP R7,#4		;else if(operator == 4)
 BEQ divideExp	;	divideExp()
+CMP R7,#5		;else if(operator == 5)
+BEQ powerExp	;	powerExp()
 
 multiplyExp
 MUL R5, R4, R6	; result = number1 * number2
@@ -160,16 +172,28 @@ SUB R2, R2, R6	;	 remainder -= number2
 ADD R5, R5, #1	;	 result += 1
 B subDivide		; }
 
+powerExp
+MOV	R5, #1		; result = 1
+
+calcPower
+CMP R6, #0
+BEQ endCalculate; while(number2 != 0) {
+MUL R5, R4, R5	;	 result = result * number1
+SUB R6, R6, #1	; 	 number2 -= 1
+B calcPower		; }
+
 endCalculate
 
 LDR R10, =0X30 ;ASCII offset
 
-LDR R8, =1 	;testPower = 1
+remainderPrint
+
+LDR R8, =10 ;testPower = 1
 LDR R12, =1 ;numberOfDigits = 1
 
 digits					;
 CMP R5, R8			;
-BLE endDigits		;	 while(result > testPower)
+BLO endDigits		;	 while(result > testPower)
                     ; 	 {
 MUL R8, R3, R8		; 	 	testPower *= 10
 ADD R12, R12, #1	; 	 	numberOfDigits += 1
@@ -199,30 +223,48 @@ ADD R11, R11, #1	;	 quotient++
 B divide			; }
 endDivide
 
-SUB R12, R12, #1	; numberOfDigits--
 CMP R12, #0			; if(numberOfDigits == 0)
 BEQ endPrint		;	 end print
                     ; else
 ADD R0, R10, R11	;	 character = ASCII offset + quotient
 BL sendchar			;	 print character
+SUB R12, R12, #1	; 	 numberOfDigits--
 B print				;
 
 endPrint
 
 CMP R7, #4
-BNE notDiv
-LDR R0, =0x2E		; print '.'
+BNE notDiv			; if(operator == /)
+
+LDR R7, =0			; operator - 0
+
+CMP R2, #0
+BEQ notDiv
+
+LDR R0, =0x20		; print ' '
 BL sendchar
-LDR R0, =0x2E		; print '.'
+LDR R0, =0x52		; print 'R'
 BL sendchar
-LDR R0, =0x2E		; print '.'
+LDR R0, =0x65		; print 'e'
+BL sendchar
+LDR R0, =0x6D		; print 'm'
+BL sendchar
+LDR R0, =0x61		; print 'a'
 BL sendchar
 LDR R0, =0x69		; print 'i'
 BL sendchar
-LDR R0, =0x73		; print 's'
+LDR R0, =0x6E		; print 'n'
 BL sendchar
-LDR R0, =0x68		; print 'h'
+LDR R0, =0x64		; print 'd'
 BL sendchar
+LDR R0, =0x65		; print 'e'
+BL sendchar
+LDR R0, =0x72		; print 'r'
+BL sendchar
+LDR R0, =0x20		; print ' '
+BL sendchar
+MOV R5, R2
+B remainderPrint
 
 notDiv
 LDR R0, =0xA		;
