@@ -103,17 +103,17 @@ subtractExp
     B endCalculate
 
 divideExp
-	LDR R5, =0x0	;	
-	LDR R2, =0x0	;
+	LDR R5, =0x0	; result = 0
+	LDR R2, =0x0	; remainder = 0
 	
-	MOV R2, R4		;
+	MOV R2, R4		; remainder = number1
 	
-subDivide			;
-	CMP R2, R6		;
-	BLO endCalculate;
-	SUB R2, R2, R6	;
-	ADD R5, R5, #1	;
-	B subDivide		;	
+subDivide			; 
+	CMP R2, R6		; while(remainder >= number2)
+	BLO endCalculate; {
+	SUB R2, R2, R6	;	 remainder -= number2
+	ADD R5, R5, #1	;	 result += 1
+	B subDivide		; }
 
 endCalculate
 
