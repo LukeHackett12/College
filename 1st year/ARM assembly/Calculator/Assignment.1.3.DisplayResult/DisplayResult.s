@@ -123,8 +123,12 @@ removePowerTwo
 
 endReadAgain
 
+	LDR R0, =0x20		; print ' '
+	BL sendchar
 	LDR R5, =0x0	; result = 0
 	LDR R0, ='=' ; print '='
+	BL sendchar
+	LDR R0, =0x20		; print ' '
 	BL sendchar
 
     CMP R7,#1		;if(operator == 1)
@@ -164,12 +168,14 @@ endCalculate
 
 	LDR R10, =0X30 ;ASCII offset
 	
-	LDR R8, =1 	;testPower = 1
+remainderPrint
+
+	LDR R8, =10 ;testPower = 1
 	LDR R12, =1 ;numberOfDigits = 1 
-	
+
 digits					;
 	CMP R5, R8			;
-	BLE endDigits		;	 while(result > testPower)
+	BLO endDigits		;	 while(result > testPower)
 						; 	 {
 	MUL R8, R3, R8		; 	 	testPower *= 10
 	ADD R12, R12, #1	; 	 	numberOfDigits += 1
@@ -199,30 +205,45 @@ divide
 	B divide			; }
 endDivide
 	
-	SUB R12, R12, #1	; numberOfDigits--
 	CMP R12, #0			; if(numberOfDigits == 0)
 	BEQ endPrint		;	 end print
 						; else
 	ADD R0, R10, R11	;	 character = ASCII offset + quotient
 	BL sendchar			;	 print character
+	SUB R12, R12, #1	; 	 numberOfDigits--
 	B print				;
 
 endPrint
 
 	CMP R7, #4
-	BNE notDiv
-	LDR R0, =0x2E		; print '.'
-	BL sendchar			
-	LDR R0, =0x2E		; print '.'
-	BL sendchar			
-	LDR R0, =0x2E		; print '.'
+	BNE notDiv			; if(operator == /)
+	
+	LDR R7, =0			; operator - 0
+	
+	LDR R0, =0x20		; print ' '
+	BL sendchar
+	LDR R0, =0x52		; print 'R'
+	BL sendchar
+	LDR R0, =0x65		; print 'e'
+	BL sendchar
+	LDR R0, =0x6D		; print 'm'
+	BL sendchar
+	LDR R0, =0x61		; print 'a'
 	BL sendchar
 	LDR R0, =0x69		; print 'i'
-	BL sendchar			
-	LDR R0, =0x73		; print 's'
-	BL sendchar			
-	LDR R0, =0x68		; print 'h'
 	BL sendchar
+	LDR R0, =0x6E		; print 'n'
+	BL sendchar
+	LDR R0, =0x64		; print 'd'
+	BL sendchar
+	LDR R0, =0x65		; print 'e'
+	BL sendchar
+	LDR R0, =0x72		; print 'r'
+	BL sendchar
+	LDR R0, =0x20		; print ' '
+	BL sendchar
+	MOV R5, R2
+	B remainderPrint
 
 notDiv
 	LDR R0, =0xA		;

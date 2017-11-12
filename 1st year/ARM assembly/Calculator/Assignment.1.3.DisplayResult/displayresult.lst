@@ -25,7 +25,7 @@ ARM Macro Assembler    Page 1
    19 00000010 EBFFFFFE        BL               getkey      ; read key from con
                                                             sole
    20 00000014 E350001B        CMP              R0, #0x1B   ; 
-   21 00000018 0A000082        BEQ              endProgram  ; 
+   21 00000018 0A000093        BEQ              endProgram  ; 
    22 0000001C E350000D        CMP              R0, #0x0D   ; while (key != ent
                                                             er)
    23 00000020 0A00003C        BEQ              endReadAgain ; {
@@ -172,176 +172,198 @@ ARM Macro Assembler    Page 3
   123 00000118         
   124 00000118         endReadAgain
   125 00000118         
-  126 00000118 E3A05000        LDR              R5, =0x0    ; result = 0
-  127 0000011C E3A0003D        LDR              R0, ='='    ; print '='
-  128 00000120 EBFFFFFE        BL               sendchar
-  129 00000124         
-  130 00000124 E3570001        CMP              R7,#1       ;if(operator == 1)
-  131 00000128 0A000005        BEQ              multiplyExp ; multiplyExp()
-  132 0000012C E3570002        CMP              R7,#2       ;else if(operator =
+  126 00000118 E3A00020        LDR              R0, =0x20   ; print ' '
+  127 0000011C EBFFFFFE        BL               sendchar
+  128 00000120 E3A05000        LDR              R5, =0x0    ; result = 0
+  129 00000124 E3A0003D        LDR              R0, ='='    ; print '='
+  130 00000128 EBFFFFFE        BL               sendchar
+  131 0000012C E3A00020        LDR              R0, =0x20   ; print ' '
+  132 00000130 EBFFFFFE        BL               sendchar
+  133 00000134         
+  134 00000134 E3570001        CMP              R7,#1       ;if(operator == 1)
+  135 00000138 0A000005        BEQ              multiplyExp ; multiplyExp()
+  136 0000013C E3570002        CMP              R7,#2       ;else if(operator =
                                                             = 2)
-  133 00000130 0A000005        BEQ              addExp      ; addExp()
-  134 00000134 E3570003        CMP              R7,#3       ;else if(operator =
+  137 00000140 0A000005        BEQ              addExp      ; addExp()
+  138 00000144 E3570003        CMP              R7,#3       ;else if(operator =
                                                             = 3)
-  135 00000138 0A000005        BEQ              subtractExp ; subtractExp()
-  136 0000013C E3570004        CMP              R7,#4       ;else if(operator =
+  139 00000148 0A000005        BEQ              subtractExp ; subtractExp()
+  140 0000014C E3570004        CMP              R7,#4       ;else if(operator =
                                                             = 4)
-  137 00000140 0A000005        BEQ              divideExp   ; divideExp()
-  138 00000144         
-  139 00000144         multiplyExp
-  140 00000144 E0050694        MUL              R5, R4, R6  ; result = number1 
-                                                            * number2
-  141 00000148 EA00000A        B                endCalculate
-  142 0000014C         
+  141 00000150 0A000005        BEQ              divideExp   ; divideExp()
+  142 00000154         
+  143 00000154         multiplyExp
 
 
 
 ARM Macro Assembler    Page 4 
 
 
-  143 0000014C         addExp
-  144 0000014C E0845006        ADD              R5, R4, R6  ; result = number1 
+  144 00000154 E0050694        MUL              R5, R4, R6  ; result = number1 
+                                                            * number2
+  145 00000158 EA00000A        B                endCalculate
+  146 0000015C         
+  147 0000015C         addExp
+  148 0000015C E0845006        ADD              R5, R4, R6  ; result = number1 
                                                             + number2
-  145 00000150 EA000008        B                endCalculate
-  146 00000154         
-  147 00000154         subtractExp
-  148 00000154 E0445006        SUB              R5, R4, R6  ; result = number1 
+  149 00000160 EA000008        B                endCalculate
+  150 00000164         
+  151 00000164         subtractExp
+  152 00000164 E0445006        SUB              R5, R4, R6  ; result = number1 
                                                             - number2
-  149 00000158 EA000006        B                endCalculate
-  150 0000015C         
-  151 0000015C         divideExp
-  152 0000015C E3A02000        LDR              R2, =0x0    ; remainder = 0
-  153 00000160         
-  154 00000160 E1A02004        MOV              R2, R4      ; remainder = numbe
+  153 00000168 EA000006        B                endCalculate
+  154 0000016C         
+  155 0000016C         divideExp
+  156 0000016C E3A02000        LDR              R2, =0x0    ; remainder = 0
+  157 00000170         
+  158 00000170 E1A02004        MOV              R2, R4      ; remainder = numbe
                                                             r1
-  155 00000164         
-  156 00000164         subDivide                            ; 
-  157 00000164 E1520006        CMP              R2, R6      ; while(remainder >
+  159 00000174         
+  160 00000174         subDivide                            ; 
+  161 00000174 E1520006        CMP              R2, R6      ; while(remainder >
                                                             = number2)
-  158 00000168 3A000002        BLO              endCalculate ; {
-  159 0000016C E0422006        SUB              R2, R2, R6  ;  remainder -= num
+  162 00000178 3A000002        BLO              endCalculate ; {
+  163 0000017C E0422006        SUB              R2, R2, R6  ;  remainder -= num
                                                             ber2
-  160 00000170 E2855001        ADD              R5, R5, #1  ;  result += 1
-  161 00000174 EAFFFFFA        B                subDivide   ; }
-  162 00000178         
-  163 00000178         endCalculate
-  164 00000178         
-  165 00000178 E3A0A030        LDR              R10, =0X30  ;ASCII offset
-  166 0000017C         
-  167 0000017C E3A08001        LDR              R8, =1      ;testPower = 1
-  168 00000180 E3A0C001        LDR              R12, =1     ;numberOfDigits = 1
+  164 00000180 E2855001        ADD              R5, R5, #1  ;  result += 1
+  165 00000184 EAFFFFFA        B                subDivide   ; }
+  166 00000188         
+  167 00000188         endCalculate
+  168 00000188         
+  169 00000188 E3A0A030        LDR              R10, =0X30  ;ASCII offset
+  170 0000018C         
+  171 0000018C         remainderPrint
+  172 0000018C         
+  173 0000018C E3A0800A        LDR              R8, =10     ;testPower = 1
+  174 00000190 E3A0C001        LDR              R12, =1     ;numberOfDigits = 1
                                                              
-  169 00000184         
-  170 00000184         digits                               ;
-  171 00000184 E1550008        CMP              R5, R8      ;
-  172 00000188 DA000002        BLE              endDigits   ;  while(result > t
+  175 00000194         
+  176 00000194         digits                               ;
+  177 00000194 E1550008        CMP              R5, R8      ;
+  178 00000198 3A000002        BLO              endDigits   ;  while(result > t
                                                             estPower)
-  173 0000018C         ;   {
-  174 0000018C E0080893        MUL              R8, R3, R8  ;    testPower *= 1
+  179 0000019C         ;   {
+  180 0000019C E0080893        MUL              R8, R3, R8  ;    testPower *= 1
                                                             0
-  175 00000190 E28CC001        ADD              R12, R12, #1 ;    numberOfDigit
+  181 000001A0 E28CC001        ADD              R12, R12, #1 ;    numberOfDigit
                                                             s += 1
-  176 00000194 EAFFFFFA        B                digits      ;    }
-  177 00000198         endDigits
-  178 00000198         
-  179 00000198         print
-  180 00000198 E3A08001        MOV              R8, #1      ; testPower = 1
-  181 0000019C E3A09001        MOV              R9, #1      ; realPower = 1
-  182 000001A0         
-  183 000001A0         power
-  184 000001A0 E1550008        CMP              R5, R8      ; if(result <= test
+  182 000001A4 EAFFFFFA        B                digits      ;    }
+  183 000001A8         endDigits
+  184 000001A8         
+  185 000001A8         print
+  186 000001A8 E3A08001        MOV              R8, #1      ; testPower = 1
+  187 000001AC E3A09001        MOV              R9, #1      ; realPower = 1
+  188 000001B0         
+  189 000001B0         power
+  190 000001B0 E1550008        CMP              R5, R8      ; if(result <= test
                                                             Power)
-  185 000001A4 DA000002        BLE              endPower    ;  end division
-  186 000001A8         ; else
-  187 000001A8 E1A09008        MOV              R9, R8      ;   realPower = tes
-                                                            tPower
-  188 000001AC E0080893        MUL              R8, R3, R8  ;  testPower *= 10
-  189 000001B0 EAFFFFFA        B                power       ;
-  190 000001B4         endPower
+  191 000001B4 DA000002        BLE              endPower    ;  end division
 
 
 
 ARM Macro Assembler    Page 5 
 
 
-  191 000001B4         
-  192 000001B4 E3A0B000        LDR              R11, =0     ; quotient 
-  193 000001B8         
-  194 000001B8         divide
-  195 000001B8 E1550009        CMP              R5, R9      ; while(remainder >
+  192 000001B8         ; else
+  193 000001B8 E1A09008        MOV              R9, R8      ;   realPower = tes
+                                                            tPower
+  194 000001BC E0080893        MUL              R8, R3, R8  ;  testPower *= 10
+  195 000001C0 EAFFFFFA        B                power       ;
+  196 000001C4         endPower
+  197 000001C4         
+  198 000001C4 E3A0B000        LDR              R11, =0     ; quotient 
+  199 000001C8         
+  200 000001C8         divide
+  201 000001C8 E1550009        CMP              R5, R9      ; while(remainder >
                                                             = power)
-  196 000001BC 3A000002        BLO              endDivide   ; {
-  197 000001C0 E0455009        SUB              R5, R5, R9  ;  result = result 
+  202 000001CC 3A000002        BLO              endDivide   ; {
+  203 000001D0 E0455009        SUB              R5, R5, R9  ;  result = result 
                                                             - realPower
-  198 000001C4 E28BB001        ADD              R11, R11, #1 ;  quotient++
-  199 000001C8 EAFFFFFA        B                divide      ; }
-  200 000001CC         endDivide
-  201 000001CC         
-  202 000001CC E24CC001        SUB              R12, R12, #1 ; numberOfDigits--
-                                                            
-  203 000001D0 E35C0000        CMP              R12, #0     ; if(numberOfDigits
+  204 000001D4 E28BB001        ADD              R11, R11, #1 ;  quotient++
+  205 000001D8 EAFFFFFA        B                divide      ; }
+  206 000001DC         endDivide
+  207 000001DC         
+  208 000001DC E35C0000        CMP              R12, #0     ; if(numberOfDigits
                                                              == 0)
-  204 000001D4 0A000002        BEQ              endPrint    ;  end print
-  205 000001D8         ; else
-  206 000001D8 E08A000B        ADD              R0, R10, R11 ;  character = ASC
+  209 000001E0 0A000003        BEQ              endPrint    ;  end print
+  210 000001E4         ; else
+  211 000001E4 E08A000B        ADD              R0, R10, R11 ;  character = ASC
                                                             II offset + quotien
                                                             t
-  207 000001DC EBFFFFFE        BL               sendchar    ;  print character
-  208 000001E0 EAFFFFEC        B                print       ;
-  209 000001E4         
-  210 000001E4         endPrint
-  211 000001E4         
-  212 000001E4 E3570004        CMP              R7, #4
-  213 000001E8 1A00000B        BNE              notDiv
-  214 000001EC E3A0002E        LDR              R0, =0x2E   ; print '.'
-  215 000001F0 EBFFFFFE        BL               sendchar
-  216 000001F4 E3A0002E        LDR              R0, =0x2E   ; print '.'
-  217 000001F8 EBFFFFFE        BL               sendchar
-  218 000001FC E3A0002E        LDR              R0, =0x2E   ; print '.'
-  219 00000200 EBFFFFFE        BL               sendchar
-  220 00000204 E3A00069        LDR              R0, =0x69   ; print 'i'
-  221 00000208 EBFFFFFE        BL               sendchar
-  222 0000020C E3A00073        LDR              R0, =0x73   ; print 's'
-  223 00000210 EBFFFFFE        BL               sendchar
-  224 00000214 E3A00068        LDR              R0, =0x68   ; print 'h'
-  225 00000218 EBFFFFFE        BL               sendchar
-  226 0000021C         
-  227 0000021C         notDiv
-  228 0000021C E3A0000A        LDR              R0, =0xA    ;
-  229 00000220 EBFFFFFE        BL               sendchar    ; print new line
-  230 00000224         
-  231 00000224 EAFFFF75        B                startProgram ; } while (input !
-                                                            = escape key)
-  232 00000228         
-  233 00000228         endProgram
-  234 00000228         
-  235 00000228 E3A00047        LDR              R0, =0x47   ; print 'G'
-  236 0000022C EBFFFFFE        BL               sendchar
-  237 00000230 E3A0006F        LDR              R0, =0x6F   ; print 'o'
-  238 00000234 EBFFFFFE        BL               sendchar
-  239 00000238 E3A0006F        LDR              R0, =0x6F   ; print 'o'
-  240 0000023C EBFFFFFE        BL               sendchar
-  241 00000240 E3A00064        LDR              R0, =0x64   ; print 'd'
-  242 00000244 EBFFFFFE        BL               sendchar
+  212 000001E8 EBFFFFFE        BL               sendchar    ;  print character
+  213 000001EC E24CC001        SUB              R12, R12, #1 ;   numberOfDigits
+                                                            --
+  214 000001F0 EAFFFFEC        B                print       ;
+  215 000001F4         
+  216 000001F4         endPrint
+  217 000001F4         
+  218 000001F4 E3570004        CMP              R7, #4
+  219 000001F8 1A000018        BNE              notDiv      ; if(operator == /)
+                                                            
+  220 000001FC         
+  221 000001FC E3A07000        LDR              R7, =0      ; operator - 0
+  222 00000200         
+  223 00000200 E3A00020        LDR              R0, =0x20   ; print ' '
+  224 00000204 EBFFFFFE        BL               sendchar
+  225 00000208 E3A00052        LDR              R0, =0x52   ; print 'R'
+  226 0000020C EBFFFFFE        BL               sendchar
+  227 00000210 E3A00065        LDR              R0, =0x65   ; print 'e'
+  228 00000214 EBFFFFFE        BL               sendchar
+  229 00000218 E3A0006D        LDR              R0, =0x6D   ; print 'm'
+  230 0000021C EBFFFFFE        BL               sendchar
+  231 00000220 E3A00061        LDR              R0, =0x61   ; print 'a'
+  232 00000224 EBFFFFFE        BL               sendchar
+  233 00000228 E3A00069        LDR              R0, =0x69   ; print 'i'
+  234 0000022C EBFFFFFE        BL               sendchar
+  235 00000230 E3A0006E        LDR              R0, =0x6E   ; print 'n'
+  236 00000234 EBFFFFFE        BL               sendchar
+  237 00000238 E3A00064        LDR              R0, =0x64   ; print 'd'
+  238 0000023C EBFFFFFE        BL               sendchar
+  239 00000240 E3A00065        LDR              R0, =0x65   ; print 'e'
+  240 00000244 EBFFFFFE        BL               sendchar
+  241 00000248 E3A00072        LDR              R0, =0x72   ; print 'r'
+  242 0000024C EBFFFFFE        BL               sendchar
 
 
 
 ARM Macro Assembler    Page 6 
 
 
-  243 00000248 E3A00062        LDR              R0, =0x62   ; print 'b'
-  244 0000024C EBFFFFFE        BL               sendchar
-  245 00000250 E3A00079        LDR              R0, =0x79   ; print 'y'
-  246 00000254 EBFFFFFE        BL               sendchar
-  247 00000258 E3A00065        LDR              R0, =0x65   ; print 'e'
-  248 0000025C EBFFFFFE        BL               sendchar
-  249 00000260 E3A00021        LDR              R0, =0x21   ; print '!'
-  250 00000264 EBFFFFFE        BL               sendchar
+  243 00000250 E3A00020        LDR              R0, =0x20   ; print ' '
+  244 00000254 EBFFFFFE        BL               sendchar
+  245 00000258 E1A05002        MOV              R5, R2
+  246 0000025C EAFFFFCA        B                remainderPrint
+  247 00000260         
+  248 00000260         notDiv
+  249 00000260 E3A0000A        LDR              R0, =0xA    ;
+  250 00000264 EBFFFFFE        BL               sendchar    ; print new line
   251 00000268         
-  252 00000268 EAFFFFFE 
-                       stop    B                stop
+  252 00000268 EAFFFF64        B                startProgram ; } while (input !
+                                                            = escape key)
   253 0000026C         
-  254 0000026C                 END
+  254 0000026C         endProgram
+  255 0000026C         
+  256 0000026C E3A00047        LDR              R0, =0x47   ; print 'G'
+  257 00000270 EBFFFFFE        BL               sendchar
+  258 00000274 E3A0006F        LDR              R0, =0x6F   ; print 'o'
+  259 00000278 EBFFFFFE        BL               sendchar
+  260 0000027C E3A0006F        LDR              R0, =0x6F   ; print 'o'
+  261 00000280 EBFFFFFE        BL               sendchar
+  262 00000284 E3A00064        LDR              R0, =0x64   ; print 'd'
+  263 00000288 EBFFFFFE        BL               sendchar
+  264 0000028C E3A00062        LDR              R0, =0x62   ; print 'b'
+  265 00000290 EBFFFFFE        BL               sendchar
+  266 00000294 E3A00079        LDR              R0, =0x79   ; print 'y'
+  267 00000298 EBFFFFFE        BL               sendchar
+  268 0000029C E3A00065        LDR              R0, =0x65   ; print 'e'
+  269 000002A0 EBFFFFFE        BL               sendchar
+  270 000002A4 E3A00021        LDR              R0, =0x21   ; print '!'
+  271 000002A8 EBFFFFFE        BL               sendchar
+  272 000002AC         
+  273 000002AC EAFFFFFE 
+                       stop    B                stop
+  274 000002B0         
+  275 000002B0                 END
 Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\d
 isplayresult.d -o.\displayresult.o -IC:\Keil_v5\ARM\RV31\INC -IC:\Keil_v5\ARM\C
 MSIS\Include -IC:\Keil_v5\ARM\INC\Philips --predefine="__EVAL SETA 1" --predefi
@@ -363,13 +385,13 @@ Symbol: DisplayResult
    Uses
       None
 Comment: DisplayResult unused
-addExp 0000014C
+addExp 0000015C
 
 Symbol: addExp
    Definitions
-      At line 143 in file DisplayResult.s
+      At line 147 in file DisplayResult.s
    Uses
-      At line 133 in file DisplayResult.s
+      At line 137 in file DisplayResult.s
 Comment: addExp used once
 addOperator 0000006C
 
@@ -395,23 +417,23 @@ Symbol: backspaceSecond
    Uses
       At line 91 in file DisplayResult.s
 Comment: backspaceSecond used once
-digits 00000184
+digits 00000194
 
 Symbol: digits
    Definitions
-      At line 170 in file DisplayResult.s
-   Uses
       At line 176 in file DisplayResult.s
+   Uses
+      At line 182 in file DisplayResult.s
 Comment: digits used once
-divide 000001B8
+divide 000001C8
 
 Symbol: divide
    Definitions
-      At line 194 in file DisplayResult.s
+      At line 200 in file DisplayResult.s
    Uses
-      At line 199 in file DisplayResult.s
+      At line 205 in file DisplayResult.s
 Comment: divide used once
-divideExp 0000015C
+divideExp 0000016C
 
 Symbol: divideExp
 
@@ -421,9 +443,9 @@ ARM Macro Assembler    Page 2 Alphabetic symbol ordering
 Relocatable symbols
 
    Definitions
-      At line 151 in file DisplayResult.s
+      At line 155 in file DisplayResult.s
    Uses
-      At line 137 in file DisplayResult.s
+      At line 141 in file DisplayResult.s
 Comment: divideExp used once
 divideOperator 0000007C
 
@@ -433,50 +455,50 @@ Symbol: divideOperator
    Uses
       At line 39 in file DisplayResult.s
 Comment: divideOperator used once
-endCalculate 00000178
+endCalculate 00000188
 
 Symbol: endCalculate
    Definitions
-      At line 163 in file DisplayResult.s
+      At line 167 in file DisplayResult.s
    Uses
-      At line 141 in file DisplayResult.s
       At line 145 in file DisplayResult.s
       At line 149 in file DisplayResult.s
-      At line 158 in file DisplayResult.s
+      At line 153 in file DisplayResult.s
+      At line 162 in file DisplayResult.s
 
-endDigits 00000198
+endDigits 000001A8
 
 Symbol: endDigits
    Definitions
-      At line 177 in file DisplayResult.s
+      At line 183 in file DisplayResult.s
    Uses
-      At line 172 in file DisplayResult.s
+      At line 178 in file DisplayResult.s
 Comment: endDigits used once
-endDivide 000001CC
+endDivide 000001DC
 
 Symbol: endDivide
    Definitions
-      At line 200 in file DisplayResult.s
+      At line 206 in file DisplayResult.s
    Uses
-      At line 196 in file DisplayResult.s
+      At line 202 in file DisplayResult.s
 Comment: endDivide used once
-endPower 000001B4
+endPower 000001C4
 
 Symbol: endPower
    Definitions
-      At line 190 in file DisplayResult.s
+      At line 196 in file DisplayResult.s
    Uses
-      At line 185 in file DisplayResult.s
+      At line 191 in file DisplayResult.s
 Comment: endPower used once
-endPrint 000001E4
+endPrint 000001F4
 
 Symbol: endPrint
    Definitions
-      At line 210 in file DisplayResult.s
+      At line 216 in file DisplayResult.s
    Uses
-      At line 204 in file DisplayResult.s
+      At line 209 in file DisplayResult.s
 Comment: endPrint used once
-endProgram 00000228
+endProgram 0000026C
 
 Symbol: endProgram
 
@@ -486,7 +508,7 @@ ARM Macro Assembler    Page 3 Alphabetic symbol ordering
 Relocatable symbols
 
    Definitions
-      At line 233 in file DisplayResult.s
+      At line 254 in file DisplayResult.s
    Uses
       At line 21 in file DisplayResult.s
 Comment: endProgram used once
@@ -510,13 +532,13 @@ Symbol: endReadAgain
       At line 23 in file DisplayResult.s
       At line 89 in file DisplayResult.s
 
-multiplyExp 00000144
+multiplyExp 00000154
 
 Symbol: multiplyExp
    Definitions
-      At line 139 in file DisplayResult.s
+      At line 143 in file DisplayResult.s
    Uses
-      At line 131 in file DisplayResult.s
+      At line 135 in file DisplayResult.s
 Comment: multiplyExp used once
 multiplyOperator 00000064
 
@@ -526,23 +548,23 @@ Symbol: multiplyOperator
    Uses
       At line 33 in file DisplayResult.s
 Comment: multiplyOperator used once
-notDiv 0000021C
+notDiv 00000260
 
 Symbol: notDiv
    Definitions
-      At line 227 in file DisplayResult.s
+      At line 248 in file DisplayResult.s
    Uses
-      At line 213 in file DisplayResult.s
+      At line 219 in file DisplayResult.s
 Comment: notDiv used once
-power 000001A0
+power 000001B0
 
 Symbol: power
    Definitions
-      At line 183 in file DisplayResult.s
-   Uses
       At line 189 in file DisplayResult.s
+   Uses
+      At line 195 in file DisplayResult.s
 Comment: power used once
-print 00000198
+print 000001A8
 
 
 
@@ -552,9 +574,9 @@ Relocatable symbols
 
 Symbol: print
    Definitions
-      At line 179 in file DisplayResult.s
+      At line 185 in file DisplayResult.s
    Uses
-      At line 208 in file DisplayResult.s
+      At line 214 in file DisplayResult.s
 Comment: print used once
 read 00000010
 
@@ -574,6 +596,14 @@ Symbol: readAgain
       At line 103 in file DisplayResult.s
       At line 119 in file DisplayResult.s
 
+remainderPrint 0000018C
+
+Symbol: remainderPrint
+   Definitions
+      At line 171 in file DisplayResult.s
+   Uses
+      At line 246 in file DisplayResult.s
+Comment: remainderPrint used once
 removePower 000000A4
 
 Symbol: removePower
@@ -601,14 +631,6 @@ Comment: start used once
 startProgram 00000000
 
 Symbol: startProgram
-   Definitions
-      At line 10 in file DisplayResult.s
-   Uses
-      At line 231 in file DisplayResult.s
-Comment: startProgram used once
-stop 00000268
-
-Symbol: stop
 
 
 
@@ -616,25 +638,33 @@ ARM Macro Assembler    Page 5 Alphabetic symbol ordering
 Relocatable symbols
 
    Definitions
-      At line 252 in file DisplayResult.s
+      At line 10 in file DisplayResult.s
    Uses
       At line 252 in file DisplayResult.s
+Comment: startProgram used once
+stop 000002AC
+
+Symbol: stop
+   Definitions
+      At line 273 in file DisplayResult.s
+   Uses
+      At line 273 in file DisplayResult.s
 Comment: stop used once
-subDivide 00000164
+subDivide 00000174
 
 Symbol: subDivide
    Definitions
-      At line 156 in file DisplayResult.s
+      At line 160 in file DisplayResult.s
    Uses
-      At line 161 in file DisplayResult.s
+      At line 165 in file DisplayResult.s
 Comment: subDivide used once
-subtractExp 00000154
+subtractExp 00000164
 
 Symbol: subtractExp
    Definitions
-      At line 147 in file DisplayResult.s
+      At line 151 in file DisplayResult.s
    Uses
-      At line 135 in file DisplayResult.s
+      At line 139 in file DisplayResult.s
 Comment: subtractExp used once
 subtractOperator 00000074
 
@@ -644,7 +674,7 @@ Symbol: subtractOperator
    Uses
       At line 37 in file DisplayResult.s
 Comment: subtractOperator used once
-32 symbols
+33 symbols
 
 
 
@@ -682,23 +712,30 @@ Symbol: sendchar
       At line 106 in file DisplayResult.s
       At line 108 in file DisplayResult.s
       At line 110 in file DisplayResult.s
-      At line 128 in file DisplayResult.s
-      At line 207 in file DisplayResult.s
-      At line 215 in file DisplayResult.s
-      At line 217 in file DisplayResult.s
-      At line 219 in file DisplayResult.s
-      At line 221 in file DisplayResult.s
-      At line 223 in file DisplayResult.s
-      At line 225 in file DisplayResult.s
-      At line 229 in file DisplayResult.s
+      At line 127 in file DisplayResult.s
+      At line 130 in file DisplayResult.s
+      At line 132 in file DisplayResult.s
+      At line 212 in file DisplayResult.s
+      At line 224 in file DisplayResult.s
+      At line 226 in file DisplayResult.s
+      At line 228 in file DisplayResult.s
+      At line 230 in file DisplayResult.s
+      At line 232 in file DisplayResult.s
+      At line 234 in file DisplayResult.s
       At line 236 in file DisplayResult.s
       At line 238 in file DisplayResult.s
       At line 240 in file DisplayResult.s
       At line 242 in file DisplayResult.s
       At line 244 in file DisplayResult.s
-      At line 246 in file DisplayResult.s
-      At line 248 in file DisplayResult.s
       At line 250 in file DisplayResult.s
+      At line 257 in file DisplayResult.s
+      At line 259 in file DisplayResult.s
+      At line 261 in file DisplayResult.s
+      At line 263 in file DisplayResult.s
+      At line 265 in file DisplayResult.s
+      At line 267 in file DisplayResult.s
+      At line 269 in file DisplayResult.s
+      At line 271 in file DisplayResult.s
 
 3 symbols
-373 symbols in table
+374 symbols in table
