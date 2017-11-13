@@ -51,60 +51,79 @@ public class CardGame {
     public static final int KING = 13;
 
     public static void main(String[] args){
-        //Initial guess
+
+        boolean playAgain = true;
         Random generator = new Random();
         Scanner input = new Scanner(System.in);
+
+        int count = 0;
+        int lastCard = 0;
         int cardNum = generator.nextInt(13) + 1;
-
-        printCard(cardNum);
-        System.out.print("Do you think the next card will be higher, lower or equal? ");
-        String guess = input.next();
-
-        int count = 1;
+        String guess = " ";
 
         boolean quit = false;
         boolean badInput = false;
 
-        while(count < GUESS_NUM && !quit){
-        	int lastCard = cardNum;
+        while(playAgain){
+            /*printCard(cardNum);
+            System.out.print("Do you think tt the next card will be higher, lower or equal? ");
+            */
+            count = 0;
             cardNum = generator.nextInt(13) + 1;
+            quit = false;
+            badInput = false;
 
-            if(lastCard < cardNum && Objects.equals(guess, "higher")){
-                count++;
-            }
-            else if(lastCard > cardNum && Objects.equals(guess, "lower")){
-                count++;
-            }
-            else if(lastCard == cardNum && Objects.equals(guess, "equal")){
-                count++;
-            }
-            else {
-                quit = true;
+            while(count < GUESS_NUM && !quit){
+            	lastCard = cardNum;
+                cardNum = generator.nextInt(13) + 1;
 
-                if(!Objects.equals(guess, "higher") && !Objects.equals(guess, "lower") && !Objects.equals(guess, "equal"))
-                {
+                printCard(lastCard);
+                System.out.print("Do you think the next card will be higher, lower or equal? ");
+                guess = input.nextLine();
+
+                if(lastCard < cardNum && Objects.equals(guess, "higher")){
+                    count++;
+                }
+                else if(lastCard > cardNum && Objects.equals(guess, "lower")){
+                    count++;
+                }
+                else if(lastCard == cardNum && Objects.equals(guess, "equal")){
+                    count++;
+                }
+                else if(Objects.equals(guess, "quit")){
+                    quit = true;
+                }
+                else if (!Objects.equals(guess, "higher") && Objects.equals(guess, "lower") && Objects.equals(guess, "equal")){
                     System.out.println("Sorry, we could not understand your input.");
                     badInput = true;
+                    count = 1000;
+                }
+                else {
+                    count = 1000;
                 }
             }
 
-            if(!quit){
-                printCard(cardNum);
-                System.out.print("Do you think the next card will be higher, lower or equal? ");
-                guess = input.next();
+            if(count == GUESS_NUM) {
+            	System.out.println("Congratulations.  You got them all correct.");
+            }
+            else if (quit) {
+                playAgain = false;
+            }
+            else if (!badInput && !quit){
+            	System.out.println("You lost the game.");
+            }
+
+            if (!quit){
+                System.out.print("Do you want to play again(y/n): ");
+                String again = input.next();
+                if(Objects.equals(again, "n") || Objects.equals(again, "N")){
+                    playAgain = false;
+                }
             }
         }
-
-        if(count == GUESS_NUM) {
-        	System.out.println("Congratulations.  You got them all correct.");
-        }
-        else if (!badInput){
-        	System.out.println("You lost the game.");
-        }
-
+        System.out.println("Thanks for playing!");
         input.close();
     }
-
     public static void printCard(int cardNum){
         if(cardNum != 1 && cardNum <= 10) {
             System.out.println("The card is a " + cardNum);
