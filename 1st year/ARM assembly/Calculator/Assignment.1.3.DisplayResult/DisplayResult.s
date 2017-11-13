@@ -241,7 +241,7 @@ endPrint
 	LDR R7, =0			; operator - 0
 	
 	CMP R2, #0
-	BEQ notDiv 
+	BEQ notDiv
 	
 	LDR R0, =' '
 	BL sendchar
@@ -305,4 +305,4 @@ endProgram
 	
 stop	B	stop
 
-	END 
+	END

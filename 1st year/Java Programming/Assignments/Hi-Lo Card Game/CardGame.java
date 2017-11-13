@@ -52,26 +52,19 @@ public class CardGame {
 
     public static void main(String[] args){
 
-        boolean playAgain = true;
-        Random generator = new Random();
-        Scanner input = new Scanner(System.in);
+    	boolean quit = false;
 
-        int count = 0;
-        int lastCard = 0;
-        int cardNum = generator.nextInt(13) + 1;
-        String guess = " ";
+    	Scanner input = new Scanner(System.in);
 
-        boolean quit = false;
-        boolean badInput = false;
+    	while(!quit) {
+    		Random generator = new Random();
 
-        while(playAgain){
-            /*printCard(cardNum);
-            System.out.print("Do you think tt the next card will be higher, lower or equal? ");
-            */
-            count = 0;
-            cardNum = generator.nextInt(13) + 1;
-            quit = false;
-            badInput = false;
+        	int count = 0;
+            int lastCard = 0;
+            int cardNum = generator.nextInt(13) + 1;
+            String guess = " ";
+
+            boolean badInput = false;
 
             while(count < GUESS_NUM && !quit){
             	lastCard = cardNum;
@@ -79,7 +72,7 @@ public class CardGame {
 
                 printCard(lastCard);
                 System.out.print("Do you think the next card will be higher, lower or equal? ");
-                guess = input.nextLine();
+                guess = input.next();
 
                 if(lastCard < cardNum && Objects.equals(guess, "higher")){
                     count++;
@@ -93,7 +86,7 @@ public class CardGame {
                 else if(Objects.equals(guess, "quit")){
                     quit = true;
                 }
-                else if (!Objects.equals(guess, "higher") && Objects.equals(guess, "lower") && Objects.equals(guess, "equal")){
+                else if (!Objects.equals(guess, "higher") && !Objects.equals(guess, "lower") && !Objects.equals(guess, "equal")){
                     System.out.println("Sorry, we could not understand your input.");
                     badInput = true;
                     count = 1000;
@@ -103,27 +96,25 @@ public class CardGame {
                 }
             }
 
-            if(count == GUESS_NUM) {
-            	System.out.println("Congratulations.  You got them all correct.");
-            }
-            else if (quit) {
-                playAgain = false;
-            }
-            else if (!badInput && !quit){
-            	System.out.println("You lost the game.");
-            }
+            if(!quit) {
+	            if(count == GUESS_NUM) {
+	            	System.out.println("Congratulations. You got them all correct.");
+	            }
+	            else if (!badInput){
+	            	System.out.println("You lost the game.");
+	            }
 
-            if (!quit){
-                System.out.print("Do you want to play again(y/n): ");
+	            System.out.print("Do you want to play again(y/n): ");
                 String again = input.next();
                 if(Objects.equals(again, "n") || Objects.equals(again, "N")){
-                    playAgain = false;
+                    quit = true;
                 }
             }
-        }
+    	}
         System.out.println("Thanks for playing!");
         input.close();
     }
+
     public static void printCard(int cardNum){
         if(cardNum != 1 && cardNum <= 10) {
             System.out.println("The card is a " + cardNum);
