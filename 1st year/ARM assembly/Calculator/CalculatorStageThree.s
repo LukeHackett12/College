@@ -7,22 +7,22 @@
 
 start
 
-startProgram	; do
+startProgram	; do 
 				; {
 
 	LDR R3, =10
 	LDR R4,=0 ; number1
 	LDR R6, =0 ; number2
 	LDR R7, =0 ; operator
-
+	
 read
     BL	getkey		; read key from console
-	CMP R0, #0x1B   ;
-	BEQ endProgram	;
+	CMP R0, #0x1B   ; 
+	BEQ endProgram	; 
 	CMP R0, #0x8	; 	 if(key == backspace)
 	BEQ backspace 	; 		 check()
 	BL	sendchar	;   echo key back to console
-
+		
     ;
     ; do any necessary processing of the key
     ;
@@ -60,23 +60,23 @@ subtractOperator 	; subtractOperator()
 divideOperator		; divideOperator()
     LDR R7,= 4 		; 	operator = 4
 	B endRead
-
+	
 powerOperator		; divideOperator()
-    LDR R7,= 5 		; 	operator = 4
+    LDR R7,= 5 		; 	operator = 5
 	B endRead
 
 backspace
 	BL sendchar		; print backspace
 	LDR R0, =0x20	;
 	BL sendchar		; print space
-	LDR R0, =0x8	;
+	LDR R0, =0x8	;	
 	BL sendchar		; print backspace
 	SUB R4, R4, R5  ; number2 -= lastDigit
-
+	
 	MOV R5, R4		; R5 is now equal to the number to divide
-
+	
 	LDR R4, =0		; number1 = quotient
-
+	
 removePower
 	CMP R5, #10			; while(remainder >= power)
 	BLO read      		; {
@@ -103,19 +103,19 @@ readAgain
     SUB R0, R0, #0x30	; input -= ASCII offset
 	MOV R5, R0			; lastDigit = input
     ADD R6, R0, R6		; number2 += input
-
+    
 	B readAgain
-
+	
 backspaceSecond
 	BL sendchar		; print backspace
 	LDR R0, =0x20	;
 	BL sendchar		; print space
-	LDR R0, =0x8	;
+	LDR R0, =0x8	;	
 	BL sendchar		; print backspace
 	SUB R6, R6, R5  ; number 2 -= lastDigit
-
+	
 	MOV R5, R6 ; R5 now equal character to divide
-
+	
 	LDR R6, =0 ; number2 = quotient
 
 removePowerTwo
@@ -128,14 +128,14 @@ removePowerTwo
 endReadAgain
 
 	LDR R5, =0x0		; result = 0
-
+	
 	LDR R0, =' '
 	BL sendchar
 	LDR R0, ='='
 	BL sendchar
 	LDR R0, =' '
 	BL sendchar
-
+	
     CMP R7,#1		;if(operator == 1)
     BEQ multiplyExp	;	multiplyExp()
     CMP R7,#2		;else if(operator == 2)
@@ -161,13 +161,13 @@ subtractExp
 
 divideExp
 	LDR R2, =0x0	; remainder = 0
-
+	
 	MOV R2, R4		; remainder = number1
-
+	
 	CMP R6, #0
 	BEQ nope
-
-subDivide			;
+	
+subDivide			; 
 	CMP R2, R6		; while(remainder >= number2)
 	BLO endCalculate; {
 	SUB R2, R2, R6	;	 remainder -= number2
@@ -176,22 +176,22 @@ subDivide			;
 
 powerExp
 	MOV	R5, #1		; result = 1
-
-calcPower
+	
+calcPower			
 	CMP R6, #0
-	BEQ endCalculate; while(number2 != 0) {
+	BEQ endCalculate; while(number2 != 0) {	 
 	MUL R5, R4, R5	;	 result = result * number1
 	SUB R6, R6, #1	; 	 number2 -= 1
 	B calcPower		; }
-
+	
 endCalculate
-
+	
 	LDR R10, =0X30 ;ASCII offset
-
+	
 remainderPrint
 
 	LDR R8, =10 ;testPower = 1
-	LDR R12, =1 ;numberOfDigits = 1
+	LDR R12, =1 ;numberOfDigits = 1 
 
 digits					;
 	CMP R5, R8			;
@@ -203,9 +203,9 @@ digits					;
 endDigits
 
 print
-	MOV R8, #1 			; testPower = 1
+	MOV R8, #1 			; testPower = 10
 	MOV R9, #1 			; realPower = 1
-
+	
 power
 	CMP R5, R8			; if(result <= testPower)
 	BLE endPower		;	 end division
@@ -215,8 +215,8 @@ power
 	B power				;
 endPower
 
-	LDR R11, =0 ; quotient
-
+	LDR R11, =0 ; quotient	
+	
 divide
 	CMP R5, R9 			; while(remainder >= power)
 	BLO endDivide		; {
@@ -224,7 +224,7 @@ divide
 	ADD R11, R11, #1	;	 quotient++
 	B divide			; }
 endDivide
-
+	
 	CMP R12, #0			; if(numberOfDigits == 0)
 	BEQ endPrint		;	 end print
 						; else
@@ -237,12 +237,12 @@ endPrint
 
 	CMP R7, #4
 	BNE notDiv			; if(operator == /)
-
+	
 	LDR R7, =0			; operator - 0
-
+	
 	CMP R2, #0
 	BEQ notDiv
-
+	
 	LDR R0, =' '
 	BL sendchar
 	LDR R0, ='R'
@@ -267,42 +267,42 @@ endPrint
 	BL sendchar
 	MOV R5, R2
 	B remainderPrint
-
+	
 nope
-	LDR R0, ='n'		; print 'n'
+	LDR R0, ='n'		
 	BL sendchar
-	LDR R0, ='o'		; print 'o'
+	LDR R0, ='o'		
 	BL sendchar
-	LDR R0, ='p'		; print 'p'
+	LDR R0, ='p'		
 	BL sendchar
-	LDR R0, ='e'		; print 'e'
+	LDR R0, ='e'		
 	BL sendchar
 
 notDiv
 	LDR R0, =0xA		;
 	BL sendchar			; print new line
-
+	
 	B startProgram		; } while (input != escape key)
-
+	
 endProgram
 
 	LDR R0, ='G'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='o'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='o'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='d'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='b'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='y'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='e'
-	BL sendchar
+	BL sendchar			
 	LDR R0, ='!'
 	BL sendchar
-
+	
 stop	B	stop
 
 	END

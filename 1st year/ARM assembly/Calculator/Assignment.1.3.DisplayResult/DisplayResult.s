@@ -62,7 +62,7 @@ divideOperator		; divideOperator()
 	B endRead
 	
 powerOperator		; divideOperator()
-    LDR R7,= 5 		; 	operator = 4
+    LDR R7,= 5 		; 	operator = 5
 	B endRead
 
 backspace
@@ -203,7 +203,7 @@ digits					;
 endDigits
 
 print
-	MOV R8, #1 			; testPower = 1
+	MOV R8, #1 			; testPower = 10
 	MOV R9, #1 			; realPower = 1
 	
 power
@@ -269,13 +269,13 @@ endPrint
 	B remainderPrint
 	
 nope
-	LDR R0, ='n'		; print 'n'
+	LDR R0, ='n'		
 	BL sendchar
-	LDR R0, ='o'		; print 'o'
+	LDR R0, ='o'		
 	BL sendchar
-	LDR R0, ='p'		; print 'p'
+	LDR R0, ='p'		
 	BL sendchar
-	LDR R0, ='e'		; print 'e'
+	LDR R0, ='e'		
 	BL sendchar
 
 notDiv
