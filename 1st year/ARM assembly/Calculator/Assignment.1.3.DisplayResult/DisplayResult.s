@@ -1,4 +1,4 @@
-	AREA	DisplayResult, CODE, READONLY
+	AREA	CalculatorStageThree, CODE, READONLY
 	IMPORT	main
 	IMPORT	getkey
 	IMPORT	sendchar
@@ -19,8 +19,6 @@ read
     BL	getkey		; read key from console
 	CMP R0, #0x1B   ; 
 	BEQ endProgram	; 
-    CMP	R0, #0x0D  	; while (key != enter)
-    BEQ	endReadAgain; {
 	CMP R0, #0x8	; 	 if(key == backspace)
 	BEQ backspace 	; 		 check()
 	BL	sendchar	;   echo key back to console
@@ -102,7 +100,7 @@ readAgain
     ;
 
     MUL R6, R3, R6		; number2 *= 10
-    SUB R0, R0, #0x30	; input -= 48
+    SUB R0, R0, #0x30	; input -= ASCII offset
 	MOV R5, R0			; lastDigit = input
     ADD R6, R0, R6		; number2 += input
     
@@ -129,14 +127,15 @@ removePowerTwo
 
 endReadAgain
 
-	LDR R0, =0x20		; print ' '
-	BL sendchar
 	LDR R5, =0x0		; result = 0
-	LDR R0, ='=' 		; print '='
+	
+	LDR R0, =' '
 	BL sendchar
-	LDR R0, =0x20		; print ' '
+	LDR R0, ='='
 	BL sendchar
-
+	LDR R0, =' '
+	BL sendchar
+	
     CMP R7,#1		;if(operator == 1)
     BEQ multiplyExp	;	multiplyExp()
     CMP R7,#2		;else if(operator == 2)
@@ -165,6 +164,9 @@ divideExp
 	
 	MOV R2, R4		; remainder = number1
 	
+	CMP R6, #0
+	BEQ nope
+	
 subDivide			; 
 	CMP R2, R6		; while(remainder >= number2)
 	BLO endCalculate; {
@@ -183,7 +185,7 @@ calcPower
 	B calcPower		; }
 	
 endCalculate
-
+	
 	LDR R10, =0X30 ;ASCII offset
 	
 remainderPrint
@@ -239,32 +241,42 @@ endPrint
 	LDR R7, =0			; operator - 0
 	
 	CMP R2, #0
-	BEQ notDiv
+	BEQ notDiv 
 	
-	LDR R0, =0x20		; print ' '
+	LDR R0, =' '
 	BL sendchar
-	LDR R0, =0x52		; print 'R'
+	LDR R0, ='R'
 	BL sendchar
-	LDR R0, =0x65		; print 'e'
+	LDR R0, ='e'
 	BL sendchar
-	LDR R0, =0x6D		; print 'm'
+	LDR R0, ='m'
 	BL sendchar
-	LDR R0, =0x61		; print 'a'
+	LDR R0, ='a'
 	BL sendchar
-	LDR R0, =0x69		; print 'i'
+	LDR R0, ='i'
 	BL sendchar
-	LDR R0, =0x6E		; print 'n'
+	LDR R0, ='n'
 	BL sendchar
-	LDR R0, =0x64		; print 'd'
+	LDR R0, ='d'
 	BL sendchar
-	LDR R0, =0x65		; print 'e'
+	LDR R0, ='e'
 	BL sendchar
-	LDR R0, =0x72		; print 'r'
+	LDR R0, ='r'
 	BL sendchar
-	LDR R0, =0x20		; print ' '
+	LDR R0, =' '
 	BL sendchar
 	MOV R5, R2
 	B remainderPrint
+	
+nope
+	LDR R0, ='n'		; print 'n'
+	BL sendchar
+	LDR R0, ='o'		; print 'o'
+	BL sendchar
+	LDR R0, ='p'		; print 'p'
+	BL sendchar
+	LDR R0, ='e'		; print 'e'
+	BL sendchar
 
 notDiv
 	LDR R0, =0xA		;
@@ -274,23 +286,23 @@ notDiv
 	
 endProgram
 
-	LDR R0, =0x47		; print 'G'
+	LDR R0, ='G'
 	BL sendchar			
-	LDR R0, =0x6F		; print 'o'
+	LDR R0, ='o'
 	BL sendchar			
-	LDR R0, =0x6F		; print 'o'
+	LDR R0, ='o'
 	BL sendchar			
-	LDR R0, =0x64		; print 'd'
+	LDR R0, ='d'
 	BL sendchar			
-	LDR R0, =0x62		; print 'b'
+	LDR R0, ='b'
 	BL sendchar			
-	LDR R0, =0x79		; print 'y'
+	LDR R0, ='y'
 	BL sendchar			
-	LDR R0, =0x65		; print 'e'
+	LDR R0, ='e'
 	BL sendchar			
-	LDR R0, =0x21		; print '!'
+	LDR R0, ='!'
 	BL sendchar
 	
 stop	B	stop
 
-	END
+	END 
