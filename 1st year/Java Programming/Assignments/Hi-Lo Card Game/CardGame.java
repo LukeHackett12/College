@@ -103,12 +103,13 @@ public class CardGame {
 	            else if (!badInput){
 	            	System.out.println("You lost the game.");
 	            }
+
 	            System.out.print("Do you want to play again(y/n): ");
                 String again = input.next();
-                if(!Objects.equals(again, "y") || !Objects.equals(again, "Y")){
+                if(!Objects.equals(again, "y") && !Objects.equals(again, "Y")){
                     quit = true;
 
-                    if(!Objects.equals(again, "n") || !Objects.equals(again, "N")){
+                    if(!Objects.equals(again, "n") && !Objects.equals(again, "N")){
                         System.out.println("Sorry didn't get that but guessing you quit, Thanks for playing!");
                     }
                     else {
