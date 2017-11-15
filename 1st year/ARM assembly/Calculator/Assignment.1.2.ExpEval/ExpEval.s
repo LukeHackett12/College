@@ -4,7 +4,7 @@
 	IMPORT	sendchar
 	EXPORT	start
 	PRESERVE8
-
+;Start point
 start
 
 	;
