@@ -29,7 +29,7 @@
    Total Mark out of 100 (Add all the previous marks):100
 */
 
-public class ChristmasSong{
+public class ChristmasSong {
 
     public static final String FIRST = " first ";
     public static final String SECOND = " second ";
@@ -118,6 +118,8 @@ public class ChristmasSong{
                                 present = DAY1;
                             else
                                 present = "and " + DAY1;
+
+                            break;
                 }
                 System.out.println(present);
             }
