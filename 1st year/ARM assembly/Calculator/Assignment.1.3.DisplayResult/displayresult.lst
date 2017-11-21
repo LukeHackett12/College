@@ -91,7 +91,7 @@ ARM Macro Assembler    Page 2
    62 00000080 EA00000E        B                endRead
    63 00000084         
    64 00000084         powerOperator                        ; divideOperator()
-   65 00000084 E3A07005        LDR              R7,= 5      ;  operator = 4
+   65 00000084 E3A07005        LDR              R7,= 5      ;  operator = 5
    66 00000088 EA00000C        B                endRead
    67 0000008C         
    68 0000008C         backspace
@@ -283,7 +283,7 @@ ARM Macro Assembler    Page 5
   203 000001D8         endDigits
   204 000001D8         
   205 000001D8         print
-  206 000001D8 E3A08001        MOV              R8, #1      ; testPower = 1
+  206 000001D8 E3A08001        MOV              R8, #1      ; testPower = 10
   207 000001DC E3A09001        MOV              R9, #1      ; realPower = 1
   208 000001E0         
   209 000001E0         power
@@ -364,13 +364,13 @@ ARM Macro Assembler    Page 6
   269 00000294 EAFFFFC8        B                remainderPrint
   270 00000298         
   271 00000298         nope
-  272 00000298 E3A0006E        LDR              R0, ='n'    ; print 'n'
+  272 00000298 E3A0006E        LDR              R0, ='n'
   273 0000029C EBFFFFFE        BL               sendchar
-  274 000002A0 E3A0006F        LDR              R0, ='o'    ; print 'o'
+  274 000002A0 E3A0006F        LDR              R0, ='o'
   275 000002A4 EBFFFFFE        BL               sendchar
-  276 000002A8 E3A00070        LDR              R0, ='p'    ; print 'p'
+  276 000002A8 E3A00070        LDR              R0, ='p'
   277 000002AC EBFFFFFE        BL               sendchar
-  278 000002B0 E3A00065        LDR              R0, ='e'    ; print 'e'
+  278 000002B0 E3A00065        LDR              R0, ='e'
   279 000002B4 EBFFFFFE        BL               sendchar
   280 000002B8         
   281 000002B8         notDiv

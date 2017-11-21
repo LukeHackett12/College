@@ -6,7 +6,7 @@ start
 	LDR	R1, =strSrc
 	LDR	R2, =strDst
 	LDR R0, =0
-	
+
 count
 	LDRB R3, [R1]
 	CMP R3, #0
@@ -15,7 +15,7 @@ count
 	ADD R1, R1, #1
 	B count
 endCount
-	
+
 	SUB R1, R1, #1
 reverse
 	LDRB R3, [R1]
@@ -37,4 +37,4 @@ stop	B	stop
 strSrc	DCB	"hello",0
 strDst	SPACE	128
 
-	END	
+	END
