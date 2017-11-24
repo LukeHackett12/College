@@ -57,11 +57,17 @@ public class DayOfTheWeek{
                     quit = true;
                     isValid = true;
                 }
-                else if(dateChars[2] == '/' && dateChars[5] == '/' && dateChars.length == 10){
+                else if(dateChars[2] == '/' && dateChars[5] == '/' && dateChars.length > 6){
                     if(Character.isDigit(dateChars[0]) && Character.isDigit(dateChars[1])){
                         if(Character.isDigit(dateChars[3]) && Character.isDigit(dateChars[4])){
-                            if(Character.isDigit(dateChars[6]) && Character.isDigit(dateChars[7]) && Character.isDigit(dateChars[8])){
-                                isValid = true;
+                            for(int count = 6; count < dateChars.length; count++){
+                                if(!Character.isDigit(dateChars[count])){
+                                    isValid = false;
+                                    count = dateChars.length;
+                                }
+                                else {
+                                    isValid = true;
+                                }
                             }
                         }
                     }
@@ -114,7 +120,7 @@ public class DayOfTheWeek{
 
     	String numberEnding = " ";
 
-        if(dayNumberEnding == 1) {
+        if(dayNumberEnding == 1 && dayNumber != 11) {
         	numberEnding = "st";
         }
         else if(dayNumber == 2) {
@@ -177,8 +183,17 @@ public class DayOfTheWeek{
         if(monthNumber == 1 || monthNumber == 2)
             yearNumber--;
 
-        int yearHalfOne = (int)Math.floor(yearNumber / 100);
-        int yearHalfTwo = yearNumber % 1000;
+        int yearHalfOne = 0;
+        int yearHalfTwo = 0;
+
+        if(yearNumber <= 99){
+            yearHalfOne = 0;
+            yearHalfTwo = yearNumber;
+        }
+        else{
+            yearHalfOne = (int)Math.floor(yearNumber / 100);
+            yearHalfTwo = yearNumber % 100;
+        }
 
         double day = (dayNumber + Math.floor(2.6 * (((monthNumber + 9) % 12) + 1) - 0.2) + yearHalfTwo + Math.floor(yearHalfTwo/4) + Math.floor(yearHalfOne/4) - 2*yearHalfOne) % 7;
 
@@ -203,6 +218,9 @@ public class DayOfTheWeek{
         }
         else if(day == 0){
             dayOfTheWeek = "Sunday";
+        }
+        else{
+            dayOfTheWeek = ":(";
         }
 
         return dayOfTheWeek;
