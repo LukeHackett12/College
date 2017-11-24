@@ -195,7 +195,7 @@ public class DayOfTheWeek{
             yearHalfTwo = yearNumber % 100;
         }
 
-        double day = (dayNumber + Math.floor(2.6 * (((monthNumber + 9) % 12) + 1) - 0.2) + yearHalfTwo + Math.floor(yearHalfTwo/4) + Math.floor(yearHalfOne/4) - 2*yearHalfOne) % 7;
+        int day = (int) Math.abs((dayNumber + Math.floor(2.6 * (((monthNumber + 9) % 12) + 1) - 0.2) + yearHalfTwo + Math.floor(yearHalfTwo/4) + Math.floor(yearHalfOne/4) - 2*yearHalfOne) % 7);
 
         String dayOfTheWeek = " ";
         if(day == 1){
