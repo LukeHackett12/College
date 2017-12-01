@@ -41,12 +41,9 @@ public class TriangularStars{
         boolean isStarNumber = false;
 
         long testStar = 0;
-        for(int count = 1; testStar < triangleNumber; i++){
+        for(int count = 1; testStar < triangleNumber; count++){
             testStar = (6*count*(count-1)) + 1;
-            if(testStar > Integer.MAX_VALUE){
-                testStar = triangleNumber;
-            }
-            else if(testStar == triangleNumber){
+            if(testStar == triangleNumber){
                 isStarNumber = true;
             }
         }
