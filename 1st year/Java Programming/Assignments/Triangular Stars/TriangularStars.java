@@ -33,23 +33,26 @@ public class TriangularStars{
 
     public static void main(String[] Args){
         long triangleNumber = 0;
-        for(long count = 0; triangleNumber <= MAX_VALUE; count++){
-            triangleNumber = determineTriangleNumber(count, triangleNumber);
+        long index = 0;
+        while(triangleNumber <= MAX_VALUE){
+            triangleNumber = determineTriangleNumber(index, triangleNumber);
             if(isStarNumber(triangleNumber)){
                 System.out.println(triangleNumber);
             }
+            index++;
         }
     }
 
     public static boolean isStarNumber(long triangleNumber){
         boolean isStarNumber = false;
-
         long testStar = 0;
-        for(long count = 0; testStar < triangleNumber; count++){
-            testStar = determineStarNumber(count);
+        long index = 0;
+        while(testStar < triangleNumber){
+            testStar = determineStarNumber(index);
             if(testStar == triangleNumber){
                 isStarNumber = true;
             }
+            index++;
         }
         return isStarNumber;
     }
