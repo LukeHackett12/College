@@ -1,28 +1,28 @@
 /* SELF ASSESSMENT
  1. Did I use easy-to-understand meaningful variable names formatted properly (in lowerCamelCase)?
         Mark out of 5: 5
-
+        All variable named explained their purpose and were formatted correctly.
  2. Did I indent the code appropriately?
         Mark out of 5: 5
-
+        All code is indented at appropriate points.
  3. Did I write the initialiseHighScores function correctly (parameters, return type and function body) and invoke it correctly?
        Mark out of 15: 15
-
+       initialiseHighScores took the input length of the array and returned an array filled with 0 of that length.
  4. Did I write the printHighScores function correctly (parameters, return type and function body) and invoke it correctly?
        Mark out of 15: 15
-
+       printhighscores prints an array passed to it formatted with commas in between the integers.
  5. Did I write the higherThan function correctly (parameters, return type and function body) and invoke it correctly?
        Mark out of 15: 15
-
+       higherThan determined that if a number passeed was higher than any current numbers in the array and returned true if so.
  6. Did I write the insertScore function correctly (parameters, return type and function body) and invoke it correctly?
        Mark out of 20: 20
-
+       InsertScore determine where in the array the number should be placed and moved any highScores below it down to make space.
  7. Did I write the main function body correctly (first asking for the number of scores to be maintained and then repeatedly asking for scores)?
        Mark out of 20: 20
-
+       The main function asked for the number of scores then kept maintaining the list
  8. How well did I complete this self-assessment?
         Mark out of 5: 5
-        
+        Commented explaining reasoning
  Total Mark out of 100 (Add all the previous marks): 100
 */
 
