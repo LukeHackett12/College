@@ -39,6 +39,9 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Cipher{
+
+    public static final int ALPHABET_START = 97;
+
     public static void main(String[] args){
         boolean quit = false;
 
@@ -72,7 +75,7 @@ public class Cipher{
         randomMapping[0][26] = ' ';
         randomMapping[1][26] = ' ';
 
-        int ascii = 97;
+        int ascii = ALPHABET_START;
         for(int index = 0; index < randomMapping.length - 1; index++){
             randomMapping[0][index] = (char)ascii;
             randomMapping[1][index] = (char)ascii;
