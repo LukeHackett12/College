@@ -10,62 +10,61 @@ public class SieveOfEratosthenes{
             number = in.nextInt();
         }
         if(number >= 2){
-            int[][] primedSequence = sieve(number);
-            System.out.println(nonCrossedOutSubseqToString(primedSequence, number));
+            int[] primedSequence = sieve(number);
+            System.out.println(nonCrossedOutSubseqToString(primedSequence));
         }
         else{
             System.out.println("Eww");
         }
     }
 
-    public static int[][] createSequence(int n){
-        int[][] numberSequence = new int[n-1][2];
+    public static int[] createSequence(int n){
+        int[] numberSequence = new int[n-1];
         int tempN = 2;
-        for(int i = 0; i <= n-2; i++){
-            numberSequence[i][0] = tempN;
-            numberSequence[i][1] = 0;
+        for(int i = 0; i < numberSequence.length; i++){
+            numberSequence[i] = tempN;
             tempN++;
         }
         return numberSequence;
     }
 
-    public static int[][] crossOutHigherMultiples(int[][] sequence, int n){
+    public static int[] crossOutHigherMultiples(int[] sequence){
         int multiple = 2;
-        while(multiple <= Math.sqrt(n)){
-            for(int i = multiple; i <= n-2; i++){
-                if(sequence[i][0] % multiple == 0)
-                    sequence[i][1] = 1;
+        while(multiple <= Math.sqrt(sequence.length+2)){
+            for(int i = multiple; i < sequence.length; i++){
+                if(sequence[i] % multiple == 0 && sequence[i] > 0)
+                    sequence[i] *= -1;
             }
-            System.out.println(sequenceToString(sequence, n));
+            System.out.println(sequenceToString(sequence));
             multiple++;
         }
         return sequence;
     }
 
-    public static int[][] sieve(int n){
-        int[][] numberSequence = createSequence(n);
-        System.out.println(sequenceToString(numberSequence, n));
-        numberSequence = crossOutHigherMultiples(numberSequence, n);
+    public static int[] sieve(int n){
+        int[] numberSequence = createSequence(n);
+        System.out.println(sequenceToString(numberSequence));
+        numberSequence = crossOutHigherMultiples(numberSequence);
         return numberSequence;
     }
 
-    public static String sequenceToString(int[][] sequence, int n){
+    public static String sequenceToString(int[] sequence){
         String sequenceString = "";
-        for(int i = 0; i <= n-2; i++){
-            if(sequence[i][1] == 0){
-                sequenceString += sequence[i][0] + ", ";
+        for(int i : sequence){
+            if(i > 0){
+                sequenceString += i + ", ";
             } else {
-                sequenceString += "[" + sequence[i][0] + "], ";
+                sequenceString += "[" + Math.abs(i) + "], ";
             }
         }
         return sequenceString;
     }
 
-    public static String nonCrossedOutSubseqToString(int[][] sequence, int n){
+    public static String nonCrossedOutSubseqToString(int[] sequence){
         String sequenceString = "";
-        for(int i = 0; i <= n-2; i++){
-            if(sequence[i][1] == 0){
-                sequenceString += sequence[i][0] + ", ";
+        for(int i : sequence){
+            if(i > 0){
+                sequenceString += i + ", ";
             }
         }
         return sequenceString;
