@@ -1,0 +1,60 @@
+$date
+	Mon Jan 22 13:12:40 2018
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module t_Circuit_1 $end
+$var wire 1 ! F2 $end
+$var wire 1 " F1 $end
+$var reg 1 # A $end
+$var reg 1 $ B $end
+$var reg 1 % C $end
+$scope module M1 $end
+$var wire 1 # A $end
+$var wire 1 $ B $end
+$var wire 1 % C $end
+$var wire 1 " F1 $end
+$var wire 1 ! F2 $end
+$var wire 1 & w1 $end
+$var wire 1 ' w2 $end
+$var wire 1 ( w3 $end
+$var wire 1 ) w4 $end
+$var wire 1 * w5 $end
+$var wire 1 + w7 $end
+$var wire 1 , w8 $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0,
+1+
+0*
+0)
+0(
+0'
+0&
+0%
+0$
+0#
+0"
+0!
+$end
+#1000
+0+
+1"
+0,
+1!
+1*
+1&
+1'
+1(
+1)
+1%
+1$
+1#
+#2000

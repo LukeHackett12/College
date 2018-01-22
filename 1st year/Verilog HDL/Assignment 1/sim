@@ -1,0 +1,74 @@
+#! /usr/local/bin/vvp
+:ivl_version "10.1 (stable)" "(v10_1-97-g480fb0b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 10;
+:vpi_module "system";
+:vpi_module "vhdl_sys";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x13d7960 .scope module, "t_Circuit_1" "t_Circuit_1" 2 4;
+ .timescale -9 -10;
+v0x140e2e0_0 .var "A", 0 0;
+v0x140e3a0_0 .var "B", 0 0;
+v0x140e470_0 .var "C", 0 0;
+v0x140e570_0 .net "F1", 0 0, L_0x140efa0;  1 drivers
+v0x140e640_0 .net "F2", 0 0, L_0x140eca0;  1 drivers
+S_0x13d9ef0 .scope module, "M1" "Circuit_1" 2 7, 3 6 0, S_0x13d7960;
+ .timescale -9 -10;
+    .port_info 0 /INPUT 1 "A"
+    .port_info 1 /INPUT 1 "B"
+    .port_info 2 /INPUT 1 "C"
+    .port_info 3 /OUTPUT 1 "F1"
+    .port_info 4 /OUTPUT 1 "F2"
+L_0x140e6e0 .functor AND 1, v0x140e2e0_0, v0x140e3a0_0, v0x140e470_0, C4<1>;
+L_0x140e8a0 .functor OR 1, v0x140e2e0_0, v0x140e3a0_0, v0x140e470_0, C4<0>;
+L_0x140e910 .functor AND 1, v0x140e2e0_0, v0x140e3a0_0, C4<1>, C4<1>;
+L_0x140eaa0 .functor AND 1, v0x140e2e0_0, v0x140e470_0, C4<1>, C4<1>;
+L_0x140ec00 .functor AND 1, v0x140e3a0_0, v0x140e470_0, C4<1>, C4<1>;
+L_0x140eca0 .functor OR 1, L_0x140e910, L_0x140eaa0, L_0x140ec00, C4<0>;
+L_0x140edd0 .functor NOT 1, L_0x140eca0, C4<0>, C4<0>, C4<0>;
+L_0x140ee40 .functor AND 1, L_0x140e8a0, L_0x140edd0, C4<1>, C4<1>;
+L_0x140efa0 .functor OR 1, L_0x140ee40, L_0x140e6e0, C4<0>, C4<0>;
+v0x13da070_0 .net "A", 0 0, v0x140e2e0_0;  1 drivers
+v0x140d910_0 .net "B", 0 0, v0x140e3a0_0;  1 drivers
+v0x140d9d0_0 .net "C", 0 0, v0x140e470_0;  1 drivers
+v0x140daa0_0 .net "F1", 0 0, L_0x140efa0;  alias, 1 drivers
+v0x140db60_0 .net "F2", 0 0, L_0x140eca0;  alias, 1 drivers
+v0x140dc70_0 .net "w1", 0 0, L_0x140e6e0;  1 drivers
+v0x140dd30_0 .net "w2", 0 0, L_0x140e8a0;  1 drivers
+v0x140ddf0_0 .net "w3", 0 0, L_0x140e910;  1 drivers
+v0x140deb0_0 .net "w4", 0 0, L_0x140eaa0;  1 drivers
+v0x140e000_0 .net "w5", 0 0, L_0x140ec00;  1 drivers
+v0x140e0c0_0 .net "w7", 0 0, L_0x140edd0;  1 drivers
+v0x140e180_0 .net "w8", 0 0, L_0x140ee40;  1 drivers
+    .scope S_0x13d7960;
+T_0 ;
+    %vpi_call 2 11 "$dumpfile", "sim.vcd" {0 0 0};
+    %vpi_call 2 12 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x13d7960 {0 0 0};
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x140e2e0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x140e3a0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x140e470_0, 0, 1;
+    %delay 1000, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x140e2e0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x140e3a0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x140e470_0, 0, 1;
+    %end;
+    .thread T_0;
+    .scope S_0x13d7960;
+T_1 ;
+    %delay 2000, 0;
+    %vpi_call 2 17 "$finish" {0 0 0};
+    %end;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "testsim.v";
+    "sim.v";
