@@ -2,7 +2,6 @@
 
 `timescale 1ns/100ps
 
-
 module Circuit_1 (A, B, C, F1, F2);
 	output F1, F2;
 	input A, B, C;
@@ -18,4 +17,3 @@ module Circuit_1 (A, B, C, F1, F2);
 	or  T9(F1, w8, w1);
 
 endmodule
-
