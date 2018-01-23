@@ -37,7 +37,7 @@ class Ball {
     if (y+radius >= tp.ypos && y-radius<=tp.ypos+PADDLEHEIGHT && x >= tp.xpos && x <= tp.xpos+PADDLEWIDTH) {
       println("collided!");
       dy=-dy;
-      dx += 0.1*tp.vel;
+      dx += 0.2*tp.vel;
     }
   }
 

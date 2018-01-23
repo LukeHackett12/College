@@ -2,7 +2,6 @@ Player thePlayer;
 Player computer;
 Ball theBall;
 int time;
-int velTime;
 String playerLives;
 String computerLives;
 
@@ -20,7 +19,6 @@ void setup(){
   frameRate(120);
   computer.vel = 1.1;
   time = millis();
-  velTime = millis();
 }
 
 void computerMove(){
@@ -88,11 +86,6 @@ void deathCheck(){
 
 void draw() {
   background(0);
-
-  if(millis() > velTime + 1000){
-      thePlayer.vel = thePlayer.xpos - thePlayer.prevXPos;
-      thePlayer.prevXPos = thePlayer.xpos;
-  }
 
   thePlayer.move(mouseX);
   theBall.move(thePlayer);
