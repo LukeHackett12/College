@@ -36,7 +36,7 @@ class Ball {
   void collidePlayer(Player tp) {
       //Y collission
       if (y+radius >= tp.ypos && y-radius<=tp.ypos+PADDLEHEIGHT && x >= tp.xpos && x <= tp.xpos+PADDLEWIDTH) {
-        println("collided!");
+        //println("collided!");
         dy=-dy;
         dx += 0.2*tp.vel;
       }
@@ -51,7 +51,7 @@ class Ball {
 
    void collideEnemy(Player ep) {
     if (y-radius <= ep.ypos+PADDLEHEIGHT && y-radius>=ep.ypos && x >= ep.xpos && x <= ep.xpos+PADDLEWIDTH) {
-      println("collided!");
+      //println("collided!");
       dy=-dy;
       dx += 0.5*ep.vel;
     }
