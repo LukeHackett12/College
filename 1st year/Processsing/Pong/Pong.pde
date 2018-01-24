@@ -16,8 +16,9 @@ void setup(){
   playerLives = Integer.toString(NUMLIVES);
   computerLives = Integer.toString(NUMLIVES);
   ellipseMode(RADIUS);
-  frameRate(120);
-  computer.vel = 1.1;
+  textAlign(CENTER);
+  frameRate(144);
+  computer.vel = 1.3;
   time = millis();
 }
 
@@ -25,8 +26,8 @@ void computerMove(){
   if(computer.xpos + PADDLEWIDTH/2 < theBall.x) computer.xpos += computer.vel;
   else if(computer.xpos + PADDLEWIDTH/2 > theBall.x) computer.xpos -= computer.vel;
 
-  if(millis() > time + 200){
-    if(computer.vel <= theBall.dx + 0.5) computer.vel *= 1.01;
+  if(millis() > time + 100){
+    if(computer.vel <= theBall.dx + 1.5) computer.vel *= 1.02;
     time = millis();
   }
 }
@@ -52,9 +53,9 @@ void reset(){
 void drawText(){
   fill(255);
   textSize(18);
-  text("Comp lives: " + computerLives, 10, 15);
-  text("Player lives: " + playerLives, 10, SCREENY - 10);
-  text("Computer velocity: " + computer.vel, SCREENX - 250, 20);
+  text("Comp lives: " + computerLives, 100, 15);
+  text("Player lives: " + playerLives, 100, SCREENY - 10);
+  text("Computer velocity: " + computer.vel, SCREENX - 100, 20);
   //text("Player velocity: " + thePlayer.vel, 10, SCREENY - 20);
 }
 

@@ -34,11 +34,19 @@ class Ball {
   }
 
   void collidePlayer(Player tp) {
-    if (y+radius >= tp.ypos && y-radius<=tp.ypos+PADDLEHEIGHT && x >= tp.xpos && x <= tp.xpos+PADDLEWIDTH) {
-      println("collided!");
-      dy=-dy;
-      dx += 0.2*tp.vel;
-    }
+      //Y collission
+      if (y+radius >= tp.ypos && y-radius<=tp.ypos+PADDLEHEIGHT && x >= tp.xpos && x <= tp.xpos+PADDLEWIDTH) {
+        println("collided!");
+        dy=-dy;
+        dx += 0.2*tp.vel;
+      }
+
+      //X collission
+      //if (y+radius >= tp.ypos && y-radius<=tp.ypos+PADDLEHEIGHT && x >= tp.xpos && x <= tp.xpos+PADDLEWIDTH) {
+        //println("collided!");
+        //dy=-dy;
+        //dx += 0.2*tp.vel;
+      //}
   }
 
    void collideEnemy(Player ep) {
