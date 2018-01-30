@@ -49,7 +49,7 @@ void draw(){
     }
 
     for(Alien a : aliens){
-        int rand = (int)random(400);
+        int rand = (int)random(4000);
         if(rand == 1 && !a.exploded){
             a.explode();
         } else {

@@ -65,7 +65,7 @@ public void draw(){
     }
 
     for(Alien a : aliens){
-        int rand = (int)random(400);
+        int rand = (int)random(4000);
         if(rand == 1 && !a.exploded){
             a.explode();
         } else {
@@ -81,21 +81,23 @@ final int A_DOWN = 2;
 class Alien {
     /* declare variables for alien position, direction of movement and appearance */
     int xpos;
-    int ypos;
-    int ysaved;
+    float ypos;
+    float ysaved;
     int dir;
+    float sin;
     boolean exploded;
     PImage alienImage;
     /* Constructor is passed the x and y position where the alien is to
     be created, plus the image to be used to draw the alien */
 
-    Alien(int xpos, int ypos, PImage alienImage){
+    Alien(int xpos, float ypos, PImage alienImage){
     /* set up the new alien object */
         this.xpos = xpos;
         this.ypos = ypos;
         this.alienImage = alienImage;
         dir = 1;
         exploded = false;
+        sin = 0;
         imageMode(CORNER);
     }
 
@@ -115,8 +117,16 @@ class Alien {
                  dir = A_BACKWARD;
              }
         }
-        else if(dir == A_FORWARD) xpos += 2;
-        else if(dir == A_BACKWARD) xpos -= 2;
+        else if(dir == A_FORWARD){
+            xpos += 2;
+            ypos += sin(sin) * 4;
+            sin += 0.1f;
+        }
+        else if(dir == A_BACKWARD){
+             xpos -= 2;
+             ypos += sin(sin) * 4;
+             sin += 0.1f;
+        }
     }
 
     public void draw(){
