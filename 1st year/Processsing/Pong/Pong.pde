@@ -17,8 +17,8 @@ void setup(){
   computerLives = Integer.toString(NUMLIVES);
   ellipseMode(RADIUS);
   textAlign(CENTER);
-  frameRate(144);
-  computer.vel = 1.3;
+  frameRate(60);
+  computer.vel = 2 ;//+ (3 - computer.lives);
   time = millis();
 }
 
@@ -27,7 +27,7 @@ void computerMove(){
   else if(computer.xpos + PADDLEWIDTH/2 > theBall.x) computer.xpos -= computer.vel;
 
   if(millis() > time + 100){
-    if(computer.vel <= theBall.dx + 1.5) computer.vel *= 1.02;
+    if(computer.vel <= theBall.dx + 1.2) computer.vel *= 1.015;
     time = millis();
   }
 }
@@ -37,11 +37,10 @@ void mousePressed(){
 }
 
 void reset(){
-  theBall.x = SCREENX/2;
-  theBall.y = SCREENY/2;
-  theBall.dx = random(1, 2);
-  theBall.dy = random(1, 2);
-  computer.xpos = SCREENX/2 - PADDLEWIDTH/2;
+  thePlayer = new Player(SCREENY-MARGIN-PADDLEHEIGHT);
+  computer = new Player(MARGIN);
+  computer.vel = 2;
+  theBall = new Ball();
   background(0);
   thePlayer.draw();
   computer.draw();
@@ -56,6 +55,7 @@ void drawText(){
   text("Comp lives: " + computerLives, 100, 15);
   text("Player lives: " + playerLives, 100, SCREENY - 10);
   text("Computer velocity: " + computer.vel, SCREENX - 100, 20);
+  text("Ball velocity(x): " + Math.abs(theBall.dx), SCREENX - 100, 60);
   //text("Player velocity: " + thePlayer.vel, 10, SCREENY - 20);
 }
 
@@ -89,7 +89,7 @@ void draw() {
   background(0);
 
   thePlayer.move(mouseX);
-  theBall.move(thePlayer);
+  theBall.move();
   computerMove();
 
   theBall.collidePlayer(thePlayer);

@@ -138,7 +138,7 @@ public class NoughtsAndCrosses{
                 }
             } else {
                 System.out.println("That isn't a valid move, please try again.");
-                in.next();
+                in.nextLine();
             }
         }
     }

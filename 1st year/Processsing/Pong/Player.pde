@@ -1,14 +1,14 @@
 class Player {
   float xpos; float prevXPos; float ypos; float vel;
   int lives;
-  int velTime;
   color paddlecolor = color(255);
+  PImage paddle;
   Player(float screen_y){
     xpos=SCREENX/2;
     ypos=screen_y;
     vel = 0;
-    velTime = millis();
     lives=NUMLIVES;
+    paddle = loadImage("shovel.png");
   }
 
   void move(float x){
@@ -20,8 +20,10 @@ class Player {
   }
 
   void draw(){
-    fill(paddlecolor);
-    rect(xpos, ypos, PADDLEWIDTH, PADDLEHEIGHT);
+    //fill(paddlecolor);
+    //rect(xpos, ypos, PADDLEWIDTH, PADDLEHEIGHT);
+    imageMode(CORNER);
+    image(paddle, xpos, ypos, PADDLEWIDTH, PADDLEHEIGHT);
   }
 
 }
