@@ -1,0 +1,46 @@
+$date
+	Sat Feb  3 17:20:12 2018
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module t_Circuit_2 $end
+$var wire 1 ! Out_3 $end
+$var wire 1 " Out_2 $end
+$var wire 1 # Out_1 $end
+$var reg 1 $ A $end
+$var reg 1 % B $end
+$var reg 1 & C $end
+$var reg 1 ' D $end
+$scope module M1 $end
+$var wire 1 $ A $end
+$var wire 1 % B $end
+$var wire 1 & C $end
+$var wire 1 ' D $end
+$var wire 1 # Out_1 $end
+$var wire 1 " Out_2 $end
+$var wire 1 ! Out_3 $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0'
+0&
+0%
+0$
+0#
+0"
+0!
+$end
+#1000
+1"
+1!
+1'
+1&
+1%
+1$
+#2000
