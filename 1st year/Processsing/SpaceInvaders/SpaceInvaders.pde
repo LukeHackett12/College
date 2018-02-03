@@ -1,7 +1,7 @@
 /* Declare an array of Aliens */
 Alien[] aliens;
 PImage alienImageMain;
-
+int frameRate;
 
 void settings(){
   size(SCREENX, SCREENY);
@@ -14,7 +14,8 @@ void setup(){
     aliens = new Alien[10];
     alienImageMain = loadImage("spacer.GIF");
     init_aliens(alienImageMain);
-    frameRate(24);
+    frameRate = 30;
+    frameRate(frameRate);
 }
 
 void init_aliens(PImage alienImage){
@@ -48,13 +49,21 @@ void draw(){
         }
     }
 
+    if(millis()%20 == 0){
+        frameRate(++frameRate);
+    }
+
+    int i = 0;
     for(Alien a : aliens){
         int rand = (int)random(4000);
         if(rand == 1 && !a.exploded){
             a.explode();
         } else {
+            if(i%2 == 1) tint(100, 50, 50);
+            else tint(50, 50, 100);
             a.move();
             a.draw();
         }
+        i++;
     }
 }

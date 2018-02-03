@@ -17,7 +17,7 @@ public class SpaceInvaders extends PApplet {
 /* Declare an array of Aliens */
 Alien[] aliens;
 PImage alienImageMain;
-
+int frameRate;
 
 public void settings(){
   size(SCREENX, SCREENY);
@@ -30,7 +30,8 @@ public void setup(){
     aliens = new Alien[10];
     alienImageMain = loadImage("spacer.GIF");
     init_aliens(alienImageMain);
-    frameRate(24);
+    frameRate = 30;
+    frameRate(frameRate);
 }
 
 public void init_aliens(PImage alienImage){
@@ -64,14 +65,22 @@ public void draw(){
         }
     }
 
+    if(millis()%20 == 0){
+        frameRate(++frameRate);
+    }
+
+    int i = 0;
     for(Alien a : aliens){
         int rand = (int)random(4000);
         if(rand == 1 && !a.exploded){
             a.explode();
         } else {
+            if(i%2 == 1) tint(100, 50, 50);
+            else tint(50, 50, 100);
             a.move();
             a.draw();
         }
+        i++;
     }
 }
 final int A_FORWARD = 0;
@@ -83,6 +92,7 @@ class Alien {
     int xpos;
     float ypos;
     float ysaved;
+    int vel;
     int dir;
     float sin;
     boolean exploded;
@@ -98,6 +108,7 @@ class Alien {
         dir = 1;
         exploded = false;
         sin = 0;
+        vel = 2;
         imageMode(CORNER);
     }
 
@@ -109,7 +120,7 @@ class Alien {
     public void move(){
     /* Move the alien according to the instructions in the exercise */
         if(dir == A_DOWN){
-            if(ypos - ysaved < alienImage.height)ypos += 2;
+            if(ypos - ysaved < alienImage.height) ypos += vel;
             else if(xpos == 0){
                 dir = A_FORWARD;
             }
@@ -117,13 +128,14 @@ class Alien {
                  dir = A_BACKWARD;
              }
         }
+
         else if(dir == A_FORWARD){
-            xpos += 2;
+            xpos += vel;
             ypos += sin(sin) * 4;
             sin += 0.1f;
         }
         else if(dir == A_BACKWARD){
-             xpos -= 2;
+             xpos -= vel;
              ypos += sin(sin) * 4;
              sin += 0.1f;
         }

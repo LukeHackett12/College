@@ -7,6 +7,7 @@ class Alien {
     int xpos;
     float ypos;
     float ysaved;
+    int vel;
     int dir;
     float sin;
     boolean exploded;
@@ -22,6 +23,7 @@ class Alien {
         dir = 1;
         exploded = false;
         sin = 0;
+        vel = 2;
         imageMode(CORNER);
     }
 
@@ -33,7 +35,7 @@ class Alien {
     void move(){
     /* Move the alien according to the instructions in the exercise */
         if(dir == A_DOWN){
-            if(ypos - ysaved < alienImage.height)ypos += 2;
+            if(ypos - ysaved < alienImage.height) ypos += vel;
             else if(xpos == 0){
                 dir = A_FORWARD;
             }
@@ -41,13 +43,14 @@ class Alien {
                  dir = A_BACKWARD;
              }
         }
+
         else if(dir == A_FORWARD){
-            xpos += 2;
+            xpos += vel;
             ypos += sin(sin) * 4;
             sin += 0.1;
         }
         else if(dir == A_BACKWARD){
-             xpos -= 2;
+             xpos -= vel;
              ypos += sin(sin) * 4;
              sin += 0.1;
         }
