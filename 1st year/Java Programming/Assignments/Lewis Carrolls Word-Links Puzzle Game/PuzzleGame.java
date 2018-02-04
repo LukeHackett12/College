@@ -13,13 +13,11 @@ public class PuzzleGame{
 
         ArrayList<String> wordList = readWordList(words);
 
-        if(isUniqueList(wordList)){
-            if (isWordChain(wordList)){
-                System.out.println("Valid chain of words from Lewis Carroll's word-links game.");
-            }
-            else {
-                System.out.println("Not a valid chain of words from Lewis Carroll's word-links game.");
-            }
+        if (isWordChain(wordList)){
+            System.out.println("Valid chain of words from Lewis Carroll's word-links game.");
+        }
+        else {
+            System.out.println("Not a valid chain of words from Lewis Carroll's word-links game.");
         }
     }
 
@@ -54,7 +52,6 @@ public class PuzzleGame{
     }
 
     public static boolean isEnglishWord(String word, ArrayList<String> dictionaryList){
-    	//TODO
         String[] dictionaryArray = dictionaryList.toArray(new String[dictionaryList.size()]);
         if(Arrays.binarySearch(dictionaryArray, word) >= 0) return true;
     	else return false;
@@ -82,14 +79,15 @@ public class PuzzleGame{
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             ArrayList<String> dictionary = readDictionary(bufferedReader);
 
-            for(int i = 0; i < wordList.size()-1; i++){
-                if(isEnglishWord(wordList.get(i), dictionary) && isEnglishWord(wordList.get(i+1), dictionary)){
-                    if(!isDifferentByOne(wordList.get(i), wordList.get(i+1))) return false;
-                } else {
-                    return false;
-                }
+            if(isUniqueList(wordList)){
+	            for(int i = 0; i < wordList.size()-1; i++){
+	                if(isEnglishWord(wordList.get(i), dictionary) && isEnglishWord(wordList.get(i+1), dictionary)){
+	                    if(!isDifferentByOne(wordList.get(i), wordList.get(i+1))) return false;
+	                } else {
+	                    return false;
+	                }
+	            }
             }
-
             return true;
         } catch(Exception e) {
             System.out.println(e);
