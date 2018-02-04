@@ -1,8 +1,8 @@
-figure(1)
 hold on;
 xlim([-1 1])
 ylim([-2 2])
 
+figure(1)
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')
@@ -20,9 +20,6 @@ plot(x, yApprox, 'b')
 
 
 figure(2)
-hold on;
-xlim([-1 1])
-ylim([-2 2])
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')
@@ -39,9 +36,6 @@ yApprox = tempY * 4/pi;
 plot(x, yApprox, 'b')
 
 figure(3)
-hold on;
-xlim([-1 1])
-ylim([-2 2])
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')
@@ -58,9 +52,6 @@ yApprox = tempY * 4/pi;
 plot(x, yApprox, 'b')
 
 figure(4)
-hold on;
-xlim([-1 1])
-ylim([-2 2])
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')
@@ -77,9 +68,6 @@ yApprox = tempY * 4/pi;
 plot(x, yApprox, 'b')
 
 figure(5)
-hold on;
-xlim([-1 1])
-ylim([-2 2])
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')
@@ -96,9 +84,6 @@ yApprox = tempY * 4/pi;
 plot(x, yApprox, 'b')
 
 figure(6)
-hold on;
-xlim([-1 1])
-ylim([-2 2])
 x = -1:0.0001:1;
 y = square(2 * pi * x);
 plot(x, y, 'r')

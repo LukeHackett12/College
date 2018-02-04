@@ -56,7 +56,6 @@ public class PuzzleGame{
     public static boolean isEnglishWord(String word, ArrayList<String> dictionaryList){
     	//TODO
         String[] dictionaryArray = dictionaryList.toArray(new String[dictionaryList.size()]);
-        System.out.println(Arrays.binarySearch(dictionaryArray, word));
         if(Arrays.binarySearch(dictionaryArray, word) >= 0) return true;
     	else return false;
     }
