@@ -2,15 +2,15 @@ window = 1;
 
 figure(1);
 for accuracy = [1, 3, 5, 10, 50, 500]
-    subplot(3, 2, window)
+    subplot(3, 2, window);
     title("Approximation with " + accuracy + " sine functions");
     hold on;
-    xlim([-1 1])
-    ylim([-2 2])
+    xlim([-1 1]);
+    ylim([-2 2]);
     
     x = -1:0.0001:1;
     y = square(2 * pi * x);
-    plot(x, y, 'r')
+    plot(x, y, 'r');
 
     k = 1;
     tempY = 0;
@@ -20,7 +20,7 @@ for accuracy = [1, 3, 5, 10, 50, 500]
     end
 
     yApprox = tempY * 4/pi;
-    plot(x, yApprox, 'b')
+    plot(x, yApprox, 'b');
     
     window = window + 1;
 end
