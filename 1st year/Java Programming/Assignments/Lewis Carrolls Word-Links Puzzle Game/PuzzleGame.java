@@ -87,6 +87,8 @@ public class PuzzleGame{
 	                    return false;
 	                }
 	            }
+            } else {
+                return false;
             }
             return true;
         } catch(Exception e) {

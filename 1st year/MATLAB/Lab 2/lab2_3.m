@@ -1,5 +1,6 @@
 window = 1;
 
+figure(3)
 for accuracy = [1, 3, 5, 10, 50, 500]
     subplot(3, 2, window)
     title("Approximation with " + accuracy + " sine functions");
