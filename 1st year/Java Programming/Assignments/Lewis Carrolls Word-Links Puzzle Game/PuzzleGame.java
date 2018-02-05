@@ -9,15 +9,24 @@ import java.util.HashSet;
 public class PuzzleGame{
     public static void main(String[] args){
         Scanner in = new Scanner(System.in);
-        String words = in.nextLine();
 
-        ArrayList<String> wordList = readWordList(words);
+        boolean finished = false;
+        while(!finished){
+            System.out.print("Enter your list of words: ");
+            String words = in.nextLine();
 
-        if (isWordChain(wordList)){
-            System.out.println("Valid chain of words from Lewis Carroll's word-links game.");
-        }
-        else {
-            System.out.println("Not a valid chain of words from Lewis Carroll's word-links game.");
+            if(words.equals("quit")){
+                finished = true;
+            } else {
+                ArrayList<String> wordList = readWordList(words);
+
+                if (isWordChain(wordList)){
+                    System.out.println("Valid chain of words from Lewis Carroll's word-links game.");
+                }
+                else {
+                    System.out.println("Not a valid chain of words from Lewis Carroll's word-links game.");
+                }
+            }
         }
     }
 
