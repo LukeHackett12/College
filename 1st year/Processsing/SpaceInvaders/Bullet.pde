@@ -43,7 +43,7 @@ class Bullet {
 
     void moveRandom(){
         ypos -= 10;
-        xpos += random(-10,10);
+        xpos += random(-20, 20);
     }
 
     void movePongy(){
