@@ -50,9 +50,9 @@ class Alien {
     }
 
     void draw(){
-        if(!exploded) image(alienImage, xpos, ypos);
+        if(!exploded) image(alienImage, xpos, ypos, 50, 50);
         else {
-            if(explodeRender++ <= 15)image(loadImage("exploding.GIF"), xpos, ypos);
+            if(explodeRender++ <= 15)image(loadImage("exploding.GIF"), xpos, ypos, 50, 50);
         }
     }
 }

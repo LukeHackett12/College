@@ -1,4 +1,3 @@
-/* Declare an array of Aliens */
 Alien[] aliens;
 ArrayList<Bullet> bullets;
 ArrayList<PowerUp> powerups;
@@ -35,7 +34,7 @@ void init_aliens(PImage alienImage){
 
     for(int i = 0; i < aliens.length; i++){
         aliens[i] = new Alien(xpos, ypos, alienImage);
-        xpos += 40;
+        xpos += 60;
     }
 }
 

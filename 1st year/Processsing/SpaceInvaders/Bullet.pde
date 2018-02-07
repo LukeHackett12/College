@@ -2,13 +2,6 @@ final int BULLETWIDTH = 10;
 final int BULLETHEIGHT = 50;
 
 class Bullet {
-    /* Insert the code for your Bullet class here.
-    You need: variables to store the position aand appearance of the bullet.
-    A constructor
-    A method to move the bullet
-    A method to draw the bullet
-    A method to check for collisions
-    */
     float xpos;
     float ypos;
     int yvel;
@@ -18,17 +11,14 @@ class Bullet {
         this.xpos = xpos;
         this.ypos = ypos;
         this.yvel = yvel;
-        if((int)random(2) == 0)
-            this.xvel = -10;
-        else
-            this.xvel = 10;
+        this.xvel = (int)random(-10, 10);
     }
 
     boolean collide(Alien[] aliens){
         for(Alien alien : aliens){
-            if(alien.ypos + alien.alienImage.height >= ypos
+            if(alien.ypos + 50 >= ypos
                 && alien.ypos <= ypos
-                && alien.xpos <= xpos && alien.xpos + alien.alienImage.height >= xpos
+                && alien.xpos <= xpos && alien.xpos + 50 >= xpos
                 && !alien.exploded){
                     alien.explode();
                     return true;
@@ -55,7 +45,7 @@ class Bullet {
     }
 
     void draw(){
-        fill(0, 210, 0);
+        fill(0, 220, 0);
         rect(xpos, ypos, BULLETWIDTH, BULLETHEIGHT);
     }
 }
