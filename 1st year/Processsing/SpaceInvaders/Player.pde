@@ -8,6 +8,7 @@ class Player {
     int lives;
     color playerColor = color(255);
     PImage player;
+
     Player(float screen_y){
         xpos=SCREENX/2;
         ypos=screen_y;

@@ -102,7 +102,7 @@ public void draw(){
                     bullet.draw();
                 }
                 else if (haspowers[2]){
-                    bullet.yvel = 20;
+                    bullet.yvel = 40;
                     bullet.move();
                     bullet.draw();
                 }
