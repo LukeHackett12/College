@@ -10,7 +10,7 @@ for accuracy = [1, 3, 5, 10, 50, 500]
     x = 1:1:accuracy;
     k = 1;
     for i = 1:accuracy
-        stem(k, (4/k*pi), 'b');
+        stem(k, (4/(k*pi)), 'b');
         k = k + 1;
     end
     
