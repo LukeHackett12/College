@@ -37,4 +37,4 @@ public class Wallet {
 		return getClass().getName() + "[cash = " + cash + "]";
 	}
 
-} 
+}

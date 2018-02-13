@@ -40,9 +40,7 @@ swap
     STMFD sp!, {R4-R7,lr}
     STR R1, [R0, R7, LSL #2]
     STR R2, [R0, R6, LSL #2]
-    LDMFD sp!, {R4-R7,lr}
-
-    BX  lr
+    LDMFD sp!, {R4-R7,pc}
 
     AREA	TestData, DATA, READWRITE
 
