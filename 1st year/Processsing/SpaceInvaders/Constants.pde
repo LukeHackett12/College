@@ -5,4 +5,5 @@ final int SCREENX = 1500;
 final int SCREENY = 1500;
 final int PLAYERWIDTH = 200;
 final int PLAYERHEIGHT = 20;
-final int NUMLIVES = 3;
+final int BARRIERHEIGHT = 60;
+final int BARRIERWIDTH = 100;

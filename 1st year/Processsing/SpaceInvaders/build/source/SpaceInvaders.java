@@ -3,6 +3,8 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import processing.sound.*; 
+
 import java.util.HashMap; 
 import java.util.ArrayList; 
 import java.io.File; 
@@ -14,21 +16,42 @@ import java.io.IOException;
 
 public class SpaceInvaders extends PApplet {
 
+
+
 Alien[] aliens;
+Barrier[] barriers;
 ArrayList<Bullet> bullets;
 ArrayList<PowerUp> powerups;
 Player player;
 int offScreenIndex;
 int collideIndex;
 boolean[] haspowers;
+boolean[][] destroyed;
 PImage alienImageMain;
+SoundFile homer;
+
+SoundFile apu;
+SoundFile music;
+SoundFile shot;
+SoundFile death;
 
 public void settings(){
   size(SCREENX, SCREENY);
 }
 
 public void setup(){
+    homer = new SoundFile(this, "homer2.mp3");
+    homer.amp(2);
+    apu = new SoundFile(this, "apu.mp3");
+    apu.amp(5);
+    music = new SoundFile(this, "music.mp3");
+    music.amp(0.5f);
+    shot = new SoundFile(this, "shot.mp3");
+    shot.amp(0.5f);
+    death = new SoundFile(this, "death.mp3");
+    music.play();
     aliens = new Alien[10];
+    barriers = new Barrier[3];
     player = new Player(SCREENX - 30);
     bullets = new ArrayList<Bullet>();
     powerups = new ArrayList<PowerUp>();
@@ -37,11 +60,47 @@ public void setup(){
     collideIndex = -1;
     alienImageMain = loadImage("spacer.GIF");
     init_aliens(alienImageMain);
+    init_barriers();
+
+    destroyed = new boolean[10][2];
+    for(int i = 0; i < 10; i++){
+        destroyed[i][0] = false;
+        destroyed[i][1] = false;
+    }
+
     frameRate(30);
 }
 
 public void mousePressed(){
+    loop();
+    homer.amp(2);
+    apu.amp(5);
+    music.amp(0.5f);
+    shot.play();
     bullets.add(new Bullet(player.xpos+player.player.width/2, player.ypos-player.player.height/2, 10));
+}
+
+public void reset(){
+    background(0);
+
+    textSize(64);
+    fill(255, 0, 0);
+    background(0);
+    text("YOU LOOOSE", SCREENX/2, SCREENY/2);
+
+    aliens = new Alien[10];
+    player = new Player(SCREENX - 30);
+    bullets = new ArrayList<Bullet>();
+    powerups = new ArrayList<PowerUp>();
+    haspowers = new boolean[3];
+    homer.amp(0);
+    apu.amp(0);
+    music.amp(0);
+    death.amp(30);
+    death.play();
+    init_aliens(alienImageMain);
+
+    noLoop();
 }
 
 public void init_aliens(PImage alienImage){
@@ -51,6 +110,16 @@ public void init_aliens(PImage alienImage){
     for(int i = 0; i < aliens.length; i++){
         aliens[i] = new Alien(xpos, ypos, alienImage);
         xpos += 60;
+    }
+}
+
+public void init_barriers(){
+    int xpos = 50;
+    int ypos = SCREENY - 200;
+
+    for(int i = 0; i < barriers.length; i++){
+        barriers[i] = new Barrier(xpos, ypos);
+        xpos += 500;
     }
 }
 
@@ -77,13 +146,53 @@ public void draw(){
         if(i%2 == 1) tint(150, 100, 100);
         else tint(100, 100, 150);
         a.move();
+        if(a.exploded && !destroyed[i][0]){
+          destroyed[i][0] = true;
+          apu.play();
+        }
         a.draw();
+        if(a.hasBomb && a.bombObject != null){
+            for(Barrier b : barriers){
+                if(b.destruct(a.bombObject)){
+                    b.draw();
+                    homer.play();
+                    destroyed[i][1] = true;
+                }
+            }
+
+            if(!a.bombObject.collide(player) && !destroyed[i][1]){
+                a.bombObject.move();
+                a.bombObject.draw();
+
+                if(a.bombObject.ypos > SCREENY){
+                    a.hasBomb = false;
+                    a.bombObject = null;
+                }
+            }
+            else if(!destroyed[i][1]){
+                reset();
+                return;
+            }
+        }
         i++;
     }
     //End alien draw
 
+    //Draw bariers
+    for(Barrier b : barriers){
+        b.draw();
+    }
+    //End draw barriers
+
     //Draw bullets
     for(Bullet bullet : bullets){
+        for(Barrier b : barriers){
+            if(b.destruct(bullet)){
+                homer.play();
+                offScreenIndex = bullets.indexOf(bullet);
+            }
+            b.draw();
+        }
         if(!bullet.collide(aliens)){
             if(bullet.ypos <= 0-BULLETHEIGHT){
                 offScreenIndex = bullets.indexOf(bullet);
@@ -157,8 +266,8 @@ public void draw(){
     //End drawing player
 }
 class Alien {
-
-    int xpos;
+    
+    float xpos;
     float ypos;
     float ysaved;
     int vel;
@@ -166,9 +275,11 @@ class Alien {
     float sin;
     boolean exploded;
     int explodeRender;
+    boolean hasBomb;
+    Bomb bombObject;
     PImage alienImage;
 
-    Alien(int xpos, float ypos, PImage alienImage){
+    Alien(float xpos, float ypos, PImage alienImage){
         this.xpos = xpos;
         this.ypos = ypos;
         this.alienImage = alienImage;
@@ -177,13 +288,14 @@ class Alien {
         sin = 0;
         vel = 2;
         explodeRender = 0;
+        hasBomb = false;
         imageMode(CORNER);
     }
 
     public void explode(){
-        exploded = true;
+        exploded = true;    
     }
-
+    
     public void move(){
         if(dir == A_DOWN){
             if(ypos - ysaved < alienImage.height) ypos += vel;
@@ -208,10 +320,86 @@ class Alien {
     }
 
     public void draw(){
-        if(!exploded) image(alienImage, xpos, ypos, 50, 50);
+        if(!exploded){
+            image(alienImage, xpos, ypos, 50, 50);
+            if(!hasBomb){
+                if((int)random(500) == 1){
+                    bombObject = new Bomb(xpos, ypos);
+                    hasBomb = true;
+                }
+            }
+        }
         else {
             if(explodeRender++ <= 15)image(loadImage("exploding.GIF"), xpos, ypos, 50, 50);
         }
+    }
+}
+class Barrier{
+    float xpos; float ypos;
+    int height; int width;
+
+    Barrier(float xpos, float ypos){
+        this.xpos = xpos;
+        this.ypos = ypos;
+        this.height = BARRIERHEIGHT;
+        this.width = BARRIERWIDTH;
+    }
+
+    public boolean destruct(Bullet bullet){
+        if(bullet.ypos <= ypos + height
+            && bullet.ypos + height >= ypos
+            && bullet.xpos >= xpos && bullet.xpos + BULLETWIDTH <= xpos+BARRIERWIDTH){
+                if(height > 0){
+                    height -= 10;
+                    return true;
+                }
+            }
+            return false;
+    }
+
+    public boolean destruct(Bomb bomb){
+        if(bomb.ypos >= ypos
+            && bomb.ypos <= ypos + height
+            && bomb.xpos >= xpos && bomb.xpos <= xpos + BARRIERWIDTH){
+                if(height > 0){
+                    homer.play();
+                    height -= 10;
+                    ypos += 10;
+                    return true;
+                }
+            }
+            return false;
+    }
+
+    public void draw(){
+        fill(0, 0, 255);
+        rect(xpos, ypos, width, height);
+    }
+}
+class Bomb{
+    float xpos; float ypos;
+
+    Bomb(float xpos, float ypos){
+        this.xpos = xpos;
+        this.ypos = ypos;
+    }
+
+    public boolean collide(Player player){
+        if(player.ypos + player.player.height >= ypos
+            && player.ypos <= ypos
+            && player.xpos <= xpos && player.xpos + player.player.height >= xpos){
+                return true;
+            }
+            return false;
+    }
+
+    public void move(){
+        ypos += 10;
+    }
+
+    public void draw(){
+        fill(255, 0, 0);
+        ellipse(xpos, ypos, 50, 50);
     }
 }
 final int BULLETWIDTH = 10;
@@ -272,7 +460,8 @@ final int SCREENX = 1500;
 final int SCREENY = 1500;
 final int PLAYERWIDTH = 200;
 final int PLAYERHEIGHT = 20;
-final int NUMLIVES = 3;
+final int BARRIERHEIGHT = 60;
+final int BARRIERWIDTH = 100;
 class Player {
 
     /* Insert your code from week 2 here to begin with, again you need
@@ -280,13 +469,12 @@ class Player {
     methods to move the player, and to draw the player */
 
     float xpos; float ypos;
-    int lives;
     int playerColor = color(255);
     PImage player;
+
     Player(float screen_y){
         xpos=SCREENX/2;
         ypos=screen_y;
-        lives=NUMLIVES;
         player = loadImage("player.GIF");
     }
 

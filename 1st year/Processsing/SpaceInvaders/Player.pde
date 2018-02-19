@@ -5,14 +5,12 @@ class Player {
     methods to move the player, and to draw the player */
 
     float xpos; float ypos;
-    int lives;
     color playerColor = color(255);
     PImage player;
 
     Player(float screen_y){
         xpos=SCREENX/2;
         ypos=screen_y;
-        lives=NUMLIVES;
         player = loadImage("player.GIF");
     }
 

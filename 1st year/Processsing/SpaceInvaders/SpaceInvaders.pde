@@ -1,18 +1,39 @@
+import processing.sound.*;
+
 Alien[] aliens;
+Barrier[] barriers;
 ArrayList<Bullet> bullets;
 ArrayList<PowerUp> powerups;
 Player player;
 int offScreenIndex;
 int collideIndex;
 boolean[] haspowers;
+boolean[][] destroyed;
 PImage alienImageMain;
+SoundFile homer;
+
+SoundFile apu;
+SoundFile music;
+SoundFile shot;
+SoundFile death;
 
 void settings(){
   size(SCREENX, SCREENY);
 }
 
 void setup(){
+    homer = new SoundFile(this, "homer2.mp3");
+    homer.amp(2);
+    apu = new SoundFile(this, "apu.mp3");
+    apu.amp(5);
+    music = new SoundFile(this, "music.mp3");
+    music.amp(0.5);
+    shot = new SoundFile(this, "shot.mp3");
+    shot.amp(0.5);
+    death = new SoundFile(this, "death.mp3");
+    music.play();
     aliens = new Alien[10];
+    barriers = new Barrier[3];
     player = new Player(SCREENX - 30);
     bullets = new ArrayList<Bullet>();
     powerups = new ArrayList<PowerUp>();
@@ -21,11 +42,47 @@ void setup(){
     collideIndex = -1;
     alienImageMain = loadImage("spacer.GIF");
     init_aliens(alienImageMain);
+    init_barriers();
+
+    destroyed = new boolean[10][2];
+    for(int i = 0; i < 10; i++){
+        destroyed[i][0] = false;
+        destroyed[i][1] = false;
+    }
+
     frameRate(30);
 }
 
 void mousePressed(){
+    loop();
+    homer.amp(2);
+    apu.amp(5);
+    music.amp(0.5);
+    shot.play();
     bullets.add(new Bullet(player.xpos+player.player.width/2, player.ypos-player.player.height/2, 10));
+}
+
+void reset(){
+    background(0);
+
+    textSize(64);
+    fill(255, 0, 0);
+    background(0);
+    text("YOU LOOOSE", SCREENX/2, SCREENY/2);
+
+    aliens = new Alien[10];
+    player = new Player(SCREENX - 30);
+    bullets = new ArrayList<Bullet>();
+    powerups = new ArrayList<PowerUp>();
+    haspowers = new boolean[3];
+    homer.amp(0);
+    apu.amp(0);
+    music.amp(0);
+    death.amp(30);
+    death.play();
+    init_aliens(alienImageMain);
+
+    noLoop();
 }
 
 void init_aliens(PImage alienImage){
@@ -35,6 +92,16 @@ void init_aliens(PImage alienImage){
     for(int i = 0; i < aliens.length; i++){
         aliens[i] = new Alien(xpos, ypos, alienImage);
         xpos += 60;
+    }
+}
+
+void init_barriers(){
+    int xpos = 50;
+    int ypos = SCREENY - 200;
+
+    for(int i = 0; i < barriers.length; i++){
+        barriers[i] = new Barrier(xpos, ypos);
+        xpos += 500;
     }
 }
 
@@ -61,13 +128,53 @@ void draw(){
         if(i%2 == 1) tint(150, 100, 100);
         else tint(100, 100, 150);
         a.move();
+        if(a.exploded && !destroyed[i][0]){
+          destroyed[i][0] = true;
+          apu.play();
+        }
         a.draw();
+        if(a.hasBomb && a.bombObject != null){
+            for(Barrier b : barriers){
+                if(b.destruct(a.bombObject)){
+                    b.draw();
+                    homer.play();
+                    destroyed[i][1] = true;
+                }
+            }
+
+            if(!a.bombObject.collide(player) && !destroyed[i][1]){
+                a.bombObject.move();
+                a.bombObject.draw();
+
+                if(a.bombObject.ypos > SCREENY){
+                    a.hasBomb = false;
+                    a.bombObject = null;
+                }
+            }
+            else if(!destroyed[i][1]){
+                reset();
+                return;
+            }
+        }
         i++;
     }
     //End alien draw
 
+    //Draw bariers
+    for(Barrier b : barriers){
+        b.draw();
+    }
+    //End draw barriers
+
     //Draw bullets
     for(Bullet bullet : bullets){
+        for(Barrier b : barriers){
+            if(b.destruct(bullet)){
+                homer.play();
+                offScreenIndex = bullets.indexOf(bullet);
+            }
+            b.draw();
+        }
         if(!bullet.collide(aliens)){
             if(bullet.ypos <= 0-BULLETHEIGHT){
                 offScreenIndex = bullets.indexOf(bullet);

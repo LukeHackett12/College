@@ -1,6 +1,6 @@
 class Alien {
-
-    int xpos;
+    
+    float xpos;
     float ypos;
     float ysaved;
     int vel;
@@ -8,9 +8,11 @@ class Alien {
     float sin;
     boolean exploded;
     int explodeRender;
+    boolean hasBomb;
+    Bomb bombObject;
     PImage alienImage;
 
-    Alien(int xpos, float ypos, PImage alienImage){
+    Alien(float xpos, float ypos, PImage alienImage){
         this.xpos = xpos;
         this.ypos = ypos;
         this.alienImage = alienImage;
@@ -19,13 +21,14 @@ class Alien {
         sin = 0;
         vel = 2;
         explodeRender = 0;
+        hasBomb = false;
         imageMode(CORNER);
     }
 
     void explode(){
-        exploded = true;
+        exploded = true;    
     }
-
+    
     void move(){
         if(dir == A_DOWN){
             if(ypos - ysaved < alienImage.height) ypos += vel;
@@ -50,7 +53,15 @@ class Alien {
     }
 
     void draw(){
-        if(!exploded) image(alienImage, xpos, ypos, 50, 50);
+        if(!exploded){
+            image(alienImage, xpos, ypos, 50, 50);
+            if(!hasBomb){
+                if((int)random(500) == 1){
+                    bombObject = new Bomb(xpos, ypos);
+                    hasBomb = true;
+                }
+            }
+        }
         else {
             if(explodeRender++ <= 15)image(loadImage("exploding.GIF"), xpos, ypos, 50, 50);
         }
