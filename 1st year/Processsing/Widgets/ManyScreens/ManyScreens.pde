@@ -10,7 +10,7 @@ final int EVENT_BACKWARD=2;
 final int TOGGLE=3;
 
 void setup(){
-    size(600, 600);
+    size(800, 800);
     stdFont = loadFont("ComicSansMS-Bold-48.vlw");
     textFont(stdFont);
     textAlign(CENTER, BOTTOM);
@@ -19,11 +19,11 @@ void setup(){
     screenTwo = new Screen(color(100, 230, 230));
     screen = 1;
 
-    forwardButton=new Widget(100, 100, 300, 100, "forwards", color(100), stdFont, EVENT_FORWARD);
-    backwardButton=new Widget(100, 300, 300, 100, "backwards", color(100), stdFont, EVENT_BACKWARD);
+    forwardButton=new Widget(200, 200, 300, 100, "forwards", color(100), stdFont, EVENT_FORWARD);
+    backwardButton=new Widget(200, 500, 300, 100, "backwards", color(100), stdFont, EVENT_BACKWARD);
     checkBox = new CheckBox(10, 10, 50, 50, color(10), color(200), false);
     String[] array = {"One", "Two", "Three"};
-    radioButton = new RadioButton(20,20, 100, 300, color (200,200,150), array);
+    radioButton = new RadioButton(20,20, color (200,200,150), array);
     
     screenOne.addWidget(forwardButton);
     screenOne.addWidget(backwardButton);
@@ -32,6 +32,7 @@ void setup(){
     screenTwo.addWidget(forwardButton);
     screenTwo.addWidget(backwardButton);
     screenTwo.addWidget(radioButton);
+    //screenTwo.addWidget(radioButton);
 }
 
 void mousePressed(){
@@ -45,18 +46,27 @@ void mousePressed(){
             println("You can't go back");
             break;
         case TOGGLE:
-            checkBox.event = !checkBox.event;
+            checkBox.eventBool = !checkBox.eventBool;
       }
     }
     else{
         int event = screenTwo.getEvent();
-        switch(event) {
-        case EVENT_BACKWARD:
-            screen = 1;
-            break;
-        case EVENT_FORWARD:
-            println("You can't go forwards");
-            break;
+        if(event == EVENT_BACKWARD){
+          screen = 1;
+        }
+        else if(event == EVENT_FORWARD){
+          println("You can't go forwards");
+        }
+        else{
+          println("her");
+          for(int i = 0; i < radioButton.choices.length; i++){
+            if(event-3 == i){
+              radioButton.circleButtons[i].eventBool = true;
+            }
+            else if(event - 3 >= 0){
+              radioButton.circleButtons[i].eventBool = false;
+            }
+          }
         }
     }
 }

@@ -22,6 +22,7 @@ class Widget {
     fill(widgetColor);
     rect(x,y,width,height);
     fill(labelColor);
+    textAlign(CENTER, BOTTOM);
     text(label, x+width/2, y+height);
   }
 
@@ -33,17 +34,18 @@ class Widget {
   }
 }
 
+
 class CheckBox extends Widget{
-  boolean event;
+  boolean eventBool;
   color selectedColor;
 
-  CheckBox(float x,float y, int width, int height, color widgetColor, color selectedColor, boolean event){
+  CheckBox(float x,float y, int width, int height, color widgetColor, color selectedColor, boolean eventBool){
     //super(x, y, width, height, label, widgetColor, widgetFont, event);
     super();
     this.x=x; this.y=y; this.width = width; this.height= height;
     this.widgetColor=widgetColor;
     this.selectedColor = selectedColor;
-    this.event = event;
+    this.eventBool = eventBool;
     type = 1;
   }
 
@@ -51,13 +53,14 @@ class CheckBox extends Widget{
      if(mX>x && mX < x+width && mY >y && mY <y+height){
         return 3;
      }
+     println("agh");
      return 0;
   }
 
   void draw(){
     stroke(255, 255, 255);
     strokeWeight(5);
-    if(event == false){
+    if(eventBool == false){
       fill(widgetColor);
       rect(x,y,width,height);
     }
@@ -72,30 +75,44 @@ class RadioButton extends Widget{
   color backgroundColor;
   String[] choices;
 
-  CheckBox[] checkboxes;
+  CheckBox[] circleButtons;
 
-  RadioButton(float x,float y, int width, int height, color backgroundColor, String[] choices){
+  RadioButton(float x,float y, color backgroundColor, String[] choices){
     super();
-    this.x=x; this.y=y; this.width = width; this.height= height;
+    this.x=x; this.y=y; height = choices.length*20;
     this.backgroundColor=backgroundColor;
     this.choices = choices;
 
-    checkboxes = new CheckBox[choices.length];
+    circleButtons = new CheckBox[choices.length];
     boolean start = true;
-    float tempY = y + height/(checkboxes.length*2);
-    for(int i=0;i < checkboxes.length; i++){
-      checkboxes[i] = new CheckBox(x, tempY, 20, 20, color(255, 255, 255), color(20, 20, 20), start);
+    float tempY = y + 10;
+    for(int i=0;i < circleButtons.length; i++){
+      circleButtons[i] = new CheckBox(x, tempY, 30, 30, color(255, 255, 255), color(20, 20, 20), start);
       start = false;
-      tempY += height/checkboxes.length;
+      tempY += 40;
     }
   }
-
-  void draw(){
-    fill(backgroundColor); //<>// //<>//
+  
+  int getEvent(int mX, int mY){
+    for(int i = 0; i < circleButtons.length; i++){
+       if(mX>circleButtons[i].x && mX < circleButtons[i].x+30 && mY > circleButtons[i].y && mY < circleButtons[i].y+30){
+         int temp = 3+i;
+         return temp;
+       }
+     }
+     return 0;
+  }
+  
+  void draw(){ //<>//
+    fill(backgroundColor); //<>//
     noStroke();
-    rect(x, y, width, height);
-    for(int i=0;i < checkboxes.length; i++){
-      checkboxes[i].draw();
+    //rect(x, y, width, height);
+    float tempY = y + 10;
+    for(int i=0;i < circleButtons.length; i++){
+      circleButtons[i].draw();
+      textAlign(CORNER, TOP);
+      text(choices[i], x+40, tempY);
+      tempY += 40;
     }
   }
 }

@@ -10,7 +10,7 @@ class Screen{
     int getEvent(){
         for(Widget widget : widgetList){
             int event = widget.getEvent(mouseX,mouseY);
-            if(event != 0) return event; 
+            if(event != 0) return event;
         }
         return 0;
     }
