@@ -1,13 +1,12 @@
 	AREA	Sudoku, CODE, READONLY
+	IMPORT main
+	IMPORT getkey
+	IMPORT sendchar
 	EXPORT	start
+	PRESERVE8
 
 start
-
-	LDR	R1, =gridFour
-	MOV	R2, #0
-	MOV	R3, #0
-	BL	sudoku
-
+	
 	;
 	; write tests for getSquare subroutine
 	;
@@ -36,14 +35,29 @@ start
 	;
 	; write tests for other subroutines
 	;
-
+	LDR R1, =gridFour
+	BL printGrid
+	
+	LDR R0, =0xA
+	BL sendchar
+	
 	;
 	; test sudoku subroutine
 	;
-	LDR	R1, =gridFour
+	
+	LDR R1, =gridUser
+	BL userInput
+	
+	LDR R0, =0xA
+	BL sendchar
+	
+	LDR	R1, =gridUser
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
+
+	LDR R1, =gridUser
+	BL printGrid
 
 stop	B	stop
 
@@ -359,6 +373,105 @@ endSudokuFor
 endSudoku
 	LDMFD sp!, {R4-R12, pc}
 
+;printGird
+;R1 - grid to print
+;void
+printGrid
+	STMFD sp!, {R4-R12, lr}
+	MOV R4, R1
+	;start R2 and R3 at 0,0
+	;nested loop for each row
+	;getsquare and sendchar
+	MOV R2, #0
+printOuterFor
+	MOV R3, #0
+printInnerFor
+	CMP R3, #9
+	BEQ endPrintInnerFor
+	MOV R1, R4
+	BL getSquare
+	ADD R0, R0, #0x30
+	BL sendchar
+	ADD R3, #1
+	B printInnerFor
+endPrintInnerFor
+	LDR R0, =0xA
+	BL sendchar
+	ADD R2, #1
+	CMP R2, #9
+	BEQ endPrint
+	B printOuterFor
+endPrint
+	LDMFD sp!, {R4-R12, pc}
+	
+userInput
+	STMFD sp!, {R4-R12, lr}
+	MOV R4, R1
+	;start R2 and R3 at 0,0
+	;nested loop for each row
+	;getkey, setsquare and sendchar
+	MOV R2, #0
+inputOuterFor
+	MOV R3, #0
+inputInnerFor
+	CMP R3, #9
+	BEQ endInputInnerFor
+	BL getkey
+	CMP R0, #0x8
+	BEQ backSpace
+	CMP R0, #0x30
+	BLT inputInnerFor
+	CMP R0, #0x39
+	BGT inputInnerFor
+	SUB R0,#0x30
+	MOV R1, R4
+	BL setSquare
+	ADD R0, #0x30
+	BL sendchar
+	ADD R3, #1
+	B inputInnerFor
+endInputInnerFor
+	LDR R0, =0xA
+	BL sendchar
+	ADD R2, #1
+	CMP R2, #9
+	BEQ endInput
+	B inputOuterFor
+
+backSpace
+	CMP R3, #0
+	BEQ backRow
+	SUB R3, #1
+	MOV R0, #0
+	MOV R1, R4
+	BL setSquare
+	BL clearChar
+	B inputInnerFor
+	
+backRow
+	CMP R2, #0
+	BEQ inputInnerFor
+	MOV R3, #8
+	SUB R2, #1
+	MOV R0, #0
+	MOV R1, R4
+	BL setSquare
+	BL clearChar
+	B inputInnerFor
+	
+endInput
+	LDMFD sp!, {R4-R12, pc}
+
+clearChar
+	STMFD sp!, {R4-R12, lr}
+	LDR R0, =0x8
+	BL sendchar
+	LDR R0, =0x20
+	BL sendchar
+	LDR R0, =0x8
+	BL sendchar
+	LDMFD sp!, {R4-R12, pc}
+
 	AREA	Grids, DATA, READWRITE
 
 gridOne
@@ -430,5 +543,8 @@ gridSix
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 	    DCB 0,0,0,0,0,0,0,0,0
+		
+gridUser
+		SPACE 81
 
 	END
