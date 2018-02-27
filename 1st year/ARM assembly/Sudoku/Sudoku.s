@@ -2,16 +2,10 @@
 	EXPORT	start
 
 start
-
-	LDR	R1, =gridFour
-	MOV	R2, #0
-	MOV	R3, #0
-	BL	sudoku
-
 	;
 	; write tests for getSquare subroutine
 	;
-	LDR R1, =gridOne
+	LDR R1, =gridBroke
 	LDR R2, =4
 	LDR R3, =7
 	BL getSquare
@@ -20,7 +14,7 @@ start
 	; write tests for setSquare subroutine
 	;
 	LDR R0, =4
-	LDR R1, =gridOne
+	LDR R1, =gridBroke
 	LDR R2, =2
 	LDR R3, =2
 	BL setSquare
@@ -28,7 +22,7 @@ start
 	;
 	; write tests for isValid subroutine
 	;
-	LDR R1, =gridThree
+	LDR R1, =gridEasy
 	LDR R2, =2
 	LDR R3, =1
 	BL isValid
@@ -40,7 +34,7 @@ start
 	;
 	; test sudoku subroutine
 	;
-	LDR	R1, =gridFour
+	LDR	R1, =gridEvil
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
@@ -361,44 +355,40 @@ endSudoku
 
 	AREA	Grids, DATA, READWRITE
 
-gridOne
-		DCB	7,9,0,0,0,0,3,0,0
-    	DCB	0,0,0,0,0,6,9,0,0
-    	DCB	8,0,0,0,3,0,0,7,6
-    	DCB	0,0,0,0,0,5,0,0,2
-    	DCB	0,0,5,4,1,8,7,0,0
-    	DCB	4,0,0,7,0,0,0,0,0
-    	DCB	6,1,0,0,9,0,0,0,8
-    	DCB	0,0,2,3,0,0,0,0,0
-    	DCB	0,0,9,0,0,0,0,0,0;5,4
+gridEvil
+		DCB 0,5,0,0,8,0,7,0,0
+		DCB 1,0,0,0,0,4,9,0,0
+		DCB 9,0,0,0,0,2,0,0,3
+		DCB 0,0,0,0,2,0,0,9,8
+		DCB 0,0,8,0,0,0,6,0,0
+		DCB 4,1,0,0,6,0,0,0,0
+		DCB 3,0,0,8,0,0,0,0,5
+		DCB 0,0,7,9,0,0,0,0,1
+		DCB 0,0,1,0,5,0,0,7,0
+		
+gridHard
+		DCB 0,0,0,0,0,4,1,0,0
+		DCB 0,0,8,1,0,0,0,6,0
+		DCB 0,0,0,0,9,0,0,7,5
+		DCB 5,4,0,0,0,8,3,0,2
+		DCB 0,0,0,0,0,0,0,0,0
+		DCB 2,0,9,4,0,0,0,8,1
+		DCB 4,8,0,0,1,0,0,0,0
+		DCB 0,9,0,0,0,2,8,0,0
+		DCB 0,0,6,5,0,0,0,0,0
 
-	;
-	; add other grids for test cases
-	;
-gridTwo
-		DCB 2,9,5,7,4,3,8,6,1
-		DCB 4,3,1,8,6,5,9,2,7
-		DCB 8,7,6,1,9,2,5,4,3
-		DCB 3,8,7,4,5,9,2,1,6
-		DCB 6,1,2,3,8,7,4,9,5
-		DCB 5,4,9,2,1,6,7,3,8
-		DCB 7,6,3,5,3,4,1,8,9
-		DCB 9,2,8,6,7,1,3,5,4
-		DCB 1,5,4,9,3,8,6,7,2
+gridMedium
+		DCB 2,6,0,0,0,7,0,0,1
+		DCB 7,0,9,0,0,0,0,0,0
+		DCB 0,1,0,0,2,0,7,5,0
+		DCB 0,8,0,0,0,2,0,0,3
+		DCB 5,9,0,0,8,0,0,1,6
+		DCB 6,0,0,5,0,0,0,8,0
+		DCB 0,3,5,0,6,0,0,4,0
+		DCB 0,0,0,0,0,0,3,0,9
+		DCB 9,0,0,7,0,0,0,6,5
 
-gridThree
-		DCB 0,0,8,1,0,6,0,0,5
-		DCB 0,0,0,0,3,0,9,1,0
-		DCB 3,0,9,0,0,0,0,0,0
-		DCB 0,9,0,0,8,5,0,0,0
-		DCB 0,9,0,0,8,5,0,0,0
-		DCB 0,3,5,4,6,2,1,9,0
-		DCB 0,0,0,9,1,0,0,4,0
-		DCB 0,0,0,0,0,0,3,0,1
-		DCB 0,5,2,0,7,0,0,0,0
-		DCB 9,0,0,8,0,1,6,0,0
-
-gridFour
+gridEasy
 		DCB 6,0,0,0,3,0,8,0,0
 		DCB 0,2,0,9,7,0,3,0,0
 		DCB 0,4,3,0,0,5,9,0,0
@@ -409,22 +399,11 @@ gridFour
 		DCB 0,0,2,0,6,8,0,3,0
 		DCB 0,0,6,0,1,0,0,0,7
 		
-gridFive
-		DCB 0,0,0,0,0,3,8,9,0
-		DCB 0,8,0,8,0,0,0,0,0
-		DCB 9,3,1,7,0,0,0,0,0
-		DCB 0,5,0,0,0,0,2,6,0
-		DCB 1,0,8,0,0,0,5,0,7
-		DCB 0,7,4,0,0,0,0,3,0
-		DCB 0,0,0,0,0,2,6,7,4
-		DCB 0,0,0,0,0,1,0,2,0
-		DCB 0,6,2,4,0,0,0,0,0
-		
-gridSix
-		DCB 1,0,3,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,1,0,0
+gridZero
 		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,3,0,0,0,0,0
+		DCB 0,0,0,0,0,0,0,0,0
+		DCB 0,0,0,0,0,0,0,0,0
+		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
