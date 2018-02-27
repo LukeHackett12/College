@@ -1,0 +1,10 @@
+141165238X, Java By Dissection, C. McDowell, Lulu Enterprises Inc., 2010, 5, 30.13
+1111529442, Java Programming, J. Farrell, Course Technology, 2011, 12, 41.65
+1423901886, Java Programming Lab Manual, Mayfield, Course Technology, 2007, 7, 45.00
+0672324601, Sams Teach Yourself Java 2 in 24 Hours, R. Cadenhead, Sams, 2002, 12, 23.50
+1590594576, Beginning Java Objects From Concepts to Code, J. Barker, Apress L. P., 2005, 12, 37.99
+0132821540, Java for Programmers, P. Deitel, Prentice Hall PTR, 2011, 22, 35.99
+0262693259, Java Precisely, P. Sestoft, Mit Pr, 2005, 7, 15.50
+0596007736, Java In A Nutshell, D. Flanagan, Oreilly & Associates Inc, 2005, 18, 37.99
+0071606300, Java 7: The Complete Reference, H. Schildt, McGraw-Hill Osborne, 2009, 1, 54.99
+0470371749, Beginning Programming with Java For Dummies, B. Burd, Wiley & Sons, 2010, 18, 31.99
