@@ -35,7 +35,7 @@ void setup(){
 void draw(){
   background(200, 200, 200);
 
-  for(int i = 0; i<widgetList.size(); i++){
+  for(int i= 0; i<widgetList.size(); i++){
 	Widget aWidget = (Widget)widgetList.get(i);
     if (mouseX > aWidget.x && mouseX < aWidget.x + aWidget.width && mouseY > aWidget.y && mouseY < aWidget.y + aWidget.height){
         borderColor = color(255, 255, 255);

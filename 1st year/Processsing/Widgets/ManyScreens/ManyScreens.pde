@@ -1,5 +1,5 @@
 Screen screenOne; Screen screenTwo;
-Widget forwardButton; Widget backwardButton; 
+Widget forwardButton; Widget backwardButton;
 CheckBox checkBox;
 RadioButton radioButton;
 int screen;
@@ -19,12 +19,12 @@ void setup(){
     screenTwo = new Screen(color(100, 230, 230));
     screen = 1;
 
-    forwardButton=new Widget(200, 200, 300, 100, "forwards", color(100), stdFont, EVENT_FORWARD);
-    backwardButton=new Widget(200, 500, 300, 100, "backwards", color(100), stdFont, EVENT_BACKWARD);
-    checkBox = new CheckBox(10, 10, 50, 50, color(10), color(200), false);
-    String[] array = {"One", "Two", "Three"};
+    forwardButton=new Widget(250, 200, 300, 100, "forwards", color(100), stdFont, EVENT_FORWARD);
+    backwardButton=new Widget(250, 500, 300, 100, "backwards", color(100), stdFont, EVENT_BACKWARD);
+    checkBox = new CheckBox(10, 10, 50, 50, color(200), color(10), false);
+    String[] array = {""};
     radioButton = new RadioButton(20,20, color (200,200,150), array);
-    
+
     screenOne.addWidget(forwardButton);
     screenOne.addWidget(backwardButton);
     screenOne.addWidget(checkBox);
@@ -58,7 +58,6 @@ void mousePressed(){
           println("You can't go forwards");
         }
         else{
-          println("her");
           for(int i = 0; i < radioButton.choices.length; i++){
             if(event-3 == i){
               radioButton.circleButtons[i].eventBool = true;

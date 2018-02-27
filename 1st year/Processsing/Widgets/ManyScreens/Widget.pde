@@ -19,6 +19,7 @@ class Widget {
    }
 
   void draw(){
+    strokeWeight(1);
     fill(widgetColor);
     rect(x,y,width,height);
     fill(labelColor);
@@ -53,13 +54,12 @@ class CheckBox extends Widget{
      if(mX>x && mX < x+width && mY >y && mY <y+height){
         return 3;
      }
-     println("agh");
      return 0;
   }
 
   void draw(){
     stroke(255, 255, 255);
-    strokeWeight(5);
+    strokeWeight(10);
     if(eventBool == false){
       fill(widgetColor);
       rect(x,y,width,height);
@@ -92,7 +92,7 @@ class RadioButton extends Widget{
       tempY += 40;
     }
   }
-  
+
   int getEvent(int mX, int mY){
     for(int i = 0; i < circleButtons.length; i++){
        if(mX>circleButtons[i].x && mX < circleButtons[i].x+30 && mY > circleButtons[i].y && mY < circleButtons[i].y+30){
@@ -102,12 +102,12 @@ class RadioButton extends Widget{
      }
      return 0;
   }
-  
+
   void draw(){ //<>//
     fill(backgroundColor); //<>//
     noStroke();
     //rect(x, y, width, height);
-    float tempY = y + 10;
+    float tempY = y + 7;
     for(int i=0;i < circleButtons.length; i++){
       circleButtons[i].draw();
       textAlign(CORNER, TOP);
