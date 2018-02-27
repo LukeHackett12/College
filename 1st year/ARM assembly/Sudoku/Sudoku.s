@@ -1,11 +1,16 @@
 	AREA	Sudoku, CODE, READONLY
+	IMPORT main
+	IMPORT getkey
+	IMPORT sendchar
 	EXPORT	start
+	PRESERVE8
 
 start
+	
 	;
 	; write tests for getSquare subroutine
 	;
-	LDR R1, =gridBroke
+	LDR R1, =gridOne
 	LDR R2, =4
 	LDR R3, =7
 	BL getSquare
@@ -14,7 +19,7 @@ start
 	; write tests for setSquare subroutine
 	;
 	LDR R0, =4
-	LDR R1, =gridBroke
+	LDR R1, =gridOne
 	LDR R2, =2
 	LDR R3, =2
 	BL setSquare
@@ -22,7 +27,7 @@ start
 	;
 	; write tests for isValid subroutine
 	;
-	LDR R1, =gridEasy
+	LDR R1, =gridThree
 	LDR R2, =2
 	LDR R3, =1
 	BL isValid
@@ -30,14 +35,29 @@ start
 	;
 	; write tests for other subroutines
 	;
-
+	LDR R1, =gridFour
+	BL printGrid
+	
+	LDR R0, =0xA
+	BL sendchar
+	
 	;
 	; test sudoku subroutine
 	;
-	LDR	R1, =gridEvil
+	
+	LDR R1, =gridUser
+	BL userInput
+	
+	LDR R0, =0xA
+	BL sendchar
+	
+	LDR	R1, =gridUser
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
+
+	LDR R1, =gridUser
+	BL printGrid
 
 stop	B	stop
 
@@ -353,42 +373,145 @@ endSudokuFor
 endSudoku
 	LDMFD sp!, {R4-R12, pc}
 
+;printGird
+;R1 - grid to print
+;void
+printGrid
+	STMFD sp!, {R4-R12, lr}
+	MOV R4, R1
+	;start R2 and R3 at 0,0
+	;nested loop for each row
+	;getsquare and sendchar
+	MOV R2, #0
+printOuterFor
+	MOV R3, #0
+printInnerFor
+	CMP R3, #9
+	BEQ endPrintInnerFor
+	MOV R1, R4
+	BL getSquare
+	ADD R0, R0, #0x30
+	BL sendchar
+	ADD R3, #1
+	B printInnerFor
+endPrintInnerFor
+	LDR R0, =0xA
+	BL sendchar
+	ADD R2, #1
+	CMP R2, #9
+	BEQ endPrint
+	B printOuterFor
+endPrint
+	LDMFD sp!, {R4-R12, pc}
+	
+userInput
+	STMFD sp!, {R4-R12, lr}
+	MOV R4, R1
+	;start R2 and R3 at 0,0
+	;nested loop for each row
+	;getkey, setsquare and sendchar
+	MOV R2, #0
+inputOuterFor
+	MOV R3, #0
+inputInnerFor
+	CMP R3, #9
+	BEQ endInputInnerFor
+	BL getkey
+	CMP R0, #0x8
+	BEQ backSpace
+	CMP R0, #0x30
+	BLT inputInnerFor
+	CMP R0, #0x39
+	BGT inputInnerFor
+	SUB R0,#0x30
+	MOV R1, R4
+	BL setSquare
+	ADD R0, #0x30
+	BL sendchar
+	ADD R3, #1
+	B inputInnerFor
+endInputInnerFor
+	LDR R0, =0xA
+	BL sendchar
+	ADD R2, #1
+	CMP R2, #9
+	BEQ endInput
+	B inputOuterFor
+
+backSpace
+	CMP R3, #0
+	BEQ backRow
+	SUB R3, #1
+	MOV R0, #0
+	MOV R1, R4
+	BL setSquare
+	BL clearChar
+	B inputInnerFor
+	
+backRow
+	CMP R2, #0
+	BEQ inputInnerFor
+	MOV R3, #8
+	SUB R2, #1
+	MOV R0, #0
+	MOV R1, R4
+	BL setSquare
+	BL clearChar
+	B inputInnerFor
+	
+endInput
+	LDMFD sp!, {R4-R12, pc}
+
+clearChar
+	STMFD sp!, {R4-R12, lr}
+	LDR R0, =0x8
+	BL sendchar
+	LDR R0, =0x20
+	BL sendchar
+	LDR R0, =0x8
+	BL sendchar
+	LDMFD sp!, {R4-R12, pc}
+
 	AREA	Grids, DATA, READWRITE
 
-gridEvil
-		DCB 0,5,0,0,8,0,7,0,0
-		DCB 1,0,0,0,0,4,9,0,0
-		DCB 9,0,0,0,0,2,0,0,3
-		DCB 0,0,0,0,2,0,0,9,8
-		DCB 0,0,8,0,0,0,6,0,0
-		DCB 4,1,0,0,6,0,0,0,0
-		DCB 3,0,0,8,0,0,0,0,5
-		DCB 0,0,7,9,0,0,0,0,1
-		DCB 0,0,1,0,5,0,0,7,0
-		
-gridHard
-		DCB 0,0,0,0,0,4,1,0,0
-		DCB 0,0,8,1,0,0,0,6,0
-		DCB 0,0,0,0,9,0,0,7,5
-		DCB 5,4,0,0,0,8,3,0,2
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 2,0,9,4,0,0,0,8,1
-		DCB 4,8,0,0,1,0,0,0,0
-		DCB 0,9,0,0,0,2,8,0,0
-		DCB 0,0,6,5,0,0,0,0,0
+gridOne
+		DCB	7,9,0,0,0,0,3,0,0
+    	DCB	0,0,0,0,0,6,9,0,0
+    	DCB	8,0,0,0,3,0,0,7,6
+    	DCB	0,0,0,0,0,5,0,0,2
+    	DCB	0,0,5,4,1,8,7,0,0
+    	DCB	4,0,0,7,0,0,0,0,0
+    	DCB	6,1,0,0,9,0,0,0,8
+    	DCB	0,0,2,3,0,0,0,0,0
+    	DCB	0,0,9,0,0,0,0,0,0;5,4
 
-gridMedium
-		DCB 2,6,0,0,0,7,0,0,1
-		DCB 7,0,9,0,0,0,0,0,0
-		DCB 0,1,0,0,2,0,7,5,0
-		DCB 0,8,0,0,0,2,0,0,3
-		DCB 5,9,0,0,8,0,0,1,6
-		DCB 6,0,0,5,0,0,0,8,0
-		DCB 0,3,5,0,6,0,0,4,0
-		DCB 0,0,0,0,0,0,3,0,9
-		DCB 9,0,0,7,0,0,0,6,5
+	;
+	; add other grids for test cases
+	;
+gridTwo
+		DCB 2,9,5,7,4,3,8,6,1
+		DCB 4,3,1,8,6,5,9,2,7
+		DCB 8,7,6,1,9,2,5,4,3
+		DCB 3,8,7,4,5,9,2,1,6
+		DCB 6,1,2,3,8,7,4,9,5
+		DCB 5,4,9,2,1,6,7,3,8
+		DCB 7,6,3,5,3,4,1,8,9
+		DCB 9,2,8,6,7,1,3,5,4
+		DCB 1,5,4,9,3,8,6,7,2
 
-gridEasy
+gridThree
+		DCB 0,0,8,1,0,6,0,0,5
+		DCB 0,0,0,0,3,0,9,1,0
+		DCB 3,0,9,0,0,0,0,0,0
+		DCB 0,9,0,0,8,5,0,0,0
+		DCB 0,9,0,0,8,5,0,0,0
+		DCB 0,3,5,4,6,2,1,9,0
+		DCB 0,0,0,9,1,0,0,4,0
+		DCB 0,0,0,0,0,0,3,0,1
+		DCB 0,5,2,0,7,0,0,0,0
+		DCB 9,0,0,8,0,1,6,0,0
+
+gridFour
 		DCB 6,0,0,0,3,0,8,0,0
 		DCB 0,2,0,9,7,0,3,0,0
 		DCB 0,4,3,0,0,5,9,0,0
@@ -399,15 +522,29 @@ gridEasy
 		DCB 0,0,2,0,6,8,0,3,0
 		DCB 0,0,6,0,1,0,0,0,7
 		
-gridZero
+gridFive
+		DCB 0,0,0,0,0,3,8,9,0
+		DCB 0,8,0,8,0,0,0,0,0
+		DCB 9,3,1,7,0,0,0,0,0
+		DCB 0,5,0,0,0,0,2,6,0
+		DCB 1,0,8,0,0,0,5,0,7
+		DCB 0,7,4,0,0,0,0,3,0
+		DCB 0,0,0,0,0,2,6,7,4
+		DCB 0,0,0,0,0,1,0,2,0
+		DCB 0,6,2,4,0,0,0,0,0
+		
+gridSix
+		DCB 1,0,3,0,0,0,0,0,0
+		DCB 0,0,0,0,0,0,1,0,0
 		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
+		DCB 0,0,0,3,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 		DCB 0,0,0,0,0,0,0,0,0
 	    DCB 0,0,0,0,0,0,0,0,0
+		
+gridUser
+		SPACE 81
 
 	END
