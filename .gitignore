@@ -30,3 +30,6 @@
 1st year/Processsing/SpaceInvaders/build/source/SpaceInvaders.java
 *.tmp
 1st year/asciifull.gif
+*.uvproj
+1st year/ARM assembly/Sudoku/Sudoku_sct.Bak
+*.crf

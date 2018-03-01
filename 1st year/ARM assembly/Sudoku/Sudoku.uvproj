@@ -769,7 +769,7 @@
               <OCR_RVCT6>
                 <Type>0</Type>
                 <StartAddress>0xa1000000</StartAddress>
-                <Size>0x1000000</Size>
+                <Size>0x10000000</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>

@@ -35,7 +35,7 @@ start
 	;
 	; write tests for other subroutines
 	;
-	LDR R1, =gridFour
+	LDR R1, =gridSix
 	BL printGrid
 	
 	LDR R0, =0xA
@@ -44,19 +44,13 @@ start
 	;
 	; test sudoku subroutine
 	;
-	
-	LDR R1, =gridUser
-	BL userInput
-	
-	LDR R0, =0xA
-	BL sendchar
-	
-	LDR	R1, =gridUser
+
+	LDR	R1, =gridSix
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
 
-	LDR R1, =gridUser
+	LDR R1, =gridSix
 	BL printGrid
 
 stop	B	stop
@@ -294,7 +288,7 @@ divEndWhile
 ; R2 - row
 ; R3 - column
 sudoku
-	STMFD sp!, {R4-R12, lr}
+	STMFD sp!, {R4-R9, lr}
 	MOV R4, #0 		;result = false
 	
 	MOV R5, R2 		;row = row
@@ -371,13 +365,13 @@ endSudokuFor
 	BL setSquare
 
 endSudoku
-	LDMFD sp!, {R4-R12, pc}
+	LDMFD sp!, {R4-R9, pc}
 
 ;printGird
 ;R1 - grid to print
 ;void
 printGrid
-	STMFD sp!, {R4-R12, lr}
+	STMFD sp!, {R4, lr}
 	MOV R4, R1
 	;start R2 and R3 at 0,0
 	;nested loop for each row
@@ -402,10 +396,10 @@ endPrintInnerFor
 	BEQ endPrint
 	B printOuterFor
 endPrint
-	LDMFD sp!, {R4-R12, pc}
+	LDMFD sp!, {R4, pc}
 	
 userInput
-	STMFD sp!, {R4-R12, lr}
+	STMFD sp!, {R4, lr}
 	MOV R4, R1
 	;start R2 and R3 at 0,0
 	;nested loop for each row
@@ -460,17 +454,17 @@ backRow
 	B inputInnerFor
 	
 endInput
-	LDMFD sp!, {R4-R12, pc}
+	LDMFD sp!, {R4, pc}
 
 clearChar
-	STMFD sp!, {R4-R12, lr}
+	STMFD sp!, {lr}
 	LDR R0, =0x8
 	BL sendchar
 	LDR R0, =0x20
 	BL sendchar
 	LDR R0, =0x8
 	BL sendchar
-	LDMFD sp!, {R4-R12, pc}
+	LDMFD sp!, {pc}
 
 	AREA	Grids, DATA, READWRITE
 
@@ -534,15 +528,15 @@ gridFive
 		DCB 0,6,2,4,0,0,0,0,0
 		
 gridSix
-		DCB 1,0,3,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,1,0,0
 		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,3,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,0,0,0,0
-	    DCB 0,0,0,0,0,0,0,0,0
+		DCB 0,0,0,0,0,3,0,8,5
+		DCB 0,0,1,0,2,0,0,0,0
+		DCB 0,0,0,5,0,7,0,0,0
+		DCB 0,0,4,0,0,0,1,0,0
+		DCB 0,9,0,0,0,0,0,0,0
+		DCB 5,0,0,0,0,0,0,7,3
+		DCB 0,0,2,0,1,0,0,0,0
+		DCB 0,0,0,0,4,0,0,0,9
 		
 gridUser
 		SPACE 81
