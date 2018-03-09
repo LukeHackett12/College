@@ -7,54 +7,72 @@
 
 start
 	
-	;
-	; write tests for getSquare subroutine
-	;
-	LDR R1, =gridOne
-	LDR R2, =4
-	LDR R3, =7
-	BL getSquare
-
-	;
-	; write tests for setSquare subroutine
-	;
-	LDR R0, =4
-	LDR R1, =gridTwo
-	LDR R2, =2
-	LDR R3, =2
-	BL setSquare
-
-	;
-	; write tests for isValid subroutine
-	;
-	LDR R1, =gridThree
-	LDR R2, =2
-	LDR R3, =1
-	BL isValid
+	BL sendchar
 	
-	;
-	; write tests for other subroutines
-	;
-	LDR R1, =gridSix
-	BL printGrid
-	
+	LDR	R1, =testGridOne
+	LDR	R2, =0
+ 	LDR	R3, =0
+ 	LDR	R4, =1
+
+testStageOne
+ 	CMP	R4, #9
+ 	BGT	testStageTwo
+	STRB	R4, [R1]
+	BL	isValid
+	ADD	R4, R4, #1	; put a break point here - only 1 should be valid
+	B	testStageOne
+
+testStageTwo
+	LDR	R1, =testGridTwo
+	LDR	R2, =0
+	LDR	R3, =0
+	BL	sudoku
+	LDR	R0, =testGridTwo
+	LDR	R1, =testSolutionTwo
+	BL	compareGrids
+
+testStageThree
+	LDR	R1, =testGridThree
+	LDR	R2, =0
+	LDR	R3, =0
+	BL	sudoku
+	LDR	R0, =testGridThree
+	LDR	R1, =testSolutionThree
+	BL	compareGrids
+
+testExtraMile
 	LDR R1, =gridUser
 	BL userInput
-	
-	;
-	; test sudoku subroutine
-	;
-
+	BL printGrid
 	LDR	R1, =gridUser
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
 
-	LDR R1, =gridUser
-	BL printGrid
-
 stop	B	stop
 
+compareGrids
+	STMFD	sp!, {R4-R6, LR}
+	LDR	R4, =0
+forCompareGrids
+	CMP	R4, #(9*9)
+	BGE	endForCompareGrids
+	LDRB	R5, [R0, R4]
+	LDRB	R6, [R1, R4]
+	CMP	R5, R6
+	BNE	endForCompareGrids
+	ADD	R4, R4, #1
+	B	forCompareGrids
+endForCompareGrids
+
+	CMP	R4,#(9*9)
+	BNE	elseCompareGridsFalse
+	MOV	R0, #1
+	B	endIfCompareGridsTrue
+elseCompareGridsFalse
+	MOV	R0, #0
+endIfCompareGridsTrue
+	LDMFD	sp!, {R4-R6, PC}
 
 ; getSquare subroutine
 ;R1 - grid
@@ -121,6 +139,8 @@ isZero
 	MOV R0, #1				
 	
 endVal
+	MOV R2, R4
+	MOV R3, R5
 	LDMFD sp!, {R4-R5, pc}	; Load local variables
 
 ; isValidRow subroutine
@@ -481,75 +501,60 @@ clearChar
 
 	AREA	Grids, DATA, READWRITE
 
-gridOne
-		DCB	7,9,0,0,0,0,3,0,0
-    	DCB	0,0,0,0,0,6,9,0,0
-    	DCB	8,0,0,0,3,0,0,7,6
-    	DCB	0,0,0,0,0,5,0,0,2
-    	DCB	0,0,5,4,1,8,7,0,0
-    	DCB	4,0,0,7,0,0,0,0,0
-    	DCB	6,1,0,0,9,0,0,0,8
-    	DCB	0,0,2,3,0,0,0,0,0
-    	DCB	0,0,9,0,0,0,0,0,0;5,4
+testGridOne
+	DCB	0,0,0,0,0,5,6,7,0
+	DCB	0,2,3,0,0,0,0,0,0
+	DCB	0,4,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	8,0,0,0,0,0,0,0,0
+	DCB	9,0,0,0,0,0,0,0,0
 
-	;
-	; add other grids for test cases
-	;
-gridTwo
-		DCB 2,9,5,7,4,3,8,6,1
-		DCB 4,3,1,8,6,5,9,2,7
-		DCB 8,7,6,1,9,2,5,4,3
-		DCB 3,8,7,4,5,9,2,1,6
-		DCB 6,1,2,3,8,7,4,9,5
-		DCB 5,4,9,2,1,6,7,3,8
-		DCB 7,6,3,5,3,4,1,8,9
-		DCB 9,2,8,6,7,1,3,5,4
-		DCB 1,5,4,9,3,8,6,7,2
+testGridTwo
+	DCB	0,2,7,6,0,0,0,0,3
+	DCB	3,0,0,0,0,9,0,0,0
+	DCB	8,0,0,0,4,0,5,0,0
+	DCB	6,0,0,0,0,2,0,4,0
+	DCB	0,0,2,0,0,0,8,0,0
+	DCB	0,4,0,7,0,0,0,0,1
+	DCB	0,0,3,0,1,0,0,0,7
+	DCB	0,0,0,8,0,0,0,0,9
+	DCB	9,0,0,0,0,6,2,8,0
 
-gridThree
-		DCB 0,0,8,1,0,6,0,0,5
-		DCB 0,0,0,0,3,0,9,1,0
-		DCB 3,0,9,0,0,0,0,0,0
-		DCB 0,9,0,0,8,5,0,0,0
-		DCB 0,9,0,0,8,5,0,0,0
-		DCB 0,3,5,4,6,2,1,9,0
-		DCB 0,0,0,9,1,0,0,4,0
-		DCB 0,0,0,0,0,0,3,0,1
-		DCB 0,5,2,0,7,0,0,0,0
-		DCB 9,0,0,8,0,1,6,0,0
+testSolutionTwo
+	DCB	1,2,7,6,5,8,4,9,3
+	DCB	3,5,4,2,7,9,1,6,8
+	DCB	8,9,6,3,4,1,5,7,2
+	DCB	6,3,9,1,8,2,7,4,5
+	DCB	7,1,2,4,9,5,8,3,6
+	DCB	5,4,8,7,6,3,9,2,1
+	DCB	2,8,3,9,1,4,6,5,7
+	DCB	4,6,5,8,2,7,3,1,9
+	DCB	9,7,1,5,3,6,2,8,4
 
-gridFour
-		DCB 6,0,0,0,3,0,8,0,0
-		DCB 0,2,0,9,7,0,3,0,0
-		DCB 0,4,3,0,0,5,9,0,0
-		DCB 0,0,0,8,0,0,5,0,3
-		DCB 1,3,0,6,0,2,0,4,9
-		DCB 2,0,5,0,0,7,0,0,0
-		DCB 0,0,4,5,0,0,1,6,0
-		DCB 0,0,2,0,6,8,0,3,0
-		DCB 0,0,6,0,1,0,0,0,7
-		
-gridFive
-		DCB 0,0,0,0,0,3,8,9,0
-		DCB 0,8,0,8,0,0,0,0,0
-		DCB 9,3,1,7,0,0,0,0,0
-		DCB 0,5,0,0,0,0,2,6,0
-		DCB 1,0,8,0,0,0,5,0,7
-		DCB 0,7,4,0,0,0,0,3,0
-		DCB 0,0,0,0,0,2,6,7,4
-		DCB 0,0,0,0,0,1,0,2,0
-		DCB 0,6,2,4,0,0,0,0,0
-		
-gridSix
-		DCB 0,0,0,0,0,0,0,0,0
-		DCB 0,0,0,0,0,3,0,8,5
-		DCB 0,0,1,0,2,0,0,0,0
-		DCB 0,0,0,5,0,7,0,0,0
-		DCB 0,0,4,0,0,0,1,0,0
-		DCB 0,9,0,0,0,0,0,0,0
-		DCB 5,0,0,0,0,0,0,7,3
-		DCB 0,0,2,0,1,0,0,0,0
-		DCB 0,0,0,0,4,0,0,0,9
+testGridThree
+	DCB	0,0,0,9,0,0,0,5,0
+	DCB	0,0,3,0,4,0,1,0,6
+	DCB	0,4,0,2,0,0,0,8,0
+	DCB	7,0,8,0,0,0,0,0,0
+	DCB	0,3,0,0,0,0,0,6,0
+	DCB	0,0,0,0,0,0,5,0,4
+	DCB	0,6,0,0,0,1,0,7,0
+	DCB	4,0,2,0,5,0,3,0,0
+	DCB	0,9,0,0,0,8,0,0,0
+
+testSolutionThree
+	DCB	1,2,7,9,8,6,4,5,3
+	DCB	9,8,3,5,4,7,1,2,6
+	DCB	5,4,6,2,1,3,7,8,9
+	DCB	7,5,8,3,6,4,2,9,1
+	DCB	2,3,4,1,9,5,8,6,7
+	DCB	6,1,9,8,7,2,5,3,4
+	DCB	8,6,5,4,3,1,9,7,2
+	DCB	4,7,2,6,5,9,3,1,8
+	DCB	3,9,1,7,2,8,6,4,5
 		
 gridUser
 		SPACE 81
