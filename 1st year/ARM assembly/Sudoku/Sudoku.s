@@ -7,8 +7,6 @@
 
 start
 	
-	BL sendchar
-	
 	LDR	R1, =testGridOne
 	LDR	R2, =0
  	LDR	R3, =0
@@ -43,11 +41,18 @@ testStageThree
 testExtraMile
 	LDR R1, =gridUser
 	BL userInput
-	BL printGrid
 	LDR	R1, =gridUser
 	MOV	R2, #0
 	MOV	R3, #0
 	BL	sudoku
+	CMP R0, #1
+	BNE notSolved
+	BL printGrid
+	B stop
+	
+notSolved
+	LDR R0, ='X'
+	BL sendchar
 
 stop	B	stop
 
@@ -285,8 +290,8 @@ endForSubOne				; return result;
 	LDMFD sp!, {R4-R10, pc}	; Load local variables
 
 ;divide subroutine
-;R2 - a
-;R3 - b
+;R2 - row/col = a
+;R3 - divValue = b
 ;R0 - result no remainder
 divide
 	STMFD sp!, {R4-R6, lr}	; Save local variables
