@@ -1,6 +1,8 @@
 package com.LukeHackett;
 
 public class Harness {
+    public final int MAX_HARNESS_USES = 10;
+
     private String make;
     private int modelNo;
     private int numUses;
@@ -37,12 +39,14 @@ public class Harness {
     }
 
     public boolean canHarnessBeLoaned() {
-        return !loaned;
+        return (!loaned && numUses <= MAX_HARNESS_USES);
     }
 
     public void loanHarness(String user) {
-        loanUser = user;
-        loaned = true;
+        if(canHarnessBeLoaned()){
+            loanUser = user;
+            loaned = true;
+        }
     }
 
     public void returnHarness() {
