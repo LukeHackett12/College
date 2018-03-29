@@ -1,0 +1,12 @@
+SNR_Range = 0:2:35;
+QAM_Range=[4,16,64,256];
+size = 10^6;
+for QAM = 1 : length(QAM_range)
+    stream = randi([0 QAM_range(QAM)-1], size, 1);
+    mod = qammod(stream, QAM);
+    for SNR = 1 : length(SNR_Range)
+        signal_noise=awgn(mod, SNR, 'measured');
+        Dem = qamdemod(signal_noise, QAM);
+        BER(QAM< )
+    end
+end

@@ -1,0 +1,12 @@
+close all;
+size = 10^6;
+stream = randi([0 QAM_Range(QAM)-1], size, 1);
+mod = qammod(stream, QAM_Range(QAM));
+for SNR = [16 20]
+    signal_noise=awgn(mod, SNR_Range(SNR), 'measured');
+    Dem = qamdemod(signal_noise, QAM_Range(QAM));
+    BER(QAM, SNR)=((length(stream) - sum(stream==Dem))/length(stream));
+end
+
+
+semilogy(SNR_Range, BER(1,:),SNR_Range, BER(2,:),SNR_Range, BER(3,:), SNR_Range, BER(4,:));
