@@ -1,173 +1,562 @@
-    AREA    FpAdd, CODE, READONLY
-    IMPORT    main
-    EXPORT    start
+	AREA	Sudoku, CODE, READONLY
+	IMPORT main
+	IMPORT getkey
+	IMPORT sendchar
+	EXPORT	start
+	PRESERVE8
 
 start
+	
+	BL sendchar
+	
+	LDR	R1, =testGridOne
+	LDR	R2, =0
+ 	LDR	R3, =0
+ 	LDR	R4, =1
 
-    ;
-    ; Part 1 - decode
-    ;
-    ldr    r0, =0x3F000000        ; fpval1 = 0.5
-    LDR    r1, =0x3EE00000        ; fpval2 = 0.4375
-    bl getLargerExp
-    b stop
-    ;ldr r0, =0x3FA00000
-    ;ldr r1, =0x3F400000
+testStageOne
+ 	CMP	R4, #9
+ 	BGT	testStageTwo
+	STRB	R4, [R1]
+	BL	isValid
+	ADD	R4, R4, #1	; put a break point here - only 1 should be valid
+	B	testStageOne
 
-    b stop
+testStageTwo
+	LDR	R1, =testGridTwo
+	LDR	R2, =0
+	LDR	R3, =0
+	BL	sudoku
+	LDR	R0, =testGridTwo
+	LDR	R1, =testSolutionTwo
+	BL	compareGrids
 
-    BL    fpadd
+testStageThree
+	LDR	R1, =testGridThree
+	LDR	R2, =0
+	LDR	R3, =0
+	BL	sudoku
+	LDR	R0, =testGridThree
+	LDR	R1, =testSolutionThree
+	BL	compareGrids
 
-stop    B    stop
-; r0 - fp1
-; r1 - fp2
-; returns r2 - fraction1
-;          r3 - fraction2
-fixExponents
-    stmfd sp!, {r4-r12,lr}
-    mov r4, r0                ; fpValOneTemp = fpval1
-    mov r5, r1                 ; fpValTwoTemp = fpval2 
-    bl getExponent
-    mov r6, r1                ; fpValOneExp = getExponent(fpValOneTemp)
-    mov r0, r5
-    bl getExponent
-    mov r7, r1                ; fpValTwoExp = getExponent(fpValTwoTemp)
-    cmp r6, r7                ; if(fpValOneExp != fpValTwoExp)
-    beq done                ; {
-    cmp r6, r7                ;    if(fpValOne < fpValTwoExp)
-    bgt fpvalTwoSmaller        ;    {
-    mov r0, r5
-    bl getFraction
-    mov r3, r1
-    mov r11, #1
-    mov r8, r4                ;        smallerExponentFpValue = fpValOne;
-    sub r9, r7, r6            ;        expDifference = fpValTwoExp - fpValOneExp
-    b multiplyNumber        ;    }
-fpvalTwoSmaller                ;    else {
-    mov r0, r4
-    bl getFraction
-    mov r2, r1
-    mov r12, #1
-    mov r8, r5                ;        smallerExponentFpValue = fpValTwo;
-    sub r9, r6, r7            ;        expDifference = fpValOneExp - fpValTwoExp
-multiplyNumber                ;    }
-    ldr r10, =0                ;    loopCount = 0;
-    mov r0, r8                ;
-    bl getFraction            ;
-    mov r8, r1                ;    smallerExpFraction = getFraction(smallerExponentFpValue)    
-whMultiply                    ;
-    cmp r10, r9                ;    while(loopCount < expDifference)
-    beq doneMultiply        ;    {
-    mov r8, r8, lsr #1        ;        smallerExpFraction >> 1
-    add r10, r10, #1        ;        loopCount++
-    b whMultiply            ;    }
-doneMultiply
-done
-    cmp r11, #1
-    beq r3set
-    mov r3, r8
-    b doneforrealthistime
-r3set
-    mov r2, r8
-doneforrealthistime
-    ldmfd sp!, {r4-r12,pc}
+testExtraMile
+	LDR R1, =gridUser
+	BL userInput
+	BL printGrid
+	LDR	R1, =gridUser
+	MOV	R2, #0
+	MOV	R3, #0
+	BL	sudoku
+
+stop	B	stop
+
+compareGrids
+	STMFD	sp!, {R4-R6, LR}
+	LDR	R4, =0
+forCompareGrids
+	CMP	R4, #(9*9)
+	BGE	endForCompareGrids
+	LDRB	R5, [R0, R4]
+	LDRB	R6, [R1, R4]
+	CMP	R5, R6
+	BNE	endForCompareGrids
+	ADD	R4, R4, #1
+	B	forCompareGrids
+endForCompareGrids
+
+	CMP	R4,#(9*9)
+	BNE	elseCompareGridsFalse
+	MOV	R0, #1
+	B	endIfCompareGridsTrue
+elseCompareGridsFalse
+	MOV	R0, #0
+endIfCompareGridsTrue
+	LDMFD	sp!, {R4-R6, PC}
+
+; getSquare subroutine
+;R1 - grid
+;R2 - row
+;R3 - col
+
+;byte returned to R0
+getSquare
+	STMFD sp!, {R4-R5, lr}	; Save local variables
+	LDR R5, =9				; row length = 9;
+	MUL R4, R2, R5			; index = rows * 9;
+	ADD R4, R3				; index += col;
+	LDRB R0, [R1, R4]		; element = array[index];
+	LDMFD sp!, {R4-R5, pc}	; Load local variables
+
+; setSquare subroutine
+;R0 - value
+;R1 - grid
+;R2 - row
+;R3 - col
+
+;void
+setSquare
+	STMFD sp!, {R4-R5, lr}	; Save local variables
+	LDR R5, =9				; row length = 9;
+	MUL R4, R2, R5			; index = rows * 9;
+	ADD R4, R3				; index += col;
+	STRB R0, [R1, R4]		; grid[row][col] = element;
+	LDMFD sp!, {R4-R5, pc}	; Load local variables
 
 
+; isValid subroutine
+;R1 - grid
+;R2 - row
+;R3 - col
 
-; getExponent
-; r0 - ieee
-; r1 - return value
-getExponent
-    stmfd sp!, {r4-r6, lr}
-    ldr r4, =0x7F800000
-    and r5, r4, r0
-    mov r5, r5, lsr #23
-    sub r1, r5, #127
-    ldmfd sp!, {r4-r6,pc}
+;boolean returned to R0
+;1 for true, 0 for false
+isValid
+	STMFD sp!,{R4-R5, lr}	; Save local variables
+	BL getSquare			; element = grid[row][col];
+	CMP R0, #0				; if(element == 0)
+	BEQ isZero				; 	  return true;
+	
+	;Save row and col
+	MOV R4, R2				; tempRow = row;
+	MOV R5, R3				; tempCol = col;
+	BL isValidRow			; if(isValidRow(row, col))
+	CMP R0, #1				;	  valid = true;
+	BNE endVal				; else return false;
+	
+	MOV R2, R4				; row = tempRow;
+	MOV R3, R5				; col = tempCol;
+	BL isValidColumn		; if(isValidColumn(row, col))
+	CMP R0, #1				; 	  valid = true;
+	BNE endVal				; else return false;
+	
+	MOV R2, R4				; row = tempRow;
+	MOV R3, R5				; col = tempCol;
+	BL isValidSubGrid		; 
+	B endVal				; return isValidSubGrid(row, col);
+	
+isZero
+	MOV R0, #1				
+	
+endVal
+	MOV R2, R4
+	MOV R3, R5
+	LDMFD sp!, {R4-R5, pc}	; Load local variables
 
-; getFraction
-; r0 - ieee
-; r1 - return value
-getFraction
-    stmfd sp!, {r4-r6, lr}
-    ldr r4, =0x007FFFFF
-    and r5, r0, r4
-    ldr r4, =0x00800000
-    orr r5, r5, r4
-    ldr r6, =0
-;whShift
-;    cmp r6, #0;
-;    bne ewhShift
-;    movs r5, r5, lsr #1
-;    bcc whShift
-;    ldr r6, =1
-;    b whShift
-;ewhShift
-;    mov r5, r5, lsl #1
-;    add r5, r5, #1
-    mov r1, r5
-    ldmfd sp!, {r4-r6,pc}
-    
-    
-; getNumberWithLargerExp
-; r0 - fp1
-; r1 - fp2
-; returns : r2 - the larger exponent
-getLargerExp
-    stmfd sp!, {r4-r7,lr}
-    mov r4, r0                 ; tempFp1 = fp1
-    mov r5, r1                ; tempFp2 = fp2
-    bl getExponent
-    mov r6, r1                ; fp1Exponent = getExponent(fp1)
-    mov r0, r5
-    bl getExponent
-    mov r7, r1                ; fp2Exponent = getExponent(fp2)
-    cmp r6, r7                ; if(fp1Exponent != fp2Exponent)
-    beq fp1ExponentLarger    ; {
-    cmp r6, r7                ;    if(fp1Exponent < fp2Exponent)
-    bgt fp1ExponentLarger    ;    {
-    ;; fp2Exponent is larger
-    mov r0, r5
-    bl getExponent
-    mov r2, r1
-    b getNumberWithLargerExpdone;}
-fp1ExponentLarger            ; else {
-    ;; fp1Exponent is larger
-    mov r0, r4
-    bl getExponent
-    mov r2, r1
-getNumberWithLargerExpdone
-    ldmfd sp!, {r4-r7, pc}
-    
-    
+; isValidRow subroutine
+;R1 - grid
+;R2 - row
+;R3 - col
+isValidRow
+	STMFD sp!, {R4-R6, lr}	; Save local variables
+	BL getSquare			; element = grid[row][col];
+	MOV R4, R0				; tempElem = element;
+	MOV R5, R3				; tempCol = col;
+	MOV R6, #0				; testCol = 0;
+	
+rowLoop
+	CMP R6, #9				; while(testCol < 9){
+	BEQ isCorrectRow		;
+	MOV R3, R6				;	  col = testCol;
+	BL getSquare			;	  element = grid[row][col];
+	CMP R0, R4				;	  if(tempElem == element)
+	BEQ rowSame				;		  rowSame();
+	ADD R6, #1				;	  testCol++;
+	B rowLoop				; }
+	
+rowSame						; void rowSame(){
+	CMP R5, R6				;	  if(tempCol != testCol)
+	BNE falseRow			;		  return false
+	ADD R6, #1				;	  testCol++;
+	B rowLoop				; }
+	
+isCorrectRow				;
+	MOV R0, #1				; result = true;
+	B endRowLoop			;
 
-    
-    
-; fpadd subroutine
-; Adds two IEEE754 single precision floating point values
-; Parameters:
-;   R0: first floating point value
-;   R1: second floating point value
-; Return value:
-;   R0: floating point result
-;
-fpadd
+falseRow					;
+	MOV R0, #0				; result = false;
+	
+endRowLoop					; return result;
 
-    ;
-    ; YOUR SUBROUTINE IMPLEMENTATION HERE
-    ;
-    stmfd sp!, {r4-r6, lr}
-    mov r4, r0                    ; tempfp1 = fp1
-    mov r5, r1                    ; tempfp2 = fp2
-    bl     fixExponents
-    add r6, r2, r3                ; fraction part
-    mov r0, r4
-    mov r1, r5
-    bl getLargerExp
-    mov r7, r2                    ; exponent
-    add r7, r7, #127            ; add bias
-    ldmfd sp!, {r4-r6, pc}
-    
-    
-    END
+	LDMFD sp!, {R4-R6, pc}	; Load local variables
 
+; isValidColumn subroutine
+;R1 - grid
+;R2 - row
+;R3 - col
+isValidColumn
+	STMFD sp!, {R4-R6, lr}	;Save local variables
+	BL getSquare			; element = grid[row][col];
+	MOV R4, R0				; tempElem = element;
+	MOV R5, R2				; tempCol = col;
+	MOV R6, #0				; testCol = 0;
+	
+columnLoop					
+	CMP R6, #9				; while(testRow < 9){
+	BEQ isCorrectColumn		;
+	MOV R2, R6				;	  row = testRow;
+	BL getSquare			;	  element = grid[row][col];
+	CMP R0, R4				;	  if(tempElem == element)
+	BEQ columnSame			;		  columnSame();
+	ADD R6, #1				;	  testRow++;
+	B columnLoop			; }
+	
+columnSame					; void columnSame(){
+	CMP R5, R6;	  			if(tempRow != testRow)
+	BNE falseColumn			;	  return false
+	ADD R6, #1				;	  testRow++;
+	B columnLoop			; }
+	
+isCorrectColumn
+	MOV R0, #1				; result = 1;	
+	B endColumnLoop
+
+falseColumn
+	MOV R0, #0				; result = 0;
+	
+endColumnLoop				; return result;
+
+	LDMFD sp!, {R4-R6, pc}
+	
+; isValidSubGrid subroutine
+;R1 - grid
+;R2 - row
+;R3 - col
+isValidSubGrid
+	STMFD sp!, {R4-R10, lr}	; Save local variables
+	BL getSquare
+	MOV R4, R0				; element = R4;
+	MOV R5, R2				; saveRow = row;
+	MOV R6, R3				; saveCol = col;
+	
+	MOV R3, #3				; divBy = 3;
+	
+	BL divide				; 
+	MUL R7, R0, R3			; startRow = row/3 * 3;
+	
+	MOV R2, R6				; 
+	BL divide				; 
+	MUL R8, R0, R3			; startCol = col/3 * 3;
+	
+	MOV R2, R5				; row = saveRow;
+	MOV R3, R6				; col = saveCol;
+	
+	ADD R9, R7, #3			; endRow = startRow + 3;
+	ADD R10, R8, #3			; endCol = startCol + 3;
+	
+forSubOne					
+	CMP R7, R9				; while(startRow < endRow){
+	BEQ correctSub			; 
+	MOV R2, R7				; 	row = startRow;
+forSubTwo					; 
+	CMP R8, R10				; 	while(startCol < endCol){
+	BEQ endForSubTwo		;
+	MOV R3, R8				; 	  col = startCol;
+	BL getSquare			; 	  tempElement = grid[row][col];
+	CMP R0, R4				; 	  if(element == tempElement)
+	BEQ subSame				; 	  	  subSame();
+	ADD R8, #1				; 	  startCol++;
+	B forSubTwo				; 	}
+
+subSame						; 	void subSame(){
+	CMP R7, R5				; 		if(startRow == savedRow)
+	BNE falseSub			; 			return false;
+	CMP R8, R6				; 		if(startCol == savedCol)
+	BNE falseSub			;			return false
+	ADD R8, #1				;			startCol++;
+	B forSubTwo				; 	}
+	
+falseSub					; 
+	MOV R0, #0				; 	result = false;
+	B endForSubOne			; 
+	
+endForSubTwo				; 
+	ADD R7, #1				; 	startRow++;
+	SUB R8, #3				; 	startCol -= 3;
+	B forSubOne				; }
+
+correctSub					; 
+	MOV R0, #1				; result = true;
+	B endForSubOne			; 
+
+endForSubOne				; return result;
+
+	LDMFD sp!, {R4-R10, pc}	; Load local variables
+
+;divide subroutine
+;R2 - a
+;R3 - b
+;R0 - result no remainder
+divide
+	STMFD sp!, {R4-R6, lr}	; Save local variables
+	LDR R0, =0				; result = 0;
+	LDR R4, =0				; quotient = 0;
+	MOV R5, R2				; tempA = a;
+	MOV R6, R3				; tempB = b;
+	
+	MOV R4, R5				; quotient = tempA;
+divWhile
+	CMP R4, R6				; while(quotient >= tempB){
+	BLO divEndWhile			; 
+	SUB R4, R4, R6			; 	  quotient -= tempB;
+	ADD R0, R0, #1			; 	  result++;
+	B divWhile				; }
+divEndWhile					; return result;
+	LDMFD sp!, {R4-R6, pc}	; Load local variables
+
+; sudoku subroutine
+; R1 - grid
+; R2 - row
+; R3 - column
+sudoku
+	STMFD sp!, {R4-R9, lr}	; Save local variables
+	MOV R4, #0 				; result = false
+	
+	MOV R5, R2 				; savedRow = row
+	MOV R6, R3 				; savedColumn = column
+	
+	ADD R8, R6, #1			; nextColumn = savedColumn + 1
+	MOV R7, R5				; nextRow = savedRow
+	CMP R8, #8				;
+	BLE fillTest			; if(nextColumn > 8){
+	MOV R8, #0				;	nextColumn = 0;
+	ADD R7, #1				;	nextRow++;
+							; }
+fillTest
+	MOV R2, R5				; row = savedRow;
+	MOV R3, R6				; column = savedCol;
+	BL getSquare			; element = grid[row][column];
+	CMP R0, #0				; 
+	BEQ isEmpty				; if(getSquare(sudokuGrid, row, col) != 0){
+	CMP R5, #8				;	
+	BNE	filledElse			;	if(savedRow == 8 
+	CMP R6, #8				;	&& savedColumn == 8
+	BNE filledElse			;	){
+	MOV R0, #1				;		return true;
+	B endSudoku				;	}
+					
+filledElse					;	else{
+	MOV R2, R7				;		result = 
+	MOV R3, R8				;		sudoku(sudokuGrid, 
+	BL sudoku				;		nextRow, nextColumn);
+	MOV R4, R0				;	}
+	B endSudoku				;}
+	
+isEmpty						; else {
+	MOV R9, #1				;
+sudokuFor					; 	for(byte try = 1; 
+	CMP R9, #9				; 	try <= 9 
+	BGT endSudokuFor		; 	&& 
+	CMP R4, #1				; 	!result; try++){
+	BEQ endSudokuFor		;
+	MOV R0, R9				; 	value = try;
+	MOV R2, R5				; 	row = savedRow;
+	MOV R3, R6				; 	col = savedCol
+	BL setSquare			; 	setSquare(grid, row, col, value);
+	BL isValid				; 
+	CMP R0, #1				; 	if(isValid(grid, row, col, try)){
+	BNE stepSudokuFor		;	  
+	CMP R5, #8				;		if(row == 8
+	BNE sudokuForElse		;			&&
+	CMP R6, #8				;			col == 8){	
+	BNE sudokuForElse		;
+	MOV R4, #1				;			result = true;
+	B stepSudokuFor			;		}
+
+sudokuForElse				;		else {
+	MOV R2, R7				; 			row = nextRow;
+	MOV R3, R8				;			col = nextCol;
+	BL sudoku				;			
+	MOV R4, R0				;			result = sudoku(grid, nxtrow, nxtcol);
+	B stepSudokuFor			;		}
+
+stepSudokuFor				;
+	MOV R2, R5				;;;
+	MOV R3, R6				;;; reseting row and col and incrementing try
+	ADD R9, #1				;;;
+	B sudokuFor				; 	}
+	
+endSudokuFor				;
+	CMP R4, #0				; 	if(!result){
+	BNE endSudoku			; 	    value = 0;
+	MOV R0, #0				;	    row = savedRow;
+	MOV R2, R5				;	  	col = savedCol;
+	MOV R3, R6				;	    setSquare(grid, row, col, value);
+	BL setSquare			; 	}
+							; }
+							
+endSudoku					; return result
+
+	LDMFD sp!, {R4-R9, pc}	; Load local variables
+
+;printGrid
+;start R2 and R3 at 0,0
+;nested loop for each row
+;getsquare and sendchar
+
+;R1 - grid to print
+;void
+printGrid
+	STMFD sp!, {R4, lr}		; Save local variables
+	MOV R4, R1				; savedGrid = grid;
+	MOV R2, #0				; gridRow = 0;
+	
+printOuterFor				; while(gridRow < 9){
+	MOV R3, #0				; 	  gridCol = 0;
+printInnerFor				;
+	CMP R3, #9				;	  while(gridCol < 9){
+	BEQ endPrintInnerFor	;
+	MOV R1, R4				;		  grid = savedGrid;
+	BL getSquare			;		  value = getSquare(grid, row, col);
+	ADD R0, R0, #0x30		;		  value += ASCII_OFFSET;
+	BL sendchar				;		  System.out.print(value);
+	ADD R3, #1				;		  gridCol++;
+	B printInnerFor			;		
+endPrintInnerFor			;	  }
+	LDR R0, =0xA			;
+	BL sendchar				;	  System.out.println();
+	ADD R2, #1				;	  gridRow++;
+	CMP R2, #9				;
+	BEQ endPrint			;
+	B printOuterFor			;	  
+endPrint					; }
+	LDR R0, =0xA			;
+	BL sendchar				; System.out.println();
+				
+	LDMFD sp!, {R4, pc}		; Load local variables
+	
+;start R2 and R3 at 0,0
+;nested loop for each row
+;getkey, setsquare and sendchar
+	
+userInput
+	STMFD sp!, {R4, lr}		; Save local variables
+	MOV R4, R1				; savedGrid = grid
+	MOV R2, #0				; inputRow = 0
+	
+inputOuterFor				; while(inputRow < 9){
+	MOV R3, #0				; 		inputCol = 0;
+inputInnerFor				;		while(inputCol < 9){
+	CMP R3, #9				;			
+	BEQ endInputInnerFor	;
+	BL getkey				;			input = getInput();
+	CMP R0, #0x8			;			if(input == BACKSPACE) {
+	BEQ backSpace			;				backspace();
+	CMP R0, #0x30			;			}
+	BLT inputInnerFor		;			else if(
+	CMP R0, #0x39			;				input > 0
+	BGT inputInnerFor		;					&&
+	SUB R0,#0x30			;				input <= 9){
+	MOV R1, R4				;				grid = savedGrid;
+	BL setSquare			;				setSquare(grid, row, col, value);
+	ADD R0, #0x30			;				input += ASCII_OFFSET;
+	BL sendchar				;				System.out.print(input);
+	ADD R3, #1				;				inputCol++;
+	B inputInnerFor			;		}
+endInputInnerFor			;
+	LDR R0, =0xA			;
+	BL sendchar				;		System.out.println();
+	ADD R2, #1				;		inputRow++;
+	CMP R2, #9				;
+	BEQ endInput			;
+	B inputOuterFor			; }
+
+backSpace					; void backSpace(){
+	CMP R3, #0				; 		if(inputCol == 0) backRow();
+	BEQ backRow				;		else{
+	SUB R3, #1				; 			inputCol-;
+	MOV R0, #0				; 			value = 0;
+	MOV R1, R4				; 			grid = savedGrid;
+	BL setSquare			; 			setSquare(grid, row, col, value);
+	BL clearChar			; 			clearChar();
+							;		}
+	B inputInnerFor			; }
+
+backRow						; void backRow(){
+	CMP R2, #0				; 	
+	BEQ inputInnerFor		; 	if(inputRow != 0){
+	MOV R3, #8				; 		inputCol = 8;
+	SUB R2, #1				; 		inputRow--;
+	MOV R0, #0				; 		value = 0;
+	MOV R1, R4				; 		grid = savedGrid;
+	BL setSquare			; 		setSquare(grid, row, col, value);
+	BL clearChar			; 	}
+	B inputInnerFor			; }
+
+endInput					;
+	LDR R0, =0xA			; System.out.println();
+	BL sendchar				;
+	LDMFD sp!, {R4, pc}		; Load local variables
+
+clearChar
+	STMFD sp!, {lr}	; Save local variables
+	LDR R0, =0x8	; 
+	BL sendchar		; System.out.print(BACKSPACE);
+	LDR R0, =0x20	;
+	BL sendchar		; System.out.print(" ");
+	LDR R0, =0x8	;
+	BL sendchar		; System.out.print(BACKSPACE);
+	LDMFD sp!, {pc}	; Load local variables
+
+	AREA	Grids, DATA, READWRITE
+
+testGridOne
+	DCB	0,0,0,0,0,5,6,7,0
+	DCB	0,2,3,0,0,0,0,0,0
+	DCB	0,4,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	0,0,0,0,0,0,0,0,0
+	DCB	8,0,0,0,0,0,0,0,0
+	DCB	9,0,0,0,0,0,0,0,0
+
+testGridTwo
+	DCB	0,2,7,6,0,0,0,0,3
+	DCB	3,0,0,0,0,9,0,0,0
+	DCB	8,0,0,0,4,0,5,0,0
+	DCB	6,0,0,0,0,2,0,4,0
+	DCB	0,0,2,0,0,0,8,0,0
+	DCB	0,4,0,7,0,0,0,0,1
+	DCB	0,0,3,0,1,0,0,0,7
+	DCB	0,0,0,8,0,0,0,0,9
+	DCB	9,0,0,0,0,6,2,8,0
+
+testSolutionTwo
+	DCB	1,2,7,6,5,8,4,9,3
+	DCB	3,5,4,2,7,9,1,6,8
+	DCB	8,9,6,3,4,1,5,7,2
+	DCB	6,3,9,1,8,2,7,4,5
+	DCB	7,1,2,4,9,5,8,3,6
+	DCB	5,4,8,7,6,3,9,2,1
+	DCB	2,8,3,9,1,4,6,5,7
+	DCB	4,6,5,8,2,7,3,1,9
+	DCB	9,7,1,5,3,6,2,8,4
+
+testGridThree
+	DCB	0,0,0,9,0,0,0,5,0
+	DCB	0,0,3,0,4,0,1,0,6
+	DCB	0,4,0,2,0,0,0,8,0
+	DCB	7,0,8,0,0,0,0,0,0
+	DCB	0,3,0,0,0,0,0,6,0
+	DCB	0,0,0,0,0,0,5,0,4
+	DCB	0,6,0,0,0,1,0,7,0
+	DCB	4,0,2,0,5,0,3,0,0
+	DCB	0,9,0,0,0,8,0,0,0
+
+testSolutionThree
+	DCB	1,2,7,9,8,6,4,5,3
+	DCB	9,8,3,5,4,7,1,2,6
+	DCB	5,4,6,2,1,3,7,8,9
+	DCB	7,5,8,3,6,4,2,9,1
+	DCB	2,3,4,1,9,5,8,6,7
+	DCB	6,1,9,8,7,2,5,3,4
+	DCB	8,6,5,4,3,1,9,7,2
+	DCB	4,7,2,6,5,9,3,1,8
+	DCB	3,9,1,7,2,8,6,4,5
+		
+gridUser
+		SPACE 81
+
+	END
