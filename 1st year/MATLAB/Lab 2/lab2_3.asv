@@ -11,5 +11,5 @@ for QAM = 1 : length(QAM_Range)
         Dem = qamdemod(signal_noise, QAM_Range(QAM));
         BER(QAM,SNR)=((length(stream) - sum(stream==Dem))/length(stream));
     end
-end
+end+
 semilogy(SNRRangeInDb,BER(1,:),SNRRangeInDb,BER(2,:),SNRRangeInDb,BER(3,:),SNRRangeInDb,BER(4,:));
