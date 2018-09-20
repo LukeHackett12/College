@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <math.h>
 
+#define BUZZ_SIZE 1024
+
 typedef struct node{
 	int data;
 	struct node *next;
@@ -103,12 +105,54 @@ int calculateResult(char *toCalc[], int size){
 	return result;
 }
 
+char *append(char character, char *string)
+{
+	char * result = NULL;
+	asprintf(&result, "%s%c", string, character);
+	return result;
+}
+
+char **readFileString(char *file){
+	char buff[BUZZ_SIZE];
+	FILE *f = fopen(file, "r");
+	fgets(buff, BUZZ_SIZE, f);
+	fclose(f);
+
+	char *toCalc[BUZZ_SIZE];
+	for(int i = 0; i < BUZZ_SIZE; i++){
+		toCalc[i] = "";
+	}
+
+	int i = 0;
+	int size = 0;
+	char c = buff[i];
+	while(c != '\0'){
+		c = buff[i];
+		if(c != ' '){
+			toCalc[size] = append(c, toCalc[size]);
+		}
+		else{
+			size++;
+		}
+		i++;
+	}
+
+	return toCalc;
+}
+
+int getArraySize(char **array){
+	int i = 0;
+	while(array[i] != ""){
+		i++;
+	}
+
+	return i+1;
+}
+
 int main(){
-	//Program to demonstrate the code
-	//DOES NOT READ FROM FILE
-	
-	char *toCalc[7] = {"7","8","3","^","28","+","+"};
-	
-	int result = calculateResult(toCalc, 7);
+	char **toCalc = readFileString("numbers.txt");
+	int size = getArraySize(toCalc);
+
+	int result = calculateResult(toCalc, size);
 	printf("%d\n", result);
 }
