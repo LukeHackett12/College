@@ -1,337 +1,404 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <math.h>
+#include <string.h>
 
-#define BUZZ_SIZE 1024
+#define BUFSIZE 100
 
-typedef struct node{
-	double data;
-	struct node *next;
+typedef struct node {
+    double data;
+    struct node *next;
 } node;
 
-bool isNumber(char *string){
-	int i = 0;
-	while(string[i] != '\0'){
-		if(!isdigit(string[i]) && string[i] != '.'){
-			return false;
-		}
-		i++;
-	}
+bool needsConversion(char *line) {
+    char *notation;
+    char *target;
 
-	if(i == 0) return false; 
+    bool match = false;
 
-	return true;
+    notation = strtok(line, " ");
+    target = "infix";
+    if (strcmp(notation, target) == 0) {
+        match = true;
+    }
+
+    for (int i = 0; i < strlen(notation); i++) {
+        line[i] = ' ';
+    }
+
+    line[strlen(notation)] = ' ';
+
+    return match;
 }
 
-void addToList(node *head, char *string){
-	double number;
-	sscanf(string, "%lf", &number);
+bool isNumber(char *string) {
+    int i = 0;
 
-	node *next = head;
-	while(next->next!= NULL){
-		next = next->next;
-	}
+    while (string[i] != '\0') {
+        if (!isdigit(string[i]) && string[i] != '.') {
+            return false;
+        }
+        i++;
+    }
 
-	node *new = (node*)malloc(sizeof(node));
-	new->data = number;
-	new->next = NULL;
-	next->next = new;
+    if (i == 0) return false;
+
+    return true;
 }
 
-void removeLastElement(node *head){
-	node *next = head;
-	while(next->next != NULL && next->next->next != NULL){
-		next = next->next;
-	}
+void addToList(node *head, char *string) {
+    double number;
+    sscanf(string, "%lf", &number);
 
-	next->next = NULL;
+    node *next = head;
+    while (next->next != NULL) {
+        next = next->next;
+    }
+
+    if (head->next == NULL && head->data == 0) {
+        head->data = number;
+    } else {
+        node *new = (node *) malloc(sizeof(node));
+        new->data = number;
+        new->next = NULL;
+        next->next = new;
+    }
 }
 
-double *numbersFromList(node *head){
-	double *elements;
-	elements = malloc(sizeof(double));
+void removeLastElement(node *head) {
+    if (head->next != NULL) {
+        node *next = head;
+        while (next->next != NULL && next->next->next != NULL) {
+            next = next->next;
+        }
 
-	for(int i = 0; i < 2; i++){
-		node *next = head;
-		while(next->next != NULL){
-			next = next->next;
-		}
-		elements[i] = next->data;
-
-		removeLastElement(head);
-	}
-
-	return elements;
+        next->next = NULL;
+    } else {
+        head->data = 0;
+        head->next = NULL;
+    }
 }
 
-double performOperation(node *head, char *operator){
-	double *elements;
-	elements = numbersFromList(head);
+double *numbersFromList(node *head) {
+    double *elements;
+    elements = malloc(sizeof(double));
 
-	switch(operator[0]){
-		case '^':
-			return pow(elements[0],elements[1]);
-			break;
-		case '*':
-			return elements[1]*elements[0];
-			break;
-		case '/':
-			return elements[1]/elements[0];
-			break;
-		case '+':
-			return elements[1]+elements[0];
-			break;
-		case '-':
-			return elements[1]-elements[0];
-			break;
-	}
+    for (int i = 0; i < 2; i++) {
+        node *next = head;
+        while (next->next != NULL) {
+            next = next->next;
+        }
+        elements[i] = next->data;
 
-	return 0;
+        removeLastElement(head);
+    }
+
+    return elements;
 }
 
-void addNumToList(node *head, double number){
-	node *next = head;
-	while(next->next!= NULL){
-		next = next->next;
-	}
+double performOperation(node *head, char *operator) {
+    double *elements;
+    elements = numbersFromList(head);
 
-	node *new = (node*)malloc(sizeof(node));
-	new->data = number;
-	new->next = NULL;
-	next->next = new;
+    switch (operator[0]) {
+        case '^':
+            return pow(elements[0], elements[1]);;
+        case 'X':
+            return elements[1] * elements[0];;
+        case '/':
+            return elements[1] / elements[0];;
+        case '+':
+            return elements[1] + elements[0];
+        case '-':
+            return elements[1] - elements[0];
+    }
+
+    return 0;
 }
 
-double popFromStack(node *head){
-	double element;
+void addNumToList(node *head, double number) {
+    node *next = head;
+    while (next->next != NULL) {
+        next = next->next;
+    }
 
-	node *next = head;
-	while(next->next != NULL){
-		next = next->next;
-	}
-	element = next->data;
-	
-	removeLastElement(head);
-
-	return element;
+    if (head->next == NULL && head->data == 0) {
+        head->data = number;
+    } else {
+        node *new = (node *) malloc(sizeof(node));
+        new->data = number;
+        new->next = NULL;
+        next->next = new;
+    }
 }
 
-double calculateResult(char *toCalc[], int size){
-	node *head = (node*)malloc(sizeof(node));
-	head->next = NULL;
+double calculateResult(char *toCalc[], int size) {
+    node *head = (node *) malloc(sizeof(node));
+    head->data = 0;
+    head->next = NULL;
 
-	for(int i = 0; i < size; i++){
-		if(isNumber(toCalc[i])){
-			addToList(head, toCalc[i]);
-		}
-		else{
-			double latest = performOperation(head, toCalc[i]);
-			addNumToList(head, latest);
-		}
-	}
+    for (int i = 0; i < size; i++) {
+        char *element = toCalc[i];
+        if (isNumber(element)) {
+            addToList(head, element);
+        } else {
+            double latest = performOperation(head, element);
+            addNumToList(head, latest);
+        }
+    }
 
-	double result = head->next->data;
+    double result = head->data;
 
-	return result;
+    return result;
 }
 
-char *append(char character, char *string)
-{
-	char * result = NULL;
-	asprintf(&result, "%s%c", string, character);
-	return result;
+char *append(char character, char *string) {
+    char *result = NULL;
+    asprintf(&result, "%s%c", string, character);
+    return result;
 }
 
-char **readFileString(char *file){
-	char buff[BUZZ_SIZE];
-	FILE *f = fopen(file, "r");
-	fgets(buff, BUZZ_SIZE, f);
-	fclose(f);
+void readFileString(char *string, char **toCalc) {
+    for (int i = 0; i < BUFSIZE; i++) {
+        toCalc[i] = "";
+    }
 
-	char *toCalc[BUZZ_SIZE];
-	for(int i = 0; i < BUZZ_SIZE; i++){
-		toCalc[i] = "";
-	}
+    int i = 0;
+    int size = 0;
+    char c = string[i];
+    bool stringStarted = false;
+    while (c != '\0' || c != '\n') {
+        c = string[i];
 
-	int i = 0;
-	int size = 0;
-	char c = buff[i];
-	while(c != '\0'){
-		c = buff[i];
+        if (c >= 33 && c <= 126 && c != ' ') {
+            toCalc[size] = append(c, toCalc[size]);
+            stringStarted = true;
+        } else if (c == ' ' && stringStarted) {
+            size++;
+        } else if (c == '\n' ||  c ==  '\0') {
+            break;
+        }
+        i++;
+    }
 
-		if(c >= 33 && c <= 126 && c != ' '){
-			toCalc[size] = append(c, toCalc[size]);
-		}
-		else if(c == ' '){
-			size++;
-		}
-
-		i++;
-	}
-
-	return toCalc;
+    toCalc[++size] = "\0";
 }
 
-int getArraySize(char **array){
-	int i = 0;
+int getArraySize(char **array) {
+    int i = 0;
 
-	while(array[i][0] != 0 && array[i][0] != '\0' && array[i] != ""){
-		i++;
-	}
+    while (array[i][0] != 0 && array[i][0] != '\0' && array[i] != "") {
+        i++;
+    }
 
-	return i + !(array[i][0] == 0);
+    return i + !(array[i][0] == 0);
 }
 
-int isOperator(char *string){
-	int boolean = 0;
-	if(string[0] == '^'
-		|| string[0] == '*'
-		|| string[0] == '/'
-		|| string[0] == '+'
-		|| string[0] == '-'){
-		boolean = 1;
-	}
+int isOperator(char *string) {
+    int boolean = 0;
+    if (string[0] == '^'
+        || string[0] == 'X'
+        || string[0] == '/'
+        || string[0] == '+'
+        || string[0] == '-') {
+        boolean = 1;
+    }
 
-	return boolean;
+    return boolean;
 }
 
-void pushNonNumToStack(node *head, char character){
-	node *next = head;
-	while(next->next != NULL){
-		next = next->next;
-	}
+void pushNonNumToStack(node *head, char character) {
+    node *next = head;
+    while (next->next != NULL) {
+        next = next->next;
+    }
 
-	node *new = (node*)malloc(sizeof(node));
-	new->data = (double) character;
-	new->next = NULL;
-	next->next = new;
+    if (head->next == NULL && head->data == 0) {
+        head->data = (double) character;
+    } else {
+        node *new = (node *) malloc(sizeof(node));
+        new->data = (double) character;
+        new->next = NULL;
+        next->next = new;
+    }
 }
 
-char *popNonNumFromStack(node *head){
-	char *element[1];
-
-	node *next = head;
-	while(next->next != NULL){
-		next = next->next;
-	}
-	element[0] = (char)next->data;
-
-	removeLastElement(head);
-
-	return element;
+void popNonNumFromStack(node *head, char element[2]) {
+    if (head != NULL) {
+        node *next = head;
+        while (next->next != NULL) {
+            next = next->next;
+        }
+        element[0] = (char) next->data;
+        element[1] = '\0';
+        removeLastElement(head);
+    }
 }
 
-char *peekNonNumFromStack(node *head){
-	char *element[1];
-
-	node *next = head;
-	while(next->next != NULL){
-		next = next->next;
-	}
-	element[0] = (char)next->data;
-
-	return element;
+void peekNonNumFromStack(node *head, char element[2]) {
+    node *next = head;
+    while (next->next != NULL) {
+        next = next->next;
+    }
+    element[0] = (char) next->data;
+    element[1] = '\0';
 }
 
-int getPrecedence(char operator){
-	switch(operator){
-		case '^':
-			return 5;
-		case '*':
-			return 4;
-		case '/':
-			return 3;
-		case '+':
-			return 2;
-		case '-':
-			return 1;
-	}
+int getPrecedence(char operator) {
+    switch (operator) {
+        case '^':
+            return 5;
+        case 'X':
+            return 4;
+        case '/':
+            return 3;
+        case '+':
+            return 2;
+        case '-':
+            return 1;
+    }
 
-	return -1;
+    return -1;
 }
 
-int lowerPrecedence(node *head, char *operator){
-	char *newOp = peekNonNumFromStack(head);
-	char key[5]={'^','*','/','+','-'};
+int lowerPrecedence(node *head, char *operator) {
+    char newOp[2];
+    peekNonNumFromStack(head, newOp);
 
-	int isLower = 0;
+    if (newOp != NULL) {
+        int isLower = -1;
 
-	if(isOperator(newOp) == 1){
-		/* --------------
-		 * PROBLEM IS HERE
-		 * --------------
-		 * */
+        if (isOperator(newOp) == 1) {
+            int new = getPrecedence(newOp[0]);
+            int old = getPrecedence(operator[0]);
 
-		int new = getPrecedence(newOp[0]);
-		int old = getPrecedence(operator[0]);
+            if (new > old) {
+                isLower = 1;
+            }
+            else{
+                isLower = 0;
+            }
+        }
 
-		if(new > old){
-			isLower=1;
-		}
-	}
+        return isLower;
+    }
 
-	return isLower;
+    return 0;
 }
 
-char **reversePolishNotation(char **array, int size){
-	node *head = (node*)malloc(sizeof(node));
+char **reversePolishNotation(char **array, int size) {
+    node *head = (node *) malloc(sizeof(node));
+    head->data = 0;
+    head->next = NULL;
 
-	char **resultArray;
-	resultArray = malloc(size * sizeof(char*));
-	for (int i = 0; i < size; i++)
-		resultArray[i] = malloc((100) * sizeof(char));
-	
-	int current = 0;
-	for(int i = 0; i < size; i++){
-		if(isNumber(array[i])){
-			resultArray[current] = array[i];
-			current++;
-		}
-		else if(array[i][0] == '('){
-			pushNonNumToStack(head, array[i][0]);
-		}
-		else if(isOperator(array[i])){
-			while(lowerPrecedence(head, array[i]) == 1){
-				char *operator = popNonNumFromStack(head);
-				*resultArray[current] = *operator;
-				current++;
-			}
+    char **resultArray;
+    resultArray = malloc(size * sizeof(char *));
+    for (int i = 0; i < size; i++)
+        resultArray[i] = malloc((100) * sizeof(char));
 
-			pushNonNumToStack(head, array[i][0]);
-		}
-		else if(array[i][0] == ')'){
-			char *next = popNonNumFromStack(head);
-			next[1] = '\0';
+    int current = 0;
+    for (int i = 0; i < size; i++) {
+        char *currentElement = array[i];
+        if (isNumber(currentElement)) {
+            resultArray[current] = currentElement;
+            current++;
+        } else if (currentElement[0] == '(') {
+            pushNonNumToStack(head, currentElement[0]);
+        } else if (isOperator(currentElement)) {
+            while (lowerPrecedence(head, currentElement)  == 1) {
+                char operator[2];
+                popNonNumFromStack(head, operator);
+                *resultArray[current] = *operator;
+                current++;
+            }
 
-			while(next[0] != '('){
-				*resultArray[current] = *next;
+            pushNonNumToStack(head, currentElement[0]);
+        } else if (currentElement[0] == ')') {
+            char next[2];
+            popNonNumFromStack(head, next);
+            next[1] = '\0';
 
-				current++;
-				next = popNonNumFromStack(head);
-			}
-		}
-	}
+            while (next[0] != '(') {
+                *resultArray[current] = *next;
 
-	char *next = popNonNumFromStack(head);
-	while(next[0] != NULL){
-		if(isOperator(next)){
-			*resultArray[current] = *next;
-		}
-		current++;
-		next = popNonNumFromStack(head);
-	}
+                current++;
+                popNonNumFromStack(head, next);
+            }
+        }
+    }
 
-	return resultArray;
+    char next[2];
+    popNonNumFromStack(head, next);
+    while (next[0] != NULL) {
+        if (isOperator(next)) {
+            *resultArray[current] = *next;
+        }
+        current++;
+        popNonNumFromStack(head, next);
+    }
+
+    return resultArray;
 }
 
-int main(){
-	char **toCalc = readFileString("numbers.txt");
-	int size = getArraySize(toCalc);
+int main(int argc, char **argv) {
+    char buf[BUFSIZE];
+    char *filename;
 
-	toCalc = reversePolishNotation(toCalc, size);
-	size = getArraySize(toCalc);
+    if (argc == 1) {
+        printf("Error: No input filename provided\n");
+        printf("Usage: %s <input filename>\n", argv[0]);
+        exit(1);
+    } else if (argc > 2) {
+        printf("Error: Too many command line parameters\n");
+        printf("Usage: %s <input filename>\n", argv[0]);
+        exit(1);
+    } else {
+        filename = argv[1];
+    }
 
-	double result = calculateResult(toCalc, size);
-	printf("%f\n", result);
+
+    printf("%s\n", filename);
+
+    FILE *fp = fopen(filename, "r");
+    int lines = 0;
+    int ch = 0;
+
+    char *result = malloc(strlen(filename) + strlen(".results") + 1);
+    strcpy(result, filename);
+    strcat(result, ".results");
+    FILE *np = fopen(result, "w");
+
+    while (!feof(fp)) {
+        fgets(buf, BUFSIZE, fp);
+
+        fprintf(np, buf);
+
+        if(buf[strlen(buf)-1] != '\n'){
+            fprintf(np, "\n");
+        }
+
+        bool toConvert = needsConversion(buf);
+
+        char **toCalc = malloc((size_t) (char *) BUFSIZE);
+        readFileString(buf, toCalc);
+
+        int size = getArraySize(toCalc);
+
+        if (toConvert) {
+            toCalc = reversePolishNotation(toCalc, size);
+            size = getArraySize(toCalc);
+        }
+
+        double result = calculateResult(toCalc, size);
+        printf("%f", result);
+        fprintf(np, "%f\n", result);
+    }
+
+    fclose(fp);
 }
+
+
