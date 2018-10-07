@@ -14,7 +14,7 @@ class SubscriberReceiver implements Runnable {
         DatagramSocket socket = new DatagramSocket(port, InetAddress.getLocalHost())
 
         while (true) {
-            byte[] buffer= new byte[65508]
+            byte[] buffer = new byte[65508]
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length)
 
             socket.receive(packet)

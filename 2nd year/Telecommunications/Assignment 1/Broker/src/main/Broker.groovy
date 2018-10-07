@@ -9,9 +9,9 @@ class Broker {
     public static final String SUBSCRIBER = 'main.Structures.Subscriber'
     public static final String IDENTITY = 'Identity'
 
-    static int DEFAULT_PUBLISHER_PORT = 5050
-    static int DEFAULT_SUBSCRIBER_PORT = 5151
-    static int DEFAULT_IDENTITY_PORT = 5252
+    static int pubPort
+    static int idPort
+    static int subPort
 
     static int uniqueId
     static ArrayList<Subscriber> subscribersList
@@ -22,14 +22,22 @@ class Broker {
         subscribersList = new ArrayList<>()
         publishersList = new ArrayList<>()
 
-        BrokerReceiver publisherReceiver = new BrokerReceiver(PUBLISHER, DEFAULT_PUBLISHER_PORT)
+        BrokerReceiver publisherReceiver = new BrokerReceiver(PUBLISHER, (pubPort = findFreePort()))
         createThread(publisherReceiver)
 
-        BrokerReceiver identityReceiver = new BrokerReceiver(IDENTITY, DEFAULT_IDENTITY_PORT)
+        BrokerReceiver identityReceiver = new BrokerReceiver(IDENTITY, (idPort = findFreePort()))
         createThread(identityReceiver)
 
-        BrokerReceiver subscriberReceiver = new BrokerReceiver(SUBSCRIBER, DEFAULT_SUBSCRIBER_PORT)
+        BrokerReceiver subscriberReceiver = new BrokerReceiver(SUBSCRIBER, (subPort = findFreePort()))
         createThread(subscriberReceiver)
+    }
+
+    int findFreePort(){
+        ServerSocket ss = new ServerSocket()
+        ss.bind(new InetSocketAddress(0))
+        int port = ss.localPort
+        ss.close()
+        port
     }
 
     void createThread(Runnable runnable){

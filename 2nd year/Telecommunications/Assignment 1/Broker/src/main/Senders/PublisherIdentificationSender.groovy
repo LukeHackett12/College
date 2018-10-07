@@ -17,7 +17,7 @@ class PublisherIdentificationSender implements Runnable{
 
     @Override
     void run() {
-        IdentificationContent identificationContent = new IdentificationContent(uniqueId)
+        IdentificationContent identificationContent = new IdentificationContent(uniqueId, Broker.pubPort)
 
         ByteArrayOutputStream bstream = new ByteArrayOutputStream()
         ObjectOutputStream ostream = new ObjectOutputStream(bstream)

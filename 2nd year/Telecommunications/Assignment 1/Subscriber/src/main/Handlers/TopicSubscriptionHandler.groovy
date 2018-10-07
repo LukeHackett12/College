@@ -34,7 +34,7 @@ class TopicSubscriptionHandler implements Runnable {
         print("What do you want to subscribe to? ")
         ArrayList<String> topics = System.in.newReader().readLine().split(',')
 
-        senderProcess = new SubscriberSender(port, SUBSCRIBE, topics)
+        senderProcess = new SubscriberSender(SUBSCRIBE, topics)
         Thread thread = new Thread(senderProcess)
         thread.start()
     }
@@ -43,13 +43,13 @@ class TopicSubscriptionHandler implements Runnable {
         print("What do you want to unsubscribe from? ")
         ArrayList<String> topics = System.in.newReader().readLine().split(',')
 
-        senderProcess = new SubscriberSender(port, UNSUBSCRIBE, topics)
+        senderProcess = new SubscriberSender(UNSUBSCRIBE, topics)
         Thread thread = new Thread(senderProcess)
         thread.start()
     }
 
     private void addBroker(){
-        print("Enter any amount of brokers you want to add separated by commas: ")
+        print("Enter any amount of brokers you want to add separated by commas(in the format X.X.X.X:X): ")
         ArrayList<String> brokers = System.in.newReader().readLine().split(',')
 
         Subscriber.brokers.addAll(brokers)

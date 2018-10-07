@@ -1,24 +1,26 @@
 package main
 
-import main.Handlers.MessageHandler
-import main.Senders.PublisherIdentificationSender
+import main.Handlers.PublisherHandler
+import main.Receivers.PublisherReceiver
+import main.Structures.Broker
+import main.Structures.PublisherContent
 
 class Publisher {
 
-    final int DEFAULT_BROKER_PORT = 5050
-    final int DEFAULT_IDENTIFICATION_PORT = 5252
-
     static int batchNo
-    static int publisherId
     static int port
+
+    static ArrayList<Broker> brokers
+    static ArrayList<PublisherContent> trailingMessages
+    static ArrayList<Integer> awaitingAck
 
     Publisher(){
         batchNo = 0
+        brokers = new ArrayList<>()
+        trailingMessages = new ArrayList<>()
+        awaitingAck = new ArrayList<>()
 
-        PublisherIdentificationSender publisherIdentificationSender = new PublisherIdentificationSender(DEFAULT_IDENTIFICATION_PORT)
-        createThread(publisherIdentificationSender)
-
-        MessageHandler messagePublisher = new MessageHandler(DEFAULT_BROKER_PORT)
+        PublisherHandler messagePublisher = new PublisherHandler()
         createThread(messagePublisher)
     }
 

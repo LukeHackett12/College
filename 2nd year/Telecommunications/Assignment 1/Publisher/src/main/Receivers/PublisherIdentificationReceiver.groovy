@@ -3,20 +3,14 @@ package main.Receivers
 import main.Publisher
 import main.Structures.IdentificationContent
 
-class PublisherIdentificationReceiver implements Runnable{
-
-    int port
-
-    PublisherIdentificationReceiver(int port){
-        this.port = port
-    }
+class PublisherIdentificationReceiver implements Runnable {
 
     @Override
     void run() {
-        byte[] buffer= new byte[65508]
+        byte[] buffer = new byte[65508]
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length)
 
-        DatagramSocket socket = new DatagramSocket(port, InetAddress.getLocalHost())
+        DatagramSocket socket = new DatagramSocket(Publisher.port, InetAddress.getLocalHost())
 
         socket.receive(packet)
         socket.close()
@@ -25,8 +19,16 @@ class PublisherIdentificationReceiver implements Runnable{
         ByteArrayInputStream bstream = new ByteArrayInputStream(buffer)
         ObjectInputStream ostream = new ObjectInputStream(bstream)
         IdentificationContent identificationContent = ostream.readObject() as IdentificationContent
-        Publisher.publisherId = identificationContent.uniqueId
 
-        println("ID is $Publisher.publisherId")
+        String address = packet.address.toString().substring(1, packet.address.toString().length())
+        Publisher.brokers.find {
+            it.location == "$address:$identificationContent.publisherPort"
+        }.id = identificationContent.uniqueId
+
+        println("ID is $identificationContent.uniqueId for broker $packet.address:$identificationContent.publisherPort")
+
+        PublisherReceiver publisherReceiver = new PublisherReceiver()
+        Thread thread = new Thread(publisherReceiver)
+        thread.start()
     }
 }

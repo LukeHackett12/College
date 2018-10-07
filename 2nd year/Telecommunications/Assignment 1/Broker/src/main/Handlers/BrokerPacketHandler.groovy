@@ -62,11 +62,9 @@ class BrokerPacketHandler implements Runnable {
     }
 
     void missedPublisherContent(Publisher publisher, int targetNumber) {
-        for (int i = publisher.currentMessage; i < targetNumber; i++) {
-            PublisherLossSender sender = new PublisherLossSender(publisher.address, publisher.port, publisher.currentMessage)
+            PublisherLossSender sender = new PublisherLossSender(publisher.address, publisher.port, (targetNumber - publisher.currentMessage))
             Thread thread = new Thread(sender)
             thread.start()
-        }
     }
 
     void readSubscriberContent(ObjectInputStream ostream) {

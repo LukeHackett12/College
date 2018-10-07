@@ -24,7 +24,7 @@ class PublisherIdentificationSender implements Runnable {
         socket.send(packet)
         socket.close()
 
-        PublisherIdentificationReceiver publisherReceiver = new PublisherIdentificationReceiver(Publisher.port)
+        PublisherIdentificationReceiver publisherReceiver = new PublisherIdentificationReceiver()
         Thread thread = new Thread(publisherReceiver)
         thread.start()
     }

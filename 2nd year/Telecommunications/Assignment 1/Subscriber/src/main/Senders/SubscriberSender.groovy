@@ -5,20 +5,18 @@ import main.Subscriber
 
 class SubscriberSender implements Runnable{
 
-    int port
     ArrayList<String> topics
     String type
 
-    SubscriberSender(int port, String type, ArrayList<String> topics){
-        this.port = port
+    SubscriberSender(String type, ArrayList<String> topics){
         this.topics = topics
         this.type = type
     }
 
     @Override
     void run() {
-        for(String ip : Subscriber.brokers) {
-            InetAddress address = InetAddress.getByName(ip)
+        for(String broker : Subscriber.brokers) {
+            InetAddress address = InetAddress.getByName(broker.split(":").first())
 
             ByteArrayOutputStream bstream = new ByteArrayOutputStream()
             ObjectOutputStream ostream = new ObjectOutputStream(bstream)
@@ -27,7 +25,7 @@ class SubscriberSender implements Runnable{
 
             byte[] buffer = bstream.toByteArray()
 
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, port)
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, broker.split(":").last().toInteger())
             DatagramSocket socket = new DatagramSocket()
 
             socket.send(packet)
