@@ -10,7 +10,7 @@
 #define BUFSIZE 100
 
 typedef struct node {
-    double data;
+    int data;
     struct node *next;
 } node;
 
@@ -51,8 +51,8 @@ bool isNumber(char *string) {
 }
 
 void addToList(node *head, char *string) {
-    double number;
-    sscanf(string, "%lf", &number);
+    int number;
+    sscanf(string, "%d", &number);
 
     node *next = head;
     while (next->next != NULL) {
@@ -83,9 +83,9 @@ void removeLastElement(node *head) {
     }
 }
 
-double *numbersFromList(node *head) {
-    double *elements;
-    elements = malloc(sizeof(double));
+int *numbersFromList(node *head) {
+    int *elements;
+    elements = malloc(sizeof(int));
 
     for (int i = 0; i < 2; i++) {
         node *next = head;
@@ -100,8 +100,8 @@ double *numbersFromList(node *head) {
     return elements;
 }
 
-double performOperation(node *head, char *operator) {
-    double *elements;
+int performOperation(node *head, char *operator) {
+    int *elements;
     elements = numbersFromList(head);
 
     switch (operator[0]) {
@@ -120,7 +120,7 @@ double performOperation(node *head, char *operator) {
     return 0;
 }
 
-void addNumToList(node *head, double number) {
+void addNumToList(node *head, int number) {
     node *next = head;
     while (next->next != NULL) {
         next = next->next;
@@ -136,7 +136,7 @@ void addNumToList(node *head, double number) {
     }
 }
 
-double calculateResult(char *toCalc[], int size) {
+int calculateResult(char *toCalc[], int size) {
     node *head = (node *) malloc(sizeof(node));
     head->data = 0;
     head->next = NULL;
@@ -146,12 +146,12 @@ double calculateResult(char *toCalc[], int size) {
         if (isNumber(element)) {
             addToList(head, element);
         } else {
-            double latest = performOperation(head, element);
+            int latest = performOperation(head, element);
             addNumToList(head, latest);
         }
     }
 
-    double result = head->data;
+    int result = head->data;
 
     return result;
 }
@@ -218,10 +218,10 @@ void pushNonNumToStack(node *head, char character) {
     }
 
     if (head->next == NULL && head->data == 0) {
-        head->data = (double) character;
+        head->data = (int) character;
     } else {
         node *new = (node *) malloc(sizeof(node));
-        new->data = (double) character;
+        new->data = (int) character;
         new->next = NULL;
         next->next = new;
     }
@@ -393,9 +393,9 @@ int main(int argc, char **argv) {
             size = getArraySize(toCalc);
         }
 
-        double result = calculateResult(toCalc, size);
-        printf("%f", result);
-        fprintf(np, "%f\n", result);
+        int result = calculateResult(toCalc, size);
+        printf("%d", result);
+        fprintf(np, "%d\n", result);
     }
 
     fclose(fp);
