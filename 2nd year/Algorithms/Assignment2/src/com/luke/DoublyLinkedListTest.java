@@ -1,4 +1,3 @@
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -10,8 +9,8 @@ import static org.junit.Assert.*;
 /**
  * Test class for Doubly Linked List
  *
- * @author
- * @version 13/10/16 18:15
+ * @author Luke Hackett
+ * @version 13/10/18 18:15
  */
 @RunWith(JUnit4.class)
 public class DoublyLinkedListTest {

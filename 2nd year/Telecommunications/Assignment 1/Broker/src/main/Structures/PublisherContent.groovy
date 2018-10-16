@@ -1,11 +1,13 @@
 package main.Structures
 
 class PublisherContent implements Serializable{
-    String batchNo
+    int uniqueId
+    int batchNo
     ArrayList<String> topics
     String message
 
-    PublisherContent(String batchNo, ArrayList<String> topics, String message){
+    PublisherContent(int uniqueId, int batchNo, ArrayList<String> topics, String message){
+        this.uniqueId = uniqueId
         this.batchNo = batchNo
         this.topics = topics
         this.message = message

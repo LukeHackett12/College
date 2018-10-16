@@ -3,6 +3,9 @@ package main
 
 import main.Handlers.TopicSubscriptionHandler
 import main.Receivers.SubscriberReceiver
+import main.Structures.BrokerContent
+import main.Structures.SubscriberContent
+import tcdIO.Terminal
 
 class Subscriber{
 
@@ -10,10 +13,19 @@ class Subscriber{
 
     static int portNumber
     static ArrayList<String> brokers
+    static ArrayList<SubscriberContent> awaitingAck
+    static ArrayList<BrokerContent> messagesReceived
+
+    static Terminal messageTerminal
 
     Subscriber(){
         portNumber = findFreePort()
         brokers = new ArrayList<>()
+        brokers = new ArrayList<>()
+        awaitingAck = new ArrayList<>()
+        messagesReceived = new ArrayList<>()
+
+        messageTerminal = new Terminal("Messages")
 
         TopicSubscriptionHandler topicSubscription = new TopicSubscriptionHandler(DEFAULT_BROKER_PORT)
         createThread(topicSubscription)

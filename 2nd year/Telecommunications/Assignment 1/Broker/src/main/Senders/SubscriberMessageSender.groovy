@@ -32,14 +32,30 @@ class SubscriberMessageSender implements Runnable{
 
         Broker.subscribersList.forEach{ Subscriber subscriber ->
             if(subscribedToTopic(subscriber.subscribedTopics, topics)) {
+                byte[] flag = [(byte)0]
+                buffer = new byte[flag.length + bstream.toByteArray().length]
+                System.arraycopy(flag, 0, buffer, 0, flag.length)
+                System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)
+
                 packet = new DatagramPacket(buffer, buffer.length, subscriber.address, subscriber.port)
                 socket.send(packet)
             }
         }
 
+        Broker.awaitingAck.add(batchNo)
+
         socket.close()
 
         println("Subscriptions sent")
+
+        while (Broker.awaitingAck.find{it == batchNo}) {
+            //Just wait a sec
+        }
+
+        println("Received ack")
+
+        Thread.currentThread().interrupt()
+        return
     }
 
     boolean subscribedToTopic(ArrayList<String> subscriberTopics, ArrayList<String> topics){

@@ -1,31 +1,38 @@
 package main.Senders
 
 import main.Publisher
-import main.Receivers.PublisherIdentificationReceiver
 
 class PublisherIdentificationSender implements Runnable {
 
+    InetAddress address
     int port
 
-    PublisherIdentificationSender(int port){
-        this.port = port
+    PublisherIdentificationSender(String broker) {
+        this.address = InetAddress.getByName(broker.split(':').first())
+        this.port = broker.split(':').last().toInteger()
     }
 
     @Override
     void run() {
-        InetAddress address = InetAddress.getByName("localhost")
+        ByteArrayOutputStream bstream = new ByteArrayOutputStream()
+        ObjectOutputStream ostream = new ObjectOutputStream(bstream)
+        ostream.writeInt(Publisher.port)
+        ostream.flush()
 
-        byte[] buffer = new byte[0]
+        byte[] flag = [(byte)2]
+        byte[] buffer = new byte[flag.length + bstream.toByteArray().length]
+        System.arraycopy(flag, 0, buffer, 0, flag.length)
+        System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, port)
-        DatagramSocket socket = new DatagramSocket()
+        DatagramSocket socket
 
-        Publisher.port = socket.localPort
+        socket = new DatagramSocket()
+
         socket.send(packet)
         socket.close()
 
-        PublisherIdentificationReceiver publisherReceiver = new PublisherIdentificationReceiver()
-        Thread thread = new Thread(publisherReceiver)
-        thread.start()
+        Thread.currentThread().interrupt()
+        return
     }
 }

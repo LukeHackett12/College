@@ -1,6 +1,7 @@
 package main.Handlers
 
 import main.Senders.SubscriberSender
+import main.Structures.BrokerContent
 import main.Subscriber
 
 class TopicSubscriptionHandler implements Runnable {
@@ -11,22 +12,33 @@ class TopicSubscriptionHandler implements Runnable {
     SubscriberSender senderProcess
     int port
 
-    TopicSubscriptionHandler(int port){
+    TopicSubscriptionHandler(int port) {
         this.port = port
     }
 
     @Override
-    void run(){
-        while(true) {
-            println("Do you want to subscribe to a topic(1), add a broker(2) or unsubscribe from a topic(3)? ")
-            int answer = System.in.newReader().readLine().toInteger()
+    void run() {
+        while (true) {
+            println("Do you want to subscribe to a topic(1), unsubscribe from a topic(2), add a broker(3), or view past messages(4)? ")
+
+            String line = System.in.newReader().readLine()
+            int answer
+            try {
+                answer = line.toInteger()
+            } catch (NumberFormatException ignored) {
+                println("Cannot recognise choice")
+            }
 
             if (answer == 1)
                 subscribeToTopic()
             else if (answer == 2)
-                addBroker()
-            else if (answer == 3)
                 unsubscribeFromTopic()
+            else if (answer == 3)
+                addBroker()
+            else if (answer == 4)
+                viewMessages()
+
+            clearScreen()
         }
     }
 
@@ -48,11 +60,45 @@ class TopicSubscriptionHandler implements Runnable {
         thread.start()
     }
 
-    private void addBroker(){
-        print("Enter any amount of brokers you want to add separated by commas(in the format X.X.X.X:X): ")
-        ArrayList<String> brokers = System.in.newReader().readLine().split(',')
+    private void addBroker() {
+        boolean notValid = true
+        String broker
+        while(notValid) {
+            print("Enter a broker you want to add (in the format X.X.X.X:X): ")
+            broker = System.in.newReader().readLine()
 
-        Subscriber.brokers.addAll(brokers)
+            if(broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
+            else println("That was not a valid ip")
+        }
+
+        Subscriber.brokers.add(broker)
         Subscriber.brokers.unique()
+    }
+
+    private void viewMessages() {
+        print("What topic do you want to see the messages for? ")
+        String topic = System.in.newReader().readLine()
+
+        print("Messages:")
+        Subscriber.messagesReceived.forEach { BrokerContent brokerContent ->
+            if (brokerContent.topics.contains(topic)) printMessage(brokerContent)
+        }
+        print("Press enter to return to menu... ")
+        System.in.newReader().readLine()
+    }
+
+    void printMessage(BrokerContent brokerContent) {
+        println("\nBatch No. $brokerContent.batchNo" +
+                "\n______________________\nCONTENT:" +
+                "\n______________________" +
+                "\nTopics: $brokerContent.topics" +
+                "\nMessage: $brokerContent.message" +
+                "\n______________________" +
+                "\n")
+    }
+
+    private void clearScreen() {
+        System.out.print("\033[H\033[2J")
+        System.out.flush()
     }
 }

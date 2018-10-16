@@ -1,14 +1,12 @@
 package main.Handlers
 
 import main.Broker
-import main.Senders.PublisherIdentificationSender
-import main.Senders.PublisherLossSender
+import main.Receivers.BrokerReceiver
 import main.Senders.MessageAcknowledgement
+import main.Senders.PublisherIdentificationSender
+
 import main.Senders.SubscriberMessageSender
-import main.Structures.Publisher
-import main.Structures.PublisherContent
-import main.Structures.Subscriber
-import main.Structures.SubscriberContent
+import main.Structures.*
 
 class BrokerPacketHandler implements Runnable {
 
@@ -16,10 +14,12 @@ class BrokerPacketHandler implements Runnable {
 
     String contentType
     DatagramPacket packet
+    byte[] buffer
 
-    BrokerPacketHandler(String contentType, DatagramPacket packet) {
+    BrokerPacketHandler(String contentType, DatagramPacket packet, byte[] buffer) {
         this.contentType = contentType
         this.packet = packet
+        this.buffer = buffer
     }
 
     @Override
@@ -27,70 +27,92 @@ class BrokerPacketHandler implements Runnable {
         byte[] buffer = packet.getData()
 
         switch (contentType) {
-            case Broker.PUBLISHER:
-                ByteArrayInputStream bstream = new ByteArrayInputStream(buffer)
+            case BrokerReceiver.PUBLISHER:
+                ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 2, buffer.length - 1))
                 ObjectInputStream ostream = new ObjectInputStream(bstream)
                 readPublisherContent(ostream)
                 break
-            case Broker.SUBSCRIBER:
-                ByteArrayInputStream bstream = new ByteArrayInputStream(buffer)
+            case BrokerReceiver.SUBSCRIBER:
+                ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 2, buffer.length - 1))
                 ObjectInputStream ostream = new ObjectInputStream(bstream)
-                readSubscriberContent(ostream)
+                readSubscriberContent(ostream, buffer)
                 break
-            case Broker.IDENTITY:
-                readIdentityContent(packet)
+            case BrokerReceiver.IDENTITY:
+                ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 1, buffer.length - 1))
+                ObjectInputStream ostream = new ObjectInputStream(bstream)
+                readIdentityContent(ostream, packet)
         }
+
+        Thread.currentThread().interrupt()
+        return
     }
 
     void readPublisherContent(ObjectInputStream ostream) {
         PublisherContent publisherContent = ostream.readObject() as PublisherContent
+
         println("Data : $publisherContent.message \nFor $publisherContent.topics")
 
-        int uniqueId = publisherContent.batchNo.split('\\.').first().toInteger()
-        int currentMessage = publisherContent.batchNo.split('\\.').last().toInteger()
-        Publisher publisher = Broker.publishersList.find { Integer.compare(it.uniqueId, uniqueId) == 0 }
+        int uniqueId = publisherContent.uniqueId
+        int currentMessage = publisherContent.batchNo
+        Publisher publisher = Broker.publishersList.find { it.uniqueId == uniqueId }
 
-        (publisher.currentMessage != currentMessage) ? missedPublisherContent(publisher, currentMessage) : publisher.currentMessage++
 
-        SubscriberMessageSender sender = new SubscriberMessageSender(publisherContent.batchNo, publisherContent.topics, publisherContent.message)
+
+        String id = publisher.uniqueId.toString()
+        String batchNo = publisherContent.batchNo.toString()
+        SubscriberMessageSender sender = new SubscriberMessageSender("$id.$batchNo", publisherContent.topics, publisherContent.message)
         Thread thread = new Thread(sender)
         thread.start()
 
-        MessageAcknowledgement acknowledgement = new MessageAcknowledgement(publisher)
+        MessageAcknowledgement acknowledgement = new MessageAcknowledgement(publisher, currentMessage)
         thread = new Thread(acknowledgement)
         thread.start()
     }
 
-    void missedPublisherContent(Publisher publisher, int targetNumber) {
-            PublisherLossSender sender = new PublisherLossSender(publisher.address, publisher.port, (targetNumber - publisher.currentMessage))
-            Thread thread = new Thread(sender)
-            thread.start()
+    void readSubscriberContent(ObjectInputStream ostream, byte[] buffer) {
+        switch ((int) buffer[1]) {
+            case 0:
+                SubscriberContent subscriberContent = ostream.readObject() as SubscriberContent
+                (subscriberContent.type == SUBSCRIBE) ? subscribeUser(subscriberContent) : unsubscribeUser(subscriberContent)
+                subscriptionAcknowledgement(subscriberContent)
+                break
+            case 1:
+                messageAcknowledgement(ostream.readUTF())
+                break
+        }
     }
 
-    void readSubscriberContent(ObjectInputStream ostream) {
-        SubscriberContent subscriberContent = ostream.readObject() as SubscriberContent
+    void subscriptionAcknowledgement(SubscriberContent subscriberContent) {
+        MessageAcknowledgement acknowledgement = new MessageAcknowledgement(new Connection(address: packet.address, port: subscriberContent.receivingPort), subscriberContent)
+        Thread thread = new Thread(acknowledgement)
+        thread.start()
+    }
 
-        (subscriberContent.type == SUBSCRIBE) ? subscribeUser(subscriberContent) : unsubscribeUser(subscriberContent)
+    void messageAcknowledgement(String content) {
+        Broker.awaitingAck.remove(content)
+        println("Recieved message acknowledgment for $content")
     }
 
     private void subscribeUser(SubscriberContent subscriberContent) {
-        Subscriber subscriber = isNewSubscriber()
+        Subscriber subscriber = isNewSubscriber(subscriberContent)
         (!subscriber) ? addSubscriber(subscriberContent) : updateSubscriberTopics(subscriber, subscriberContent)
     }
 
     private void unsubscribeUser(SubscriberContent subscriberContent) {
-        Subscriber subscriber = isNewSubscriber()
+        Subscriber subscriber = Broker.subscribersList.find {
+            it.port == subscriberContent.receivingPort && it.address == packet.address
+        }
         Subscriber newSubscriber = subscriber
 
         newSubscriber.subscribedTopics.removeAll(subscriberContent.topics)
         updateSubscriber(subscriber, newSubscriber)
     }
 
-    Subscriber isNewSubscriber() {
+    Subscriber isNewSubscriber(SubscriberContent subscriberContent) {
         Subscriber foundSubscriber = null
-        Broker.subscribersList.any { Subscriber subscriber ->
+        Broker.subscribersList.find { Subscriber subscriber ->
             if (packet.address == subscriber.address
-                    && packet.port == subscriber.port) {
+                    && subscriberContent.receivingPort == subscriber.port) {
                 foundSubscriber = subscriber
             }
         }
@@ -122,9 +144,9 @@ class BrokerPacketHandler implements Runnable {
         Broker.subscribersList.add(updatedSubscriber)
     }
 
-    void readIdentityContent(DatagramPacket packet) {
+    void readIdentityContent(ObjectInputStream ostream, DatagramPacket packet) {
         InetAddress address = packet.getAddress()
-        int port = packet.getPort()
+        int port = ostream.readInt()
         int uniqueId = Broker.uniqueId
 
         Broker.publishersList.add(new Publisher(address, port, uniqueId))

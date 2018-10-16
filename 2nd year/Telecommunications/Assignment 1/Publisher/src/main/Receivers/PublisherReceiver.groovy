@@ -1,46 +1,59 @@
 package main.Receivers
 
 import main.Publisher
-import main.Structures.Broker
 
-class PublisherReceiver implements Runnable{
+class PublisherReceiver implements Runnable {
+
+    DatagramSocket socket
+
+    PublisherReceiver() {
+        socket = new DatagramSocket()
+        Publisher.port = socket.localPort
+        socket.close()
+    }
+
     @Override
     void run() {
-        while(true){
-            byte[] buffer= new byte[65508]
+        while (true) {
+            byte[] buffer = new byte[65508]
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length)
 
-            DatagramSocket socket = new DatagramSocket(Publisher.port, InetAddress.getLocalHost())
+            socket = new DatagramSocket(Publisher.port, InetAddress.getLocalHost())
 
             socket.receive(packet)
             socket.close()
 
             buffer = packet.getData()
-            ByteArrayInputStream bstream = new ByteArrayInputStream(buffer)
+            ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 1, buffer.length - 1))
             ObjectInputStream ostream = new ObjectInputStream(bstream)
             String content = ostream.readUTF()
 
-            (content.split(" ").first() == "acknowledgement") ?
-                    startReadingAcknowledgement(content.split(" ").last())
-                    : startReadingLoss(content.split(" ").last(), packet)
+            switch (content.split(' ').first()) {
+                case 'acknowledgement':
+                    startReadingAcknowledgement(content.split(' ').last())
+                    break
+                case 'identity':
+                    startReadingIdentity(content.split(' ').last(), packet)
+                    break
+            }
         }
     }
 
     void startReadingAcknowledgement(String content) {
-        if (Publisher.awaitingAck.contains(content.toInteger())) {
-            Publisher.awaitingAck.remove(content.toInteger())
+        if (Publisher.awaitingAck.first().messageNo == content.toInteger()) {
+            Publisher.awaitingAck.remove(0)
             Publisher.batchNo++
         }
     }
 
-    void startReadingLoss(String content, DatagramPacket packet) {
-        PublisherLossReceiver publisherLossReceiver = new PublisherLossReceiver(content.toInteger(), packet, getid(packet))
-        Thread thread = new Thread(publisherLossReceiver)
-        thread.start()
-    }
+    void startReadingIdentity(String content, DatagramPacket packet) {
+        String port = content.split(':').first()
+        int id = content.split(':').last().toInteger()
 
-    int getid(DatagramPacket datagramPacket) {
-        Broker broker = Publisher.brokers.find{it.location == "$datagramPacket.address:$datagramPacket.port"}
-        broker.id
+        Publisher.brokers.find {
+            "$packet.address:$port".contains(it.location)
+        }.id = id
+
+        println("ID is $id for broker $packet.address:$port")
     }
 }

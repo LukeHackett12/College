@@ -1,6 +1,6 @@
 package main.Structures
 
 class Broker {
-    int id
-    String location
+    public int id
+    public String location
 }
