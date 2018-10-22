@@ -8,7 +8,7 @@ public class StringContent implements PacketContent {
     public StringContent(DatagramPacket packet) {
         byte[] data;
 
-        data= packet.getData();
+        data = packet.getData();
         string = new String(data);
     }
 
@@ -21,12 +21,13 @@ public class StringContent implements PacketContent {
     }
 
     public DatagramPacket toDatagramPacket() {
-        DatagramPacket packet= null;
+        DatagramPacket packet = null;
         try {
-            byte[] data= string.getBytes();
-            packet= new DatagramPacket(data, data.length);
+            byte[] data = string.getBytes();
+            packet = new DatagramPacket(data, data.length);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch(Exception e) {e.printStackTrace();}
         return packet;
     }
 }

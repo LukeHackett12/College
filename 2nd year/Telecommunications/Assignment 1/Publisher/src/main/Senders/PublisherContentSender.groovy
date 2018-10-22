@@ -16,7 +16,6 @@ class PublisherContentSender implements Runnable {
         this.address = InetAddress.getByName(broker.location.split(":").first())
         this.port = broker.location.split(":").last().toInteger()
         this.publisherContent = publisherContent
-        this.type = 0
     }
 
     @Override
@@ -26,7 +25,7 @@ class PublisherContentSender implements Runnable {
         ostream.writeObject(publisherContent)
         ostream.flush()
 
-        byte[] flag = [(byte) 0, (byte) type]
+        byte[] flag = [(byte) 0]
         byte[] buffer = new byte[flag.length + bstream.toByteArray().length]
         System.arraycopy(flag, 0, buffer, 0, flag.length)
         System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)

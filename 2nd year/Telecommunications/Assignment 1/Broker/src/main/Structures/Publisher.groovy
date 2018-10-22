@@ -1,6 +1,6 @@
 package main.Structures
 
-class Publisher extends Connection{
+class Publisher extends Connection {
     int uniqueId
 
     Publisher(InetAddress address, int port, int uniqueId) {

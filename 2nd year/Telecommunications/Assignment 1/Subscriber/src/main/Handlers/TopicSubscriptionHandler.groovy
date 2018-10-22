@@ -19,24 +19,26 @@ class TopicSubscriptionHandler implements Runnable {
     @Override
     void run() {
         while (true) {
-            println("Do you want to subscribe to a topic(1), unsubscribe from a topic(2), add a broker(3), or view past messages(4)? ")
+            println("Do you want to subscribe to a topic(1), unsubscribe from a topic(2)or add a broker(3)? ")
 
             String line = System.in.newReader().readLine()
             int answer
             try {
                 answer = line.toInteger()
+                switch (answer) {
+                    case 1:
+                        subscribeToTopic()
+                        break
+                    case 2:
+                        unsubscribeFromTopic()
+                        break
+                    case 3:
+                        addBroker()
+                        break
+                }
             } catch (NumberFormatException ignored) {
-                println("Cannot recognise choice")
-            }
 
-            if (answer == 1)
-                subscribeToTopic()
-            else if (answer == 2)
-                unsubscribeFromTopic()
-            else if (answer == 3)
-                addBroker()
-            else if (answer == 4)
-                viewMessages()
+            }
 
             clearScreen()
         }
@@ -63,11 +65,11 @@ class TopicSubscriptionHandler implements Runnable {
     private void addBroker() {
         boolean notValid = true
         String broker
-        while(notValid) {
+        while (notValid) {
             print("Enter a broker you want to add (in the format X.X.X.X:X): ")
             broker = System.in.newReader().readLine()
 
-            if(broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
+            if (broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
             else println("That was not a valid ip")
         }
 

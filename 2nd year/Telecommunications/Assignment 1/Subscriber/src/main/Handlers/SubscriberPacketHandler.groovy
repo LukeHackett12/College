@@ -34,11 +34,11 @@ class SubscriberPacketHandler implements Runnable {
     void printMessage(BrokerContent brokerContent) {
         Subscriber.messageTerminal.println(
                 "\n\nBatch No. $brokerContent.batchNo" +
-                "\n______________________\nCONTENT:" +
-                "\n______________________" +
-                "\nTopics: $brokerContent.topics" +
-                "\nMessage: $brokerContent.message" +
-                "\n______________________")
+                        "\n______________________\nCONTENT:" +
+                        "\n______________________" +
+                        "\nTopics: $brokerContent.topics" +
+                        "\nMessage: $brokerContent.message" +
+                        "\n______________________")
     }
 
     void subscriptionAcknowledgement(SubscriberContent subscriberContent) {

@@ -13,8 +13,8 @@ public abstract class Node {
     CountDownLatch latch;
 
     Node() {
-        latch= new CountDownLatch(1);
-        listener= new Listener();
+        latch = new CountDownLatch(1);
+        listener = new Listener();
         listener.setDaemon(true);
         listener.start();
     }
@@ -23,9 +23,8 @@ public abstract class Node {
     public abstract void onReceipt(DatagramPacket packet);
 
     /**
-     *
      * Listener thread
-     *
+     * <p>
      * Listens for incoming packets on a datagram socket and informs registered receivers about incoming packets.
      */
     class Listener extends Thread {
@@ -44,13 +43,15 @@ public abstract class Node {
             try {
                 latch.await();
                 // Endless loop: attempt to receive packet, notify receivers, etc
-                while(true) {
+                while (true) {
                     DatagramPacket packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                     socket.receive(packet);
 
                     onReceipt(packet);
                 }
-            } catch (Exception e) {if (!(e instanceof SocketException)) e.printStackTrace();}
+            } catch (Exception e) {
+                if (!(e instanceof SocketException)) e.printStackTrace();
+            }
         }
     }
 }

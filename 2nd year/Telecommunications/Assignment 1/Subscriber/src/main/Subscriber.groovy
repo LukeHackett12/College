@@ -7,7 +7,7 @@ import main.Structures.BrokerContent
 import main.Structures.SubscriberContent
 import tcdIO.Terminal
 
-class Subscriber{
+class Subscriber {
 
     final int DEFAULT_BROKER_PORT = 5151
 
@@ -18,7 +18,7 @@ class Subscriber{
 
     static Terminal messageTerminal
 
-    Subscriber(){
+    Subscriber() {
         portNumber = findFreePort()
         brokers = new ArrayList<>()
         brokers = new ArrayList<>()
@@ -33,7 +33,7 @@ class Subscriber{
         createThread(receiver)
     }
 
-    int findFreePort(){
+    int findFreePort() {
         ServerSocket ss = new ServerSocket()
         ss.bind(new InetSocketAddress(0))
         int port = ss.localPort
@@ -46,7 +46,7 @@ class Subscriber{
         thread.start()
     }
 
-    static void main(String[] args){
+    static void main(String[] args) {
         new Subscriber()
     }
 }

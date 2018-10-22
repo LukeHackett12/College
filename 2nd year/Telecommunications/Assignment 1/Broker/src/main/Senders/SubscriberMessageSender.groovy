@@ -4,13 +4,13 @@ import main.Broker
 import main.Structures.BrokerContent
 import main.Structures.Subscriber
 
-class SubscriberMessageSender implements Runnable{
+class SubscriberMessageSender implements Runnable {
 
     String batchNo
     ArrayList<String> topics
     String message
 
-    SubscriberMessageSender(String batchNo, ArrayList<String> topics, String message){
+    SubscriberMessageSender(String batchNo, ArrayList<String> topics, String message) {
         this.batchNo = batchNo
         this.topics = topics
         this.message = message
@@ -30,9 +30,9 @@ class SubscriberMessageSender implements Runnable{
         DatagramPacket packet
         DatagramSocket socket = new DatagramSocket()
 
-        Broker.subscribersList.forEach{ Subscriber subscriber ->
-            if(subscribedToTopic(subscriber.subscribedTopics, topics)) {
-                byte[] flag = [(byte)0]
+        Broker.subscribersList.forEach { Subscriber subscriber ->
+            if (subscribedToTopic(subscriber.subscribedTopics, topics)) {
+                byte[] flag = [(byte) 0]
                 buffer = new byte[flag.length + bstream.toByteArray().length]
                 System.arraycopy(flag, 0, buffer, 0, flag.length)
                 System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)
@@ -48,7 +48,7 @@ class SubscriberMessageSender implements Runnable{
 
         println("Subscriptions sent")
 
-        while (Broker.awaitingAck.find{it == batchNo}) {
+        while (Broker.awaitingAck.find { it == batchNo }) {
             //Just wait a sec
         }
 
@@ -58,16 +58,16 @@ class SubscriberMessageSender implements Runnable{
         return
     }
 
-    boolean subscribedToTopic(ArrayList<String> subscriberTopics, ArrayList<String> topics){
+    boolean subscribedToTopic(ArrayList<String> subscriberTopics, ArrayList<String> topics) {
         boolean isValid = false
-        topics.forEach{ String topic ->
+        topics.forEach { String topic ->
             if (subscriberTopics.contains(topic)) isValid = true
         }
 
         return isValid
     }
 
-    String getBatchNo(){
+    String getBatchNo() {
         return ("$batchNo")
     }
 }

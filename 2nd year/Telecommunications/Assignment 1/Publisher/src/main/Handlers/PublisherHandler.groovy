@@ -62,10 +62,6 @@ class PublisherHandler implements Runnable {
         waitForAck(content)
 
         content.batchNo = Publisher.batchNo
-        Publisher.trailingMessages.add(content)
-        if (Publisher.trailingMessages.size() > 5) {
-            Publisher.trailingMessages.removeLast()
-        }
     }
 
     private void waitForAck(PublisherContent content) {
@@ -79,7 +75,7 @@ class PublisherHandler implements Runnable {
             }
         }
 
-        if(retries < 5) {
+        if (retries < 5) {
             println("Ack received for $waiting.messageNo")
         } else {
             println("Ack was not received for received for $waiting.messageNo")
@@ -104,11 +100,11 @@ class PublisherHandler implements Runnable {
 
         boolean notValid = true
         String broker
-        while(notValid) {
+        while (notValid) {
             print("Enter a broker you want to add (in the format X.X.X.X:X): ")
             broker = System.in.newReader().readLine()
 
-            if(broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
+            if (broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
             else println("That was not a valid ip")
         }
 

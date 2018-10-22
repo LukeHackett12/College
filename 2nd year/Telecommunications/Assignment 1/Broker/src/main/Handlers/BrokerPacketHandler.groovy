@@ -4,7 +4,6 @@ import main.Broker
 import main.Receivers.BrokerReceiver
 import main.Senders.MessageAcknowledgement
 import main.Senders.PublisherIdentificationSender
-
 import main.Senders.SubscriberMessageSender
 import main.Structures.*
 
@@ -28,7 +27,7 @@ class BrokerPacketHandler implements Runnable {
 
         switch (contentType) {
             case BrokerReceiver.PUBLISHER:
-                ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 2, buffer.length - 1))
+                ByteArrayInputStream bstream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 1, buffer.length - 1))
                 ObjectInputStream ostream = new ObjectInputStream(bstream)
                 readPublisherContent(ostream)
                 break
