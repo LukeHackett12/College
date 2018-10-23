@@ -11,6 +11,7 @@ class Publisher {
 
     static int batchNo
     static int port
+    static Terminal terminal
 
     static ArrayList<Broker> brokers
     static CopyOnWriteArrayList<MessageTime> awaitingAck
@@ -18,6 +19,8 @@ class Publisher {
     Publisher() {
         batchNo = 0
         brokers = new ArrayList<>()
+        terminal = new Terminal("Publisher")
+        terminal.setTextSize(24)
 
         awaitingAck = new CopyOnWriteArrayList<>()
 

@@ -1,10 +1,15 @@
 package main.Senders
 
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 import main.Broker
 import main.Structures.BrokerContent
+import main.Structures.MessageTime
 import main.Structures.Subscriber
 
 class SubscriberMessageSender implements Runnable {
+
+    static final TimeDuration FIVE_SECONDS = new TimeDuration(0, 0, 5, 0)
 
     String batchNo
     ArrayList<String> topics
@@ -27,9 +32,33 @@ class SubscriberMessageSender implements Runnable {
 
         byte[] buffer = bstream.toByteArray()
 
-        DatagramPacket packet
         DatagramSocket socket = new DatagramSocket()
 
+        sendMessage(bstream, socket, buffer)
+
+        MessageTime waiting = new MessageTime(Integer.parseInt(batchNo.split('.').last()))
+        int retries = 0
+        while (Broker.awaitingAck.find { it == batchNo } && retries < 5) {
+            //Just wait a sec
+            if (TimeCategory.minus(new Date(), waiting.timeStart) > FIVE_SECONDS) {
+                retries++
+                Broker.awaitingAck.remove{it == batchNo}
+                sendMessage(bstream, socket, buffer)
+                waiting.timeStart = new Date()
+            }
+        }
+
+        if (retries == 5) {
+            println("Did not recieve ack")
+        } else {
+            println("Received ack")
+        }
+
+        Thread.currentThread().interrupt()
+        return
+    }
+
+    private void sendMessage(ByteArrayOutputStream bstream, DatagramSocket socket, byte[] buffer) {
         Broker.subscribersList.forEach { Subscriber subscriber ->
             if (subscribedToTopic(subscriber.subscribedTopics, topics)) {
                 byte[] flag = [(byte) 0]
@@ -37,25 +66,14 @@ class SubscriberMessageSender implements Runnable {
                 System.arraycopy(flag, 0, buffer, 0, flag.length)
                 System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)
 
-                packet = new DatagramPacket(buffer, buffer.length, subscriber.address, subscriber.port)
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, subscriber.address, subscriber.port)
                 socket.send(packet)
             }
         }
 
         Broker.awaitingAck.add(batchNo)
-
         socket.close()
-
         println("Subscriptions sent")
-
-        while (Broker.awaitingAck.find { it == batchNo }) {
-            //Just wait a sec
-        }
-
-        println("Received ack")
-
-        Thread.currentThread().interrupt()
-        return
     }
 
     boolean subscribedToTopic(ArrayList<String> subscriberTopics, ArrayList<String> topics) {

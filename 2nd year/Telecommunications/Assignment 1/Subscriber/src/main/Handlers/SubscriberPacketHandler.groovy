@@ -4,6 +4,9 @@ import main.Structures.BrokerContent
 import main.Structures.SubscriberContent
 import main.Subscriber
 
+import static main.Subscriber.messagesReceived
+import static main.Subscriber.terminal
+
 class SubscriberPacketHandler implements Runnable {
     DatagramPacket packet
 
@@ -19,9 +22,11 @@ class SubscriberPacketHandler implements Runnable {
         switch ((int) buffer[0]) {
             case 0:
                 BrokerContent brokerContent = ostream.readObject() as BrokerContent
-                Subscriber.messagesReceived.add(brokerContent)
+                if (!messagesReceived.contains { it.batchNo == brokerContent.batchNo }) {
+                    messagesReceived.add(brokerContent)
+                    printMessage(brokerContent, 'r' as char, 'b' as char)
+                }
 
-                printMessage(brokerContent)
                 acknowledgeReceipt(brokerContent.batchNo)
                 break
             case 1:
@@ -31,14 +36,23 @@ class SubscriberPacketHandler implements Runnable {
         }
     }
 
-    void printMessage(BrokerContent brokerContent) {
-        Subscriber.messageTerminal.println(
-                "\n\nBatch No. $brokerContent.batchNo" +
-                        "\n______________________\nCONTENT:" +
+    void printMessage(BrokerContent brokerContent, char foreground, char background) {
+        terminal.clear()
+        terminal.setTextColor(foreground, background)
+
+        String pub = brokerContent.batchNo.split('\\.').first()
+        String batch =  brokerContent.batchNo.split('\\.').last()
+
+        terminal.println(
+                "Publisher : $pub" +
+                "\nBatch No. : $batch" +
+                        "\n______________________\nContent" +
                         "\n______________________" +
                         "\nTopics: $brokerContent.topics" +
                         "\nMessage: $brokerContent.message" +
                         "\n______________________")
+        terminal.setDefaultColors()
+        terminal.print("Do you want to subscribe to a topic(1), unsubscribe from a topic(2), view messages(3), or add a broker(4)? ")
     }
 
     void subscriptionAcknowledgement(SubscriberContent subscriberContent) {

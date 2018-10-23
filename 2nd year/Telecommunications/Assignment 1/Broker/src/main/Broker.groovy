@@ -8,14 +8,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class Broker {
     static int port
-
-    static int uniqueId
     static ArrayList<Subscriber> subscribersList
     static ArrayList<Publisher> publishersList
     static CopyOnWriteArrayList<String> awaitingAck
 
     Broker() {
-        uniqueId = 0
         subscribersList = new ArrayList<>()
         publishersList = new ArrayList<>()
         awaitingAck = new CopyOnWriteArrayList<>()

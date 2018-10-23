@@ -9,7 +9,13 @@ import main.Structures.Broker
 import main.Structures.MessageTime
 import main.Structures.PublisherContent
 
+import static main.Publisher.awaitingAck
+import static main.Publisher.brokers
+import static main.Publisher.terminal
+
 class PublisherHandler implements Runnable {
+
+    static final TimeDuration FIVE_SECONDS = new TimeDuration(0, 0, 5, 0)
 
     PublisherContentSender senderProcess
     ArrayList<PublisherContentSender> senders
@@ -22,9 +28,9 @@ class PublisherHandler implements Runnable {
     @Override
     void run() {
         while (true) {
-            println("Do you want to message a topic(1) or add a broker(2)?")
+            terminal.print("Do you want to message a topic(1) or add a broker(2)? ")
 
-            String line = System.in.newReader().readLine()
+            String line = terminal.takeInput()
             int answer
             try {
                 answer = line.toInteger()
@@ -38,9 +44,10 @@ class PublisherHandler implements Runnable {
                     break
                 case 2:
                     addBroker()
+                    break
+                default:
+                    terminal.clear()
             }
-
-            clearScreen()
         }
     }
 
@@ -50,25 +57,27 @@ class PublisherHandler implements Runnable {
     }
 
     private void messageSubscribers() {
-        println("What topics does this message have? ")
-        ArrayList<String> topics = System.in.newReader().readLine().split(',')
+        terminal.print("What topics does this message have(separated by ,)? ")
+        ArrayList<String> topics = terminal.takeInput().split(',')
 
-        println("What is the message? ")
-        String message = System.in.newReader().readLine()
+        terminal.print("What is the message? ")
+        String message = terminal.takeInput()
 
-        PublisherContent content = new PublisherContent(-1, Publisher.batchNo, topics, message)
+        if(!brokers.empty) {
+            PublisherContent content = new PublisherContent('-1', Publisher.batchNo, topics, message)
 
-        sendMessage(content)
-        waitForAck(content)
+            sendMessage(content)
+            waitForAck(content)
 
-        content.batchNo = Publisher.batchNo
+            content.batchNo = Publisher.batchNo
+        }
     }
 
     private void waitForAck(PublisherContent content) {
         int retries = 0
-        while (Publisher.awaitingAck.size() != 0 && retries < 5) {
-            if (TimeCategory.minus(new Date(), waiting.timeStart) > new TimeDuration(0, 0, 5, 0)) {
-                Publisher.awaitingAck.remove(0)
+        while (awaitingAck.size() != 0 && retries < 5) {
+            if (TimeCategory.minus(new Date(), waiting.timeStart) > FIVE_SECONDS) {
+                awaitingAck.remove(0)
                 println("Retrying message...")
                 sendMessage(content)
                 retries++
@@ -79,7 +88,7 @@ class PublisherHandler implements Runnable {
             println("Ack received for $waiting.messageNo")
         } else {
             println("Ack was not received for received for $waiting.messageNo")
-            Publisher.awaitingAck.clear()
+            awaitingAck.clear()
         }
     }
 
@@ -92,8 +101,8 @@ class PublisherHandler implements Runnable {
             while (!senderProcess.sent) {
                 //wait
             }
-            waiting = Publisher.awaitingAck.first()
         }
+        waiting = awaitingAck.first()
     }
 
     private void addBroker() {
@@ -101,22 +110,17 @@ class PublisherHandler implements Runnable {
         boolean notValid = true
         String broker
         while (notValid) {
-            print("Enter a broker you want to add (in the format X.X.X.X:X): ")
-            broker = System.in.newReader().readLine()
+            terminal.print("Enter a broker you want to add (in the format X.X.X.X:X): ")
+            broker = terminal.takeInput()
 
             if (broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
-            else println("That was not a valid ip")
+            else terminal.println("That was not a valid ip")
         }
 
         PublisherIdentificationSender publisherIdentificationSender = new PublisherIdentificationSender(broker)
         createThread(publisherIdentificationSender)
 
-        Publisher.brokers.add(new Broker(id: -1, location: broker))
+        Publisher.brokers.add(new Broker(id: '-1', location: broker))
         Publisher.brokers.unique { it.location }
-    }
-
-    void clearScreen() {
-        System.out.print("\033[H\033[2J")
-        System.out.flush()
     }
 }

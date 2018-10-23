@@ -6,9 +6,9 @@ class PublisherIdentificationSender implements Runnable {
 
     InetAddress address
     int port
-    int uniqueId
+    String uniqueId
 
-    PublisherIdentificationSender(InetAddress address, int port, int uniqueId) {
+    PublisherIdentificationSender(InetAddress address, int port, String uniqueId) {
         this.address = address
         this.port = port
         this.uniqueId = uniqueId
@@ -34,8 +34,6 @@ class PublisherIdentificationSender implements Runnable {
         println("Sending to $port")
         socket.send(packet)
         socket.close()
-
-        Broker.uniqueId++
 
         Thread.currentThread().interrupt()
         return

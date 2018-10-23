@@ -40,7 +40,7 @@ class PublisherReceiver implements Runnable {
     }
 
     void startReadingAcknowledgement(String content) {
-        if (Publisher.awaitingAck.first().messageNo == content.toInteger()) {
+        if (!Publisher.awaitingAck.empty && Publisher.awaitingAck.first().messageNo == content.toInteger()) {
             Publisher.awaitingAck.remove(0)
             Publisher.batchNo++
         }
@@ -48,7 +48,7 @@ class PublisherReceiver implements Runnable {
 
     void startReadingIdentity(String content, DatagramPacket packet) {
         String port = content.split(':').first()
-        int id = content.split(':').last().toInteger()
+        String id = content.split(':').last()
 
         Publisher.brokers.find {
             "$packet.address:$port".contains(it.location)

@@ -51,13 +51,11 @@ class BrokerPacketHandler implements Runnable {
 
         println("Data : $publisherContent.message \nFor $publisherContent.topics")
 
-        int uniqueId = publisherContent.uniqueId
+        String uniqueId = publisherContent.uniqueId
         int currentMessage = publisherContent.batchNo
         Publisher publisher = Broker.publishersList.find { it.uniqueId == uniqueId }
 
-
-
-        String id = publisher.uniqueId.toString()
+        String id = publisher.uniqueId
         String batchNo = publisherContent.batchNo.toString()
         SubscriberMessageSender sender = new SubscriberMessageSender("$id.$batchNo", publisherContent.topics, publisherContent.message)
         Thread thread = new Thread(sender)
@@ -146,7 +144,7 @@ class BrokerPacketHandler implements Runnable {
     void readIdentityContent(ObjectInputStream ostream, DatagramPacket packet) {
         InetAddress address = packet.getAddress()
         int port = ostream.readInt()
-        int uniqueId = Broker.uniqueId
+        String uniqueId = UUID.randomUUID().toString()
 
         Broker.publishersList.add(new Publisher(address, port, uniqueId))
 

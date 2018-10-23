@@ -1,9 +1,9 @@
 package main.Structures
 
 class Publisher extends Connection {
-    int uniqueId
+    String uniqueId
 
-    Publisher(InetAddress address, int port, int uniqueId) {
+    Publisher(InetAddress address, int port, String uniqueId) {
         this.address = address
         this.port = port
         this.uniqueId = uniqueId

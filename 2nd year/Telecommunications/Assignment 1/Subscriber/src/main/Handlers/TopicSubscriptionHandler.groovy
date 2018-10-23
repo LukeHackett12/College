@@ -4,6 +4,13 @@ import main.Senders.SubscriberSender
 import main.Structures.BrokerContent
 import main.Subscriber
 
+import static main.Subscriber.brokers
+import static main.Subscriber.terminal
+import static main.Subscriber.terminal
+import static main.Subscriber.terminal
+import static main.Subscriber.terminal
+import static main.Subscriber.terminal
+
 class TopicSubscriptionHandler implements Runnable {
 
     static final String SUBSCRIBE = "subscribe"
@@ -19,34 +26,40 @@ class TopicSubscriptionHandler implements Runnable {
     @Override
     void run() {
         while (true) {
-            println("Do you want to subscribe to a topic(1), unsubscribe from a topic(2)or add a broker(3)? ")
+            terminal.print("Do you want to subscribe to a topic(1), unsubscribe from a topic(2), view messages(3), or add a broker(4)? ")
+            String line = terminal.takeInput()
 
-            String line = System.in.newReader().readLine()
-            int answer
             try {
-                answer = line.toInteger()
+                int answer = line.toInteger()
                 switch (answer) {
                     case 1:
                         subscribeToTopic()
+                        terminal.clear()
                         break
                     case 2:
                         unsubscribeFromTopic()
+                        terminal.clear()
                         break
                     case 3:
+                        viewMessages()
+                        break
+                    case 4:
                         addBroker()
+                        terminal.clear()
+                        break
+                    default:
+                        terminal.clear()
                         break
                 }
             } catch (NumberFormatException ignored) {
-
+                terminal.clear()
             }
-
-            clearScreen()
         }
     }
 
     private void subscribeToTopic() {
-        print("What do you want to subscribe to? ")
-        ArrayList<String> topics = System.in.newReader().readLine().split(',')
+        terminal.print('What do you want to subscribe to? ')
+        ArrayList<String> topics = terminal.takeInput().split(',')
 
         senderProcess = new SubscriberSender(SUBSCRIBE, topics)
         Thread thread = new Thread(senderProcess)
@@ -54,8 +67,8 @@ class TopicSubscriptionHandler implements Runnable {
     }
 
     private void unsubscribeFromTopic() {
-        print("What do you want to unsubscribe from? ")
-        ArrayList<String> topics = System.in.newReader().readLine().split(',')
+        terminal.print("What do you want to unsubscribe from? ")
+        ArrayList<String> topics = terminal.takeInput().split(',')
 
         senderProcess = new SubscriberSender(UNSUBSCRIBE, topics)
         Thread thread = new Thread(senderProcess)
@@ -66,41 +79,37 @@ class TopicSubscriptionHandler implements Runnable {
         boolean notValid = true
         String broker
         while (notValid) {
-            print("Enter a broker you want to add (in the format X.X.X.X:X): ")
-            broker = System.in.newReader().readLine()
+            terminal.print("Enter a broker you want to add (in the format X.X.X.X:X): ")
+            broker = terminal.takeInput()
 
             if (broker.matches("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})")) notValid = false
-            else println("That was not a valid ip")
+            else terminal.println("That was not a valid ip")
         }
 
-        Subscriber.brokers.add(broker)
-        Subscriber.brokers.unique()
+        brokers.add(broker)
+        brokers.unique()
     }
 
     private void viewMessages() {
-        print("What topic do you want to see the messages for? ")
-        String topic = System.in.newReader().readLine()
+        terminal.print("What topic do you want to see the messages for? ")
+        String topic = terminal.takeInput()
 
-        print("Messages:")
+        terminal.clear()
+        terminal.print("Messages:")
         Subscriber.messagesReceived.forEach { BrokerContent brokerContent ->
-            if (brokerContent.topics.contains(topic)) printMessage(brokerContent)
+            if (brokerContent.topics.contains(topic)) printMessage(brokerContent, 'r' as char, 'b' as char)
         }
-        print("Press enter to return to menu... ")
-        System.in.newReader().readLine()
     }
 
-    void printMessage(BrokerContent brokerContent) {
-        println("\nBatch No. $brokerContent.batchNo" +
+    void printMessage(BrokerContent brokerContent, char foreground, char background) {
+        terminal.setTextColor(foreground, background)
+        terminal.print("\nBatch No. $brokerContent.batchNo" +
                 "\n______________________\nCONTENT:" +
                 "\n______________________" +
                 "\nTopics: $brokerContent.topics" +
                 "\nMessage: $brokerContent.message" +
                 "\n______________________" +
                 "\n")
-    }
-
-    private void clearScreen() {
-        System.out.print("\033[H\033[2J")
-        System.out.flush()
+        terminal.setDefaultColors()
     }
 }
