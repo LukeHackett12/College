@@ -36,7 +36,8 @@ class SubscriberMessageSender implements Runnable {
 
         sendMessage(bstream, socket, buffer)
 
-        MessageTime waiting = new MessageTime(Integer.parseInt(batchNo.split('.').last()))
+        String parsed = (batchNo) ? batchNo.split('\\.').last() : ""
+        MessageTime waiting = new MessageTime(Integer.parseInt(parsed))
         int retries = 0
         while (Broker.awaitingAck.find { it == batchNo } && retries < 5) {
             //Just wait a sec

@@ -4,6 +4,7 @@ import com.eleet.dragonconsole.CommandProcessor
 import com.eleet.dragonconsole.DragonConsole
 import com.eleet.dragonconsole.DragonConsoleFrame
 
+import java.awt.Color
 import java.awt.Font
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -16,7 +17,8 @@ class Terminal {
         console = new DragonConsole()
         textColor = "&gb"
 
-        console.clearConsole()
+        console.setBackground(Color.red)
+        //console.clearConsole()
         console.font = new Font(Font.MONOSPACED, Font.PLAIN, 12)
 
         DragonConsoleFrame frame = new DragonConsoleFrame(title, console)
