@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/bloom.dir/main.c.o CMakeFiles/bloom.dir/bitset.c.o  -o bloom -lm 
