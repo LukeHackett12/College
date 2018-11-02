@@ -1,58 +1,42 @@
 #include <stdio.h>
-#include "bitset.h"
+#include "bloom.h"
 
-// print the contents of the bitset
-void bitset_print(struct bitset *this) {
-    int i;
-    int size = bitset_size(this);
-    for (i = 0; i < size; i++) {
-        if (bitset_lookup(this, i) == 1) {
-            printf("%d ", i);
-        }
-    }
-    printf("\n");
-    for (i = 0; i < size; i++) {
-        if (bitset_lookup(this, i) == 1) {
-            printf("%c ", i);
-        }
+// print the contents of the bloom
+void bloom_print(struct bloom *this, char *item) {
+    if (bloom_lookup(this, item)) {
+        printf("%s is in the set", item);
+    } else {
+        printf("%s is not in the set", item);
     }
     printf("\n");
 }
 
-// add the characters from a string to a bitset
-void add_chars_to_set(struct bitset *this, char *s) {
-    int i;
-    for (i = 0; s[i] != 0; i++) {
-        unsigned char temp = (unsigned char) s[i];
-        bitset_add(this, temp);
-    }
-}
+// small routine to test a bloom
+void my_test() {
+    struct bloom *a = bloom_new(256);
+    struct bloom *b = bloom_new(256);
+    struct bloom *c = bloom_new(256);
+    char *string1 = "What";
+    char *string2 = "Nothing";
 
-// small routine to test a bitset
-void mytest() {
-    struct bitset *a = bitset_new(256);
-    struct bitset *b = bitset_new(256);
-    struct bitset *c = bitset_new(256);
-    char *string1 = "What can you hear";
-    char *string2 = "Nothing but the rain";
+    bloom_add(a, string1);
+    bloom_add(a, string2);
 
-    add_chars_to_set(a, string1);
-    add_chars_to_set(b, string2);
-
-    // print the contents of the sets
-    bitset_print(a);
-    bitset_print(b);
+    bloom_print(a, string1);
+    bloom_print(b, string2);
 
     // compute and print the union of sets
-    bitset_union(c, a, b);
-    bitset_print(c);
+    bloom_union(c, a, b);
+    bloom_print(c, string1);
+    bloom_print(c, string2);
 
     // compute and print the intersection of sets
-    bitset_intersect(c, a, b);
-    bitset_print(c);
+    bloom_intersect(c, a, b);
+    bloom_print(c, string1);
+    bloom_print(c, string2);
 }
 
 int main() {
-    mytest();
+    my_test();
     return 0;
 }

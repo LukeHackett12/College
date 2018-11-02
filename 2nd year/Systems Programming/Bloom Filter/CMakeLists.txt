@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
-project(bloom C)
+project(Bloom_Filter C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(bloom main.c bitset.c)
-target_link_libraries(bloom m)
+add_executable(Bloom_Filter main.c bloom.h bloom.c)
