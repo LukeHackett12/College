@@ -15,7 +15,7 @@ struct bitset *bitset_new(int size) {
     for (int i = 0; i < size / new_bitset->bits_in_word; i++) {
         new_bitset->keys[i] = 0;
     }
-
+    
     return new_bitset;
 }
 
