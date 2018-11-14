@@ -20,7 +20,6 @@ typedef struct huffchar {
     } u;
 } huffchar;
 
-
 typedef struct huffcoder {
     int freqs[NUM_CHARS];
     int code_lengths[NUM_CHARS];

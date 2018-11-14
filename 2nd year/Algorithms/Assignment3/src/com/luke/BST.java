@@ -105,7 +105,7 @@ public class BST<Key extends Comparable<Key>, Value> {
     /**
      * Tree height.
      *
-     * Asymptotic worst-case running time using Theta notation: Theta(N),
+     * Asymptotic worst-case running time using Theta notation: Theta(log(N)),
      * where N is the number of nodes
      *
      * @return the number of links from the root to the deepest leaf.
@@ -237,7 +237,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
         String resultString = prefix
                 + "-"
-                + node.val
+                + node.key
                 + "\n"
                 + prettyPrintKeys(node.left, prefix + " |")
                 + prettyPrintKeys(node.right, prefix + "  ");

@@ -49,14 +49,12 @@ void huffcoder_count(struct huffcoder *this, char *filename) {
     char ch;
     while ((ch = (char) fgetc(file)) != EOF) {
         this->freqs[(int) ch]++;
-        printf("%c", ch);
     }
 
     for (int i = 0; i < NUM_CHARS; i++) {
         if (this->freqs[i] == 0) this->freqs[i] = 1;
     }
 }
-
 
 // using the character frequencies build the tree of compound
 // and simple characters that are used to compute the Huffman codes
@@ -127,7 +125,6 @@ void huffcoder_build_tree(struct huffcoder *this) {
     this->tree = sorting[0];
 }
 
-
 // recursive function to convert the Huffman tree into a table of
 // Huffman codes
 void tree2table_recursive(struct huffcoder *this, struct huffchar *node, int *path, int depth) {
@@ -153,15 +150,11 @@ void tree2table_recursive(struct huffcoder *this, struct huffchar *node, int *pa
     } else {
         unsigned long long code = 0;
         for (int i = 0; i < depth; i++) {
-            int add = 0;
-            if (path[i] == 1) {
-                add = 1;
-            }
-            code = (code << 1) | add;
-
-            this->codes[node->u.c] = code;
-            this->code_lengths[node->u.c] = depth;
+            code = (code << 1) | path[i];
         }
+
+        this->codes[node->u.c] = code;
+        this->code_lengths[node->u.c] = depth;
     }
 }
 
@@ -171,7 +164,6 @@ void huffcoder_tree2table(struct huffcoder *this) {
     tree2table_recursive(this, this->tree, 0, 0);
 }
 
-
 // print the Huffman codes for each character in order
 void huffcoder_print_codes(struct huffcoder *this) {
     int i, j;
@@ -180,7 +172,7 @@ void huffcoder_print_codes(struct huffcoder *this) {
     for (i = 0; i < NUM_CHARS; i++) {
         // put the code into a string
         for (j = this->code_lengths[i] - 1; j >= 0; j--) {
-            buffer[j] = ((this->codes[i] >> (this->code_lengths[i]-j-1)) & 1) + '0';
+            buffer[j] = ((this->codes[i] >> j) & 1) + '0';
         }
         // don't forget to add a zero to end of string
         buffer[this->code_lengths[i]] = '\0';
