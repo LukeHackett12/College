@@ -41,11 +41,6 @@ void encode_file(huffcoder *coder, char *inputFile, char *outputFile) {
     bitfile *bitfile = bitfile_new(outputFile, "w");
 
     char ch;
-    int test = 0;
-    /*
-     * F = 01111010001
-     * r = 0000
-     */
     while ((ch = (char) fgetc(file)) != EOF) {
         unsigned long long code = coder->codes[ch];
         int length = coder->code_lengths[ch];
@@ -53,8 +48,6 @@ void encode_file(huffcoder *coder, char *inputFile, char *outputFile) {
         for(int i = length-1; i >= 0; i--){
             int bit = ((code >> i) & 1);
             encoded_file_write(bitfile, bit);
-            if(test < 25) printf("%d", bit);
-            test++;
         }
     }
 

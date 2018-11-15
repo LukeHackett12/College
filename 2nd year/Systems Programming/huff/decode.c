@@ -18,8 +18,6 @@ void decode_file(huffcoder *coder, char *inputFile, char *outputFile){
     //the tree, when the leaf isnt compound use decoded_file_write to add that char
     // to the file
 
-    //01111010001
-
     FILE *file;
     file = fopen(inputFile, "r");
     if (file == NULL) {
