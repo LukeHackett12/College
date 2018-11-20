@@ -1,10 +1,7 @@
 //
 // Created by root on 14/11/18.
 //
-#include <stdlib.h>
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
+
 #include "encode.h"
 
 bitfile *bitfile_new(char *filename, char *rw) {
@@ -16,12 +13,12 @@ bitfile *bitfile_new(char *filename, char *rw) {
     return result;
 }
 
-//Write a bit to a bitfile
 void encoded_file_write(bitfile *this, int bit) {
-    this->buffer = (this->buffer << 1) | bit;
+    if(bit == 1){
+        this->buffer = this->buffer | (1 << this->index);
+    }
     this->index++;
 
-    //Alright here
     assert(this->index <= 8);
     if (this->index == 8) {
         fputc(this->buffer, this->file);
@@ -40,8 +37,8 @@ void encode_file(huffcoder *coder, char *inputFile, char *outputFile) {
 
     bitfile *bitfile = bitfile_new(outputFile, "w");
 
-    char ch;
-    while ((ch = (char) fgetc(file)) != EOF) {
+    int ch;
+    while ((ch = fgetc(file)) != EOF) {
         unsigned long long code = coder->codes[ch];
         int length = coder->code_lengths[ch];
 
@@ -51,14 +48,17 @@ void encode_file(huffcoder *coder, char *inputFile, char *outputFile) {
         }
     }
 
-    unsigned long long code = coder->codes[3];
-    int length = coder->code_lengths[3];
+    unsigned long long code = coder->codes[4];
+    int length = coder->code_lengths[4];
 
     for(int i = length-1; i >= 0; i--){
         int bit = ((code >> i) & 1);
         encoded_file_write(bitfile, bit);
     }
 
+    if(bitfile->index != 0){
+        fputc(bitfile->buffer, bitfile->file);
+    }
 
     fclose(file);
     fclose(bitfile->file);

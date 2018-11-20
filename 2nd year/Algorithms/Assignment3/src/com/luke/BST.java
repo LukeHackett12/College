@@ -8,8 +8,6 @@ package com.luke; /*************************************************************
  *
  *************************************************************************/
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -233,7 +231,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
     private String prettyPrintKeys(Node node, String prefix) {
         if (node == null) {
-            return  prefix + "-null\n";
+            return prefix + "-null\n";
         }
 
         String resultString = prefix

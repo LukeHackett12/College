@@ -45,6 +45,11 @@ void huffcoder_tree2table(struct huffcoder *this);
 // print the Huffman codes for each character in order
 void huffcoder_print_codes(struct huffcoder *this);
 
-void huffcoder_print_text(struct huffcoder *this, char *filename);
+void huffcoder_encode(struct huffcoder * this, char * input_filename,
+                      char * output_filename);
+
+// decode the input file and write the decoding to the output file
+void huffcoder_decode(struct huffcoder * this, char * input_filename,
+                      char * output_filename);
 
 #endif // HUFF_H

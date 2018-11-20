@@ -8,6 +8,8 @@
 #include <string.h>
 
 #include "huff.h"
+#include "encode.h"
+#include "decode.h"
 
 // create a new huffcoder structure
 struct huffcoder *huffcoder_new() {
@@ -171,8 +173,8 @@ void huffcoder_print_codes(struct huffcoder *this) {
 
     for (i = 0; i < NUM_CHARS; i++) {
         // put the code into a string
-        for (j = this->code_lengths[i] - 1; j >= 0; j--) {
-            buffer[j] = ((this->codes[i] >> j) & 1) + '0';
+        for ( j = this->code_lengths[i]-1; j >= 0; j--) {
+            buffer[j] = ((this->codes[i] >> ((this->code_lengths[i]-1) - j)) & 1) + '0';
         }
         // don't forget to add a zero to end of string
         buffer[this->code_lengths[i]] = '\0';
@@ -182,27 +184,15 @@ void huffcoder_print_codes(struct huffcoder *this) {
     }
 }
 
-void huffcoder_print_text(struct huffcoder *this, char *filename){
-    FILE *file = open_file(filename);
-    char ch;
-    int lenOld = 0;
-    int lenNew = 0;
-    while ((ch = (char) fgetc(file)) != EOF) {
+// encode the input file and write the encoding to the output file
+void huffcoder_encode(struct huffcoder *this, char *input_filename,
+                      char *output_filename) {
+    encode_file(this, input_filename, output_filename);
 
-        int i;
-        for (i = 0; i < 8; i++) {
-            lenOld++;
-        }
-    }
+}
 
-    file = open_file(filename);
-    while((ch = (char) fgetc(file)) != EOF){
-        char buffer[NUM_CHARS];
-        for (int j = this->code_lengths[ch] - 1; j >= 0; j--) {
-            buffer[j] = ((this->codes[ch] >> (this->code_lengths[ch]-j-1)) & 1) + '0';
-            lenNew++;
-        }
-    }
-
-    printf("Len new is %d and len old is %d", lenNew, lenOld);
+// decode the input file and write the decoding to the output file
+void huffcoder_decode(struct huffcoder *this, char *input_filename,
+                      char *output_filename) {
+    decode_file(this, input_filename, output_filename);
 }

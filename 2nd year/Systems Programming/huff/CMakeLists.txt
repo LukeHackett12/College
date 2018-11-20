@@ -3,4 +3,4 @@ project(huff C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(huff main.c huff.c encode.c encode.h decode.c decode.h)
+add_executable(huff main.c huff.c huff.h encode.c encode.h decode.c decode.h)
