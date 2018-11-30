@@ -1,4 +1,4 @@
-package com.luke; /*************************************************************************
+/*************************************************************************
  *  Binary Search Tree class.
  *  Adapted from Sedgewick and Wayne.
  *
@@ -156,6 +156,7 @@ public class BST<Key extends Comparable<Key>, Value> {
      *
      * @return the median key, or null if the tree is empty.
      */
+    /*
     public Key median() {
 
         if (isEmpty()) return null;
@@ -176,8 +177,29 @@ public class BST<Key extends Comparable<Key>, Value> {
             return queue.remove().key;
         }
         return null;
+
+    }
+    */
+    public Key median() {
+        if (isEmpty()) return null;
+        ArrayList<Node> nodesInOrder = new ArrayList<>();
+        nodesInOrder = inorderList(root, nodesInOrder);
+        int medianIndex = (nodesInOrder.size()-1) / 2;
+        return nodesInOrder.get(medianIndex).key;
+
     }
 
+    public ArrayList<Node> inorderList(Node root, ArrayList<Node> nodes) {
+        if(root == null) {
+            return null;
+        } else {
+            inorderList(root.left, nodes);
+            nodes.add(root);
+            inorderList(root.right, nodes);
+            return nodes;
+        }
+
+    }
     /**
      * Print all keys of the tree in a sequence, in-order.
      * That is, for each node, the keys in the left subtree should appear before the key in the node.
@@ -215,7 +237,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         resultString = resultString
                 + "("
                 + printKeysInOrder(node.left, resultString)
-                + (")" + node.val + "(")
+                + (")" + node.key + "(")
                 + printKeysInOrder(node.right, resultString)
                 + ")";
 
@@ -229,7 +251,7 @@ public class BST<Key extends Comparable<Key>, Value> {
      */
     public String prettyPrintKeys() {
         //TODO fill in the correct implementation.
-        //if (isEmpty()) return "-null\n";
+        if (isEmpty()) return "-null";
         return prettyPrintKeys(this.root, "");
     }
 

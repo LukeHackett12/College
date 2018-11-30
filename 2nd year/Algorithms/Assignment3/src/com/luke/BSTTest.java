@@ -1,4 +1,3 @@
-package com.luke;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,13 +81,21 @@ public class BSTTest {
                 1, bst.median().compareTo(1));
     }
 
+    @Test
+    public void testPrintKeysInOrder(){
+        BST<Integer, Integer> bst = new BST<Integer, Integer>();
+        bst.put(7, 7);   //        _7_
+        assertEquals("Checking order of constructed tree",
+                "(()7())", bst.printKeysInOrder());
+    }
+
     /** <p>Test {@link BST#prettyPrintKeys()}.</p> */
 
     @Test
     public void testPrettyPrint() {
         BST<Integer, Integer> bst = new BST<Integer, Integer>();
         assertEquals("Checking pretty printing of empty tree",
-                "-null\n", bst.prettyPrintKeys());
+                "-null", bst.prettyPrintKeys());
 
         //  -7
         //   |-3
