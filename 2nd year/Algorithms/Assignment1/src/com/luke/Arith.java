@@ -1,14 +1,12 @@
 package com.luke;
-
-// -------------------------------------------------------------------------
-
+W
 import java.util.Stack;
 
 /**
  * Utility class containing validation/evaluation/conversion operations
  * for prefix and postfix arithmetic expressions.
  *
- * @author
+ * @author Luke Hackett
  * @version 1/12/15 13:03:48
  */
 
@@ -25,17 +23,15 @@ public class Arith {
      * @return true if the parameter is indeed in prefix notation, and false otherwise.
      **/
     public static boolean validatePrefixOrder(String prefixLiterals[]) {
-        Stack<Integer> stack = new Stack<>();
         try {
-            for (int i = prefixLiterals.length - 1; i >= 0; i--) {
-                String element = prefixLiterals[i];
-                if (isOperator(element)) {
-                    stack.push(performOperation(element, stack.pop(), stack.pop()));
-                } else {
-                    stack.push(Integer.valueOf(element));
-                }
+            int count = 1;
+            if(prefixLiterals.length < 3) return false;
+            for (int i = 0; i < prefixLiterals.length; i++) {
+                if(count <= 0) return false;
+                if(isOperator(prefixLiterals[i])) count++;
+                else count--;
             }
-            return stack.size() == 1;
+            return true;
         } catch (Exception ignore) {
             return false;
         }
@@ -70,7 +66,6 @@ public class Arith {
     private static boolean isOperator(String string) {
         return string.equals("/") ||
                 string.equals("*") ||
-                string.equals("^") ||
                 string.equals("+") ||
                 string.equals("-");
 
@@ -143,9 +138,8 @@ public class Arith {
                 return (one + two);
             case "-":
                 return (one - two);
-            default:
-                return 0;
         }
+        return 0;
     }
 
     //~ Conversion  methods ..........................................................
@@ -192,19 +186,17 @@ public class Arith {
     public static String[] convertPostfixToPrefix(String postfixLiterals[]) {
         if (validatePostfixOrder(postfixLiterals)) {
             Stack<String> stack = new Stack<>();
-            for (int i = 0; i < postfixLiterals.length; i++) {
-                if (!isOperator(postfixLiterals[i])) {
-                    stack.push(postfixLiterals[i]);
-                } else {
-                    String[] elements = new String[2];
-                    elements[0] = stack.pop();
-                    elements[1] = stack.pop();
+            for (String postfixLiteral : postfixLiterals) {
+                if (!isOperator(postfixLiteral)) stack.push(postfixLiteral + ",");
+                else {
+                    String op1 = stack.pop();
+                    String op2 = stack.pop();
 
-                    String newItem = postfixLiterals[i] + " " + elements[1] + " " + elements[0];
-                    stack.push(newItem);
+                    stack.push(postfixLiteral + "," + op2 + op1);
                 }
             }
-            return stack.pop().split(" ");
+
+            return stack.pop().split(",");
         } else {
             return null;
         }
@@ -257,8 +249,8 @@ public class Arith {
                     stack.push(postfixLiterals[i]);
                 } else {
                     String[] elements = new String[2];
-                    elements[0] = (stack.size() != 0) ? stack.pop() : "";
-                    elements[1] = (stack.size() != 0) ? stack.pop() : "";
+                    elements[0] = stack.pop();
+                    elements[1] = stack.pop();
 
                     String newItem = "( " + elements[1] + " " + postfixLiterals[i] + " " + elements[0] + " )";
                     stack.push(newItem);

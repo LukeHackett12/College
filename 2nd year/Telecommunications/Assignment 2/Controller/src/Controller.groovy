@@ -1,26 +1,32 @@
-import java.lang.reflect.Array
-
 class Controller {
-    static ArrayList<InetAddress> routers
-    static int port
+  public static final int ROUTER_HELLO = 0
+  public static final int CLIENT_HELLO = 100
+  public static final int FEATURE_REQ = 5
+  public static final int FEATURE_RES = 6
+  public static final int TABLE_UPDATE = 8
+  public static final int ACK_CODE = 10
+  public static final int ROUTER_DEFAULT_PORT = 5050
 
-    Controller() {
-        routers = new ArrayList<>()
-        //TODO make the controller and router find each other without this shit
-        port = 5151
+  static ArrayList<Router> routers
+  static ArrayList<Router> destinations
+  static int port
 
-        ControllerReceiver receiver = new ControllerReceiver()
-        createThread(receiver)
+  Controller() {
+    //TODO make the controller and router find each other without this shit
+    port = 5151
 
-        println('Controller started on port ' + port)
-    }
+    ControllerReceiver receiver = new ControllerReceiver()
+    createThread(receiver)
 
-    void createThread(Runnable runnable) {
-        Thread thread = new Thread(runnable)
-        thread.start()
-    }
+    println('Controller started on port ' + port)
+  }
 
-    static void main(String[] args) {
-        new Controller()
-    }
+  void createThread(Runnable runnable) {
+    Thread thread = new Thread(runnable)
+    thread.start()
+  }
+
+  static void main(String[] args) {
+    new Controller()
+  }
 }

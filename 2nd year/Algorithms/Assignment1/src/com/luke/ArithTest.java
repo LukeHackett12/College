@@ -37,8 +37,9 @@ public class ArithTest{
         args = new String[]{"-", "9", "9", "2", "2"};
         assertFalse("Invalid prefix", Arith.validatePrefixOrder(args));
 
-        args = new String[]{"-", "-", "9", "asd", "2"};
+        args = new String[]{"1", "2", "-", "2", "+"};
         assertFalse("Invalid prefix", Arith.validatePrefixOrder(args));
+
     }
 
     @Test
@@ -54,6 +55,11 @@ public class ArithTest{
         args = new String[]{"2", "6", "+", "6", "/"};
         result = Arith.evaluatePostfixOrder(args);
         assertEquals("Postfix division rounding case", 1, result);
+
+        args = new String[]{"1", "2", "-", "3", "*"};
+        result = Arith.evaluatePostfixOrder(args);
+        assertEquals("Postfix his case", -3, result);
+
     }
 
     @Test
@@ -65,10 +71,13 @@ public class ArithTest{
         assertEquals("Added prefix", 0,Arith.evaluatePrefixOrder(args));
 
         args = new String[]{"*", "-", "1", "2", "3"};
-        assertEquals("Added prefix", 5,Arith.evaluatePrefixOrder(args));
+        assertEquals("Added prefix", -3,Arith.evaluatePrefixOrder(args));
 
         args = new String[]{"-", "5", "*", "6", "7"};
         assertEquals("Added prefix", -37,Arith.evaluatePrefixOrder(args));
+
+        args = new String[]{"-", "*", "/", "15", "-", "7", "+", "1", "1", "3", "+", "2", "+", "1", "1"};
+        assertEquals("Added prefix", 5, Arith.evaluatePrefixOrder(args));
     }
 
     @Test
@@ -76,6 +85,11 @@ public class ArithTest{
         String args[] = {"-", "-", "2", "2", "2"};
         String expected[] = {"2", "2", "-", "2", "-"};
         assertEquals("Converting prefix to postfix", Arrays.toString(expected), Arrays.toString(Arith.convertPrefixToPostfix(args)));
+
+        args = new String[]{"*", "-", "1", "2", "3"};
+        expected = new String[]{"1", "2", "-", "3", "*"};
+
+        assertEquals("Converting postfix to prefix", Arrays.toString(expected), Arrays.toString(Arith.convertPrefixToPostfix(args)));
 
         args[0] = "12";
         assertNull(Arith.convertPrefixToPostfix(args));
@@ -87,6 +101,12 @@ public class ArithTest{
         String expected[] = {"-", "-", "2", "2", "2"};
         assertEquals("Converting postfix to prefix", Arrays.toString(expected), Arrays.toString(Arith.convertPostfixToPrefix(args)));
 
+        args = new String[]{"1", "2", "-", "3", "*"};
+        expected = new String[]{"*", "-", "1", "2", "3"};
+
+        assertEquals("Converting postfix to prefix", Arrays.toString(expected), Arrays.toString(Arith.convertPostfixToPrefix(args)));
+
+
         args[2] = "12";
         assertNull(Arith.convertPostfixToPrefix(args));
     }
@@ -97,6 +117,12 @@ public class ArithTest{
         String expected[] = {"(", "(", "2", "-", "2", ")","-", "2", ")"};
 
         assertEquals("Converting prefix to infix", Arrays.toString(expected), Arrays.toString(Arith.convertPrefixToInfix(args)));
+
+        args = new String[]{"*", "-", "1", "2", "3"};
+        expected = new String[]{"(", "(", "1", "-", "2", ")","*", "3", ")"};
+
+        assertEquals("Converting prefix to infix", Arrays.toString(expected), Arrays.toString(Arith.convertPrefixToInfix(args)));
+
 
         args[0] = "12";
         assertNull(Arith.convertPrefixToInfix(args));

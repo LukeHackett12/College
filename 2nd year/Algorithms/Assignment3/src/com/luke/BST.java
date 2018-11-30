@@ -238,14 +238,12 @@ public class BST<Key extends Comparable<Key>, Value> {
             return prefix + "-null\n";
         }
 
-        String resultString = prefix
+        return prefix
                 + "-"
                 + node.key
                 + "\n"
                 + prettyPrintKeys(node.left, prefix + " |")
                 + prettyPrintKeys(node.right, prefix + "  ");
-
-        return resultString;
     }
 
     /**
