@@ -5,7 +5,7 @@ class Controller {
   public static final int FEATURE_RES = 6
   public static final int TABLE_UPDATE = 8
   public static final int ACK_CODE = 10
-  public static final int ROUTER_DEFAULT_PORT = 5050
+  public static final int ROUTER_DEFAULT_PORT = 1000
 
   static ArrayList<Router> routers
   static ArrayList<Router> destinations
@@ -14,6 +14,8 @@ class Controller {
   Controller() {
     //TODO make the controller and router find each other without this shit
     port = 5151
+    routers = new ArrayList<>()
+    destinations = new ArrayList<>()
 
     ControllerReceiver receiver = new ControllerReceiver()
     createThread(receiver)

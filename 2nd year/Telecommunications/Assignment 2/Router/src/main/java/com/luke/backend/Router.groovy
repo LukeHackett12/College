@@ -18,7 +18,7 @@ class Router {
     flowTable = new HashMap<>()
 
     //TODO make the controller and router find each other without this shit
-    port = 5050
+    port = 1000
     num_tables = 0
     datapath_id = UUID.randomUUID().toString()
     contactedController = false
