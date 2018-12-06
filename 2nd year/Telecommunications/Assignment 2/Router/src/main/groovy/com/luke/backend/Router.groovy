@@ -11,12 +11,21 @@ class Router {
   static String datapath_id
   static Map features
 
+  public static final int PACKET_DEFAULT_PORT = 9000
+
+  static HashSet<InetAddress> routers
+  static HashSet<String> destinations
+
   static boolean contactedController
   static boolean sentFeatures
 
   Router() {
     flowTable = new HashMap<>()
 
+    routers = new HashSet<>()
+    routers.add(InetAddress.localHost)
+    destinations = new HashSet<>()
+    
     //TODO make the controller and router find each other without this shit
     port = 1000
     num_tables = 0

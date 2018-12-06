@@ -32,6 +32,8 @@ class PacketHandler implements Runnable {
           updateTable()
         }
         break
+      case FORWARD_MESSAGE:
+        forwardMessage()
       case ACK_RES:
         ackRead()
         break
@@ -65,6 +67,19 @@ class PacketHandler implements Runnable {
     }
 
     Router.flowTable.put(convertedFlow.get(0).destination, convertedFlow)
+    Router.destinations.add(convertedFlow.get(0).destination)
+    convertedFlow.each{ FlowPath entry ->
+      Router.routers.add(InetAddress.getByName(entry.nextRouter))
+    }
+  }
+
+  void forwardMessage(){
+    ByteArrayInputStream data = new ByteArrayInputStream(Arrays.copyOfRange(packet.data, 1, packet.data.length - 1))
+    ObjectInputStream stream = new ObjectInputStream(data)
+    String message = stream.readUTF()
+    Map messageMap = new JsonSlurper().parseText(message) as Map
+
+    RouterDispatcher.forwardPacket(messageMap)
   }
 
   void ackRead() {
