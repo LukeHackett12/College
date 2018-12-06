@@ -1,6 +1,6 @@
 # Express-Vue Openflow Client
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/express-vue/express-vue-mvc-starter.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.com/LukeHackett12/College.svg?token=wPNE4LQEjyzr5TDq7ygc&branch=master)](https://travis-ci.com/LukeHackett12/College)
 
 This is a simple client that uses [express-vue](https://github.com/express-vue/express-vue) made to accompany
 CS2031 Telecommunications Openflow Assignment
