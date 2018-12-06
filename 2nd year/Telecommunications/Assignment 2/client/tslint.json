@@ -1,0 +1,21 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "app/assets/scripts/**/*.js",
+            "app/**/*.vue",
+            "test/**/*.js",
+            "node_modules/**"
+        ]
+    },
+    "jsRules": {
+        "object-literal-sort-keys":false,
+        "no-console": [true, "log"],
+        "max-line-length":false
+    },
+    "rules": {},
+    "rulesDirectory": []
+}

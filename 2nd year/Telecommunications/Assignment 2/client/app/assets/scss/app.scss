@@ -1,0 +1,14 @@
+html {
+    height: 100%;
+    body {
+        background: white;
+        color: black;
+        height: 100%;
+    }
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

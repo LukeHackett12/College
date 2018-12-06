@@ -1,5 +1,6 @@
 .idea/
 cmake-build-debug/
+node_modules/
 *.in
 *.results
 *.out
