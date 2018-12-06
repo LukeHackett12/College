@@ -1,0 +1,5 @@
+language: node_js
+script:
+  - cd 2nd\ year/Telecommunications/Assignment\ 2/client/
+  - npm install
+  - npm build
