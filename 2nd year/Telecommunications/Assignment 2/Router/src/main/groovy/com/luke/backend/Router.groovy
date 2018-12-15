@@ -27,7 +27,7 @@ class Router {
     destinations = new HashSet<>()
     
     //TODO make the controller and router find each other without this shit
-    port = 1000
+    port = 4141
     num_tables = 0
     datapath_id = UUID.randomUUID().toString()
     contactedController = false

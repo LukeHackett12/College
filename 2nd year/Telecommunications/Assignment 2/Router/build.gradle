@@ -1,21 +1,21 @@
 buildscript {
-	ext {
-		springBootVersion = '2.1.0.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
+  ext {
+    springBootVersion = '2.1.0.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+  }
 
 
-	dependencies {
-		
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+  dependencies {
+
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
 }
 
 plugins {
-	id 'application'
-	id 'groovy'
+  id 'application'
+  id 'groovy'
 }
 
 mainClassName = 'com.luke.restful.RouterApplication'
@@ -31,12 +31,12 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-	implementation('org.codehaus.groovy:groovy-all:2.5.2')
-	implementation('org.springframework.boot:spring-boot-starter-web')
+  implementation('org.codehaus.groovy:groovy-all:2.5.2')
+  implementation('org.springframework.boot:spring-boot-starter-web')
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
+  testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
