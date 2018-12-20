@@ -1,3 +1,4 @@
+.gradle/
 .idea/
 cmake-build-debug/
 node_modules/
@@ -11,11 +12,11 @@ node_modules/
 *.ini
 *.uvopt
 *.sct
-1st year/ARM assembly/Memory/Assignment.2.1.Sets/Sets.uvproj
+*.uvproj
 *.o
 *.map
 *.lib
-1st year/ARM assembly/Memory/Assignment.2.1.Sets/Sets.lnp
+*.lnp
 *.d
 *.axf
 *.scvd
@@ -25,16 +26,9 @@ node_modules/
 *.htm
 *.htm
 *.class
-1st year/Java Programming/Random/Minesweeper.java
 *.xml
 *.iml
 *.vlw
-1st year/Processsing/Pong/build/
-1st year/Processsing/SpaceInvaders/build/
-1st year/Processsing/SpaceInvaders/build/source/
-1st year/Processsing/SpaceInvaders/build/source/SpaceInvaders.java
+build/
 *.tmp
-1st year/asciifull.gif
-*.uvproj
-1st year/ARM assembly/Sudoku/Sudoku_sct.Bak
 *.crf
