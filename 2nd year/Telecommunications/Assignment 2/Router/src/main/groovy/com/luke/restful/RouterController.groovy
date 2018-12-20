@@ -31,13 +31,15 @@ class RouterController {
     }
 
     @PostMapping(path = "/send", consumes = "application/json", produces = "application/json")
-    ResponseEntity sendPacket(@RequestBody Map packet) {
+    ResponseEntity sendPacket(@RequestBody Map packet, @RequestHeader HttpHeaders headers) {
         int finalPort = (packet.port != null) ? packet.port : Router.PACKET_DEFAULT_PORT
         String addressString = packet.destination
         InetAddress finalAddress = InetAddress.getByName(addressString.replaceAll('/', ''))
         String content = packet.content
+        String source = headers.getOrigin()
 
-        Map toSend = ['destPort'   : finalPort,
+        Map toSend = ['source'     : source,
+                      'destPort'   : finalPort,
                       'destAddress': finalAddress,
                       'content'    : content]
 
@@ -56,6 +58,7 @@ class RouterController {
     ResponseEntity addDestination(@RequestBody Map packet, @RequestHeader HttpHeaders headers) {
         String originIP = headers.getOrigin().split(":")[1].replaceAll('/', '')
         String originPort = headers.getOrigin().split(":").last()
+
 
         Map toSend = ['destPort'   : originPort,
                       'destAddress': originIP]

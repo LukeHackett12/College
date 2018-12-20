@@ -1,7 +1,6 @@
 import groovy.json.JsonSlurper
 
-//import static Controller.*
-import static Controller.destinations
+import static Controller.*
 
 class PacketHandler implements Runnable {
   DatagramPacket packet
