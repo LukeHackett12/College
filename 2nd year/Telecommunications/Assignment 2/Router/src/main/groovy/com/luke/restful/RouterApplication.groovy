@@ -13,7 +13,7 @@ class RouterApplication {
 
 	static void main(String[] args) {
 		Router.initRouter()
-		SpringApplication.run(RouterApplication.class, args)
+4		SpringApplication.run(RouterApplication.class, args)
 	}
 
 	@Bean
