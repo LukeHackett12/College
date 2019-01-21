@@ -1,5 +1,4 @@
 package com.luke;
-W
 import java.util.Stack;
 
 /**
@@ -29,7 +28,7 @@ public class Arith {
             for (int i = 0; i < prefixLiterals.length; i++) {
                 if(count <= 0) return false;
                 if(isOperator(prefixLiterals[i])) count++;
-                else count--;
+                else if(isNumber(prefixLiterals[i])) count--;
             }
             return true;
         } catch (Exception ignore) {
@@ -49,14 +48,11 @@ public class Arith {
     public static boolean validatePostfixOrder(String postfixLiterals[]) {
         Integer count = 0;
         for (String string : postfixLiterals) {
-            if (string.matches("-?\\d+")) {
+            if (isOperator(string)) {
+                count--;
+                if(count - 1 < 0) return false;
+            } else if(isNumber(string)){
                 count++;
-            } else {
-                if (isOperator(string)) {
-                    count--;
-                } else {
-                    return false;
-                }
             }
         }
 
@@ -69,6 +65,15 @@ public class Arith {
                 string.equals("+") ||
                 string.equals("-");
 
+    }
+    
+    public static boolean isNumber(String number) {
+        try {
+            Integer.parseInt(number);
+        } catch (NumberFormatException exception) {
+            return false;
+        }
+        return true;
     }
 
     //~ Evaluation  methods ..........................................................
@@ -95,7 +100,7 @@ public class Arith {
             }
             return stack.pop();
         } else {
-            return 0;
+            return -1;
         }
     }
 
@@ -110,13 +115,13 @@ public class Arith {
      **/
     public static int evaluatePostfixOrder(String postfixLiterals[]) {
         if (validatePostfixOrder(postfixLiterals)) {
-            Stack<String> stack = new Stack<>();
+            Stack<Integer> stack = new Stack<>();
             for (String string : postfixLiterals) {
-                if (string.matches("-?\\d+")) {
-                    stack.push(string);
+                if (isNumber(string)) {
+                    stack.push(Integer.parseInt(string));
                 } else {
-                    int one = Integer.parseInt(stack.pop());
-                    int two = Integer.parseInt(stack.pop());
+                    int one = stack.pop();
+                    int two = stack.pop();
 
                     int result = performOperation(string, two, one);
                     stack.push(String.valueOf(result));
@@ -157,7 +162,7 @@ public class Arith {
         if (validatePrefixOrder(prefixLiterals)) {
             Stack<String> stack = new Stack<>();
             for (int i = prefixLiterals.length - 1; i >= 0; i--) {
-                if (!isOperator(prefixLiterals[i])) {
+                if (isNumber(prefixLiterals[i])) {
                     stack.push(prefixLiterals[i]);
                 } else {
                     String[] elements = new String[2];
@@ -187,16 +192,16 @@ public class Arith {
         if (validatePostfixOrder(postfixLiterals)) {
             Stack<String> stack = new Stack<>();
             for (String postfixLiteral : postfixLiterals) {
-                if (!isOperator(postfixLiteral)) stack.push(postfixLiteral + ",");
+                if (!isOperator(postfixLiteral)) stack.push(postfixLiteral + " ");
                 else {
                     String op1 = stack.pop();
                     String op2 = stack.pop();
 
-                    stack.push(postfixLiteral + "," + op2 + op1);
+                    stack.push(postfixLiteral + " " + op2 + " " + op1);
                 }
             }
 
-            return stack.pop().split(",");
+            return stack.pop().split(" ");
         } else {
             return null;
         }
@@ -215,7 +220,7 @@ public class Arith {
         if (validatePrefixOrder(prefixLiterals)) {
             Stack<String> stack = new Stack<>();
             for (int i = prefixLiterals.length - 1; i >= 0; i--) {
-                if (!isOperator(prefixLiterals[i])) {
+                if (isNumber(prefixLiterals[i])) {
                     stack.push(prefixLiterals[i]);
                 } else {
                     String[] elements = new String[2];
@@ -245,7 +250,7 @@ public class Arith {
         if (validatePostfixOrder(postfixLiterals)) {
             Stack<String> stack = new Stack<>();
             for (int i = 0; i < postfixLiterals.length; i++) {
-                if (!isOperator(postfixLiterals[i])) {
+                if (isNumber(postfixLiterals[i])) {
                     stack.push(postfixLiterals[i]);
                 } else {
                     String[] elements = new String[2];
