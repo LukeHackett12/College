@@ -1,4 +1,4 @@
-package com.luke;
+
 import java.util.Stack;
 
 /**
@@ -59,7 +59,7 @@ public class Arith {
         return (count == 1);
     }
 
-    private static boolean isOperator(String string) {
+    public static boolean isOperator(String string) {
         return string.equals("/") ||
                 string.equals("*") ||
                 string.equals("+") ||
@@ -124,11 +124,11 @@ public class Arith {
                     int two = stack.pop();
 
                     int result = performOperation(string, two, one);
-                    stack.push(String.valueOf(result));
+                    stack.push(result);
                 }
             }
 
-            return Integer.parseInt(stack.pop());
+            return stack.pop();
         }
         return -1;
     }
