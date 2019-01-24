@@ -1,3 +1,2 @@
 # College Work
-All the work I'm doing during my time at Trinity college
-
+All the work I'm doing during my time at Trinity college, If you use the code star the repo at least...
