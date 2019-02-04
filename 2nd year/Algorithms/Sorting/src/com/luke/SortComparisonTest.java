@@ -60,7 +60,7 @@ public class SortComparisonTest {
                 9363.01, 9443.28, 9456.25, 9466.56, 9955.53};
 
 
-                Assert.assertThat("Selection sort on 100 elements", SortComparison.selectionSort(a), IsEqual.equalTo(result));
+        Assert.assertThat("Selection sort on 100 elements", SortComparison.selectionSort(a), IsEqual.equalTo(result));
 
         assertNull("Null when null passed on Selection Sort", SortComparison.selectionSort(null));
     }
