@@ -2,14 +2,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 
 #include "huff.h"
 
-
-
 int main(int argc, char ** argv)
 {
+
     int char_freqs[NUM_CHARS];
     struct huffcoder * coder;
     int valid_command = 0;
@@ -64,6 +64,5 @@ int main(int argc, char ** argv)
     else if ( strcmp(argv[1], "decode") == 0 ) {
         huffcoder_decode(coder, argv[3], argv[4]);
     }
-
     return 0;
 }

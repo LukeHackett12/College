@@ -120,7 +120,7 @@ class PublisherHandler implements Runnable {
         PublisherIdentificationSender publisherIdentificationSender = new PublisherIdentificationSender(broker)
         createThread(publisherIdentificationSender)
 
-        Publisher.brokers.add(new Broker(id: '-1', location: broker))
-        Publisher.brokers.unique { it.location }
+        brokers.add(new Broker(id: '-1', location: broker))
+        brokers.unique { it.location }
     }
 }

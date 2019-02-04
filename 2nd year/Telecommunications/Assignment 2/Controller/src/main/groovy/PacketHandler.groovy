@@ -57,12 +57,7 @@ class PacketHandler implements Runnable {
           flowPaths.add(flowPath)
         }
 
-        FlowPath flowPath = new FlowPath()
-        flowPath.destination = dest.address
-        flowPath.nextRouter = "localhost"
-        flowPath.nextRouterPort = 0
-        flowPath.nextRouterID = "localhost"
-        flowPath.isFinal = true
+        FlowPath flowPath = addFinalRouter()
 
         flowPaths.add(flowPath)
         ControllerDispatcher.sendFlows(flowPaths, router.address, ROUTER_DEFAULT_PORT)
@@ -70,15 +65,26 @@ class PacketHandler implements Runnable {
     }
   }
 
+  private FlowPath addFinalRouter() {
+    FlowPath flowPath = new FlowPath()
+    flowPath.destination = dest.address
+    flowPath.nextRouter = "localhost"
+    flowPath.nextRouterPort = 0
+    flowPath.nextRouterID = "localhost"
+    flowPath.isFinal = true
+    flowPath
+  }
+
   void addFeaturesToRouter() {
     ByteArrayInputStream featureData = new ByteArrayInputStream(Arrays.copyOfRange(packet.data, 1, packet.data.length - 1))
     ObjectInputStream featureStream = new ObjectInputStream(featureData)
     String featureString = featureStream.readUTF()
     Map features = (new JsonSlurper().parseText(featureString)) as Map
-    routers.forEach { Router router ->
+    routers.collect { Router router ->
       if (router.address == packet.address) {
         router.features = features
       }
+      router
     }
   }
 

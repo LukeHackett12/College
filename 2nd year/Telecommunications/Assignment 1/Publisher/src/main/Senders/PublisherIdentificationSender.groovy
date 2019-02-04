@@ -25,9 +25,7 @@ class PublisherIdentificationSender implements Runnable {
         System.arraycopy(bstream.toByteArray(), 0, buffer, flag.length, bstream.toByteArray().length)
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, port)
-        DatagramSocket socket
-
-        socket = new DatagramSocket()
+        DatagramSocket socket = new DatagramSocket()
 
         socket.send(packet)
         socket.close()
