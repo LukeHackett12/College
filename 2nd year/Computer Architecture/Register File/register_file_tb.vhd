@@ -40,20 +40,20 @@ architecture behavior OF register_file_tb IS
     -- Component Declaration for the Unit Under Test (UUT)
  
     component register_file
-    Port ( src_s0, src_s1, src_s2, src_s3,
+    Port ( src_s0, src_s1, src_s2,
         des_A0, des_A1, des_A2, Clk: in std_logic;
-        data_src : std_logic_vector(1 downto 0);
-        data : std_logic_vector(15 downto 0);
+        data_src : in std_logic;
+        data : in std_logic_vector(15 downto 0);
         reg0, reg1, reg2, reg3, reg4, 
         reg5, reg6, reg7 : out std_logic_vector(15 downto 0) 
     );
     end component;
 
    --Inputs
-   signal src_s0, src_s1, src_s2, src_s3,
+   signal src_s0, src_s1, src_s2,
         des_A0, des_A1, des_A2, Clk : std_logic;
         
-   signal data_src : std_logic_vector(1 downto 0);
+   signal data_src : std_logic;
    signal data : std_logic_vector(15 downto 0);
  	--Outputs
    signal reg0, reg1, reg2, reg3, reg4, 
@@ -67,7 +67,6 @@ begin
           src_s0 => src_s0,
           src_s1 => src_s1,
           src_s2 => src_s2,
-          src_s3 => src_s3,
           des_A0 => des_A0,
           des_A1 => des_A1,
           des_A2 => des_A2,
@@ -87,7 +86,32 @@ begin
    stim_proc: process
 
    begin
+     src_s0 <= '0';
+     src_s1 <= '1';
+     src_s2 <= '0';
+     des_A0 <= '0';
+     des_A1 <= '1';
+     des_A2 <= '0';
+     data_src <= '0';
+     data <= "1111111100000000";
+     Clk <= '0';
      
+     wait for 10 ns;
+     
+     Clk <= '1';
+      
+     wait for 10 ns;
+     
+     data_src <= '1';
+     des_A0 <= '0';
+     des_A1 <= '0';
+     des_A2 <= '0';
+     Clk <= '0';
+     
+      wait for 10 ns;
+        
+      Clk <= '1';
+      wait for 10 ns;
     --     wait;
    end process;   
 

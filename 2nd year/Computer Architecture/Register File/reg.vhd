@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:42:30 02/23/2012 
 -- Design Name: 
--- Module Name:    register - Behavioral 
+-- Module Name:    reg - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 

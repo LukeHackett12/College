@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:42:30 02/23/2012 
 -- Design Name: 
--- Module Name:    register - Behavioral 
+-- Module Name:    register_file - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -34,8 +34,8 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity register_file is
     Port ( src_s0, src_s1, src_s2,
         des_A0, des_A1, des_A2, Clk: in std_logic;
-        data_src : std_logic_vector(1 downto 0);
-        data : std_logic_vector(15 downto 0);
+        data_src : in std_logic;
+        data : in std_logic_vector(15 downto 0);
         reg0, reg1, reg2, reg3, reg4, 
         reg5, reg6, reg7 : out std_logic_vector(15 downto 0) 
     );
@@ -75,7 +75,7 @@ architecture Behaviour of register_file is
    end component;
    
    component multiplexer2_16
-   port ( s : in  std_logic_vector (2 downto 0);
+   port ( s : in  std_logic;
            in1 : in  std_logic_vector(15 downto 0);
            in2 : in  std_logic_vector (15 downto 0);
            z : out  std_logic_vector (15 downto 0));
@@ -165,6 +165,13 @@ begin
     in6 => reg6_q,
     in7 => reg7_q,
     z => src_reg
+  );
+  
+  data_multiplexer1_16 : multiplexer2_16 port map (
+    s => data_src,
+    in1 => data,
+    in2 => src_reg,
+    z => data_src_mux_out
   );
   
   reg0 <= reg0_q;

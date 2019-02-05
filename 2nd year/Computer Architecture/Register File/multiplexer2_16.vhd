@@ -4,7 +4,7 @@
 -- 
 -- Create Date: 05.02.2019 00:40:30
 -- Design Name: 
--- Module Name: multiplexer2_16 - Behavioral
+-- Module Name: multiplexer1_16 - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -32,7 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity multiplexer2_16 is
-     port ( s : in  std_logic_vector (2 downto 0);
+     port ( s : in  std_logic;
            in1 : in  std_logic_vector(15 downto 0);
            in2 : in  std_logic_vector (15 downto 0);
            z : out  std_logic_vector (15 downto 0));
@@ -43,8 +43,8 @@ begin
     process (s,in1,in2)
 		begin
 		case  s is
-			when "00" => z <= in1;
-			when "01" => z <= in2;
+			when '0' => z <= in1;
+			when '1' => z <= in2;
 			when others => z <= in1;
 		end case;
 	end process;
