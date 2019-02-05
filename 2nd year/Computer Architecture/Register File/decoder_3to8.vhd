@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:42:30 02/23/2012 
 -- Design Name: 
--- Module Name:    decoder - Behavioral 
+-- Module Name:    decoder_3to8 - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,7 +29,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity decoder is
+entity decoder_3to8 is
     Port ( s : in   STD_LOGIC_VECTOR(2 downto 0);
            z0 : out  std_logic;
            z1 : out  std_logic;
@@ -39,9 +39,9 @@ entity decoder is
            z5 : out  std_logic;
            z6 : out  std_logic;
            z7 : out  std_logic);
-end decoder;
+end decoder_3to8;
 
-architecture Behaviour of decoder is
+architecture Behaviour of decoder_3to8 is
   
 begin
     z0 <= not(s(2)) and not(s(1)) and not(s(0)) after 5ns; 

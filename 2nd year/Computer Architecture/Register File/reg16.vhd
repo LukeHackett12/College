@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:42:30 02/23/2012 
 -- Design Name: 
--- Module Name:    reg - Behavioral 
+-- Module Name:    reg16 - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -31,13 +31,13 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity reg is
+entity reg16 is
     Port ( D : in std_logic_vector(15 downto 0);
         load, Clk : in std_logic;
         Q: out std_logic_vector(15 downto 0));
-end reg;
+end reg16;
 
-architecture Behaviour of reg is
+architecture Behaviour of reg16 is
   
 begin
 

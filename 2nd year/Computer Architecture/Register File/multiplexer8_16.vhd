@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:42:30 02/23/2012 
 -- Design Name: 
--- Module Name:    multiplexer - Behavioral 
+-- Module Name:    multiplexer8_16 - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 

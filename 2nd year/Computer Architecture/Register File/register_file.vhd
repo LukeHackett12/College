@@ -43,13 +43,13 @@ end register_file;
 
 architecture Behaviour of register_file is
   
-  component reg
+  component reg16
   port ( D : in std_logic_vector(15 downto 0);
          load, Clk : in std_logic;
          Q: out std_logic_vector(15 downto 0));
   end component;
   
-  component decoder
+  component decoder_3to8
   port ( s : in   std_logic_vector(2 downto 0);
          z0 : out  std_logic;
         z1 : out  std_logic;
@@ -89,56 +89,56 @@ architecture Behaviour of register_file is
   
 begin
   
-  reg000: reg port map(
+  reg000: reg16 port map(
     D => data_src_mux_out,
     load => load_reg0,
     Clk => Clk,
     Q => reg0_q
   );
-  reg001: reg port map(
+  reg001: reg16 port map(
     D => data_src_mux_out,
     load => load_reg1,
     Clk => Clk,
     Q => reg1_q
   );
-  reg010: reg port map(
+  reg010: reg16 port map(
     D => data_src_mux_out,
     load => load_reg2,
     Clk => Clk,
     Q => reg2_q
   );
-  reg011: reg port map(
+  reg011: reg16 port map(
     D => data_src_mux_out,
     load => load_reg3,
     Clk => Clk,
     Q => reg3_q
   );
-  reg100: reg port map(
+  reg100: reg16 port map(
     D => data_src_mux_out,
     load => load_reg4,
     Clk => Clk,
     Q => reg4_q
   );
-  reg101: reg port map(
+  reg101: reg16 port map(
     D => data_src_mux_out,
     load => load_reg5,
     Clk => Clk,
     Q => reg5_q
   );
-  reg110: reg port map(
+  reg110: reg16 port map(
     D => data_src_mux_out,
     load => load_reg6,
     Clk => Clk,
     Q => reg6_q
   );
-  reg111: reg port map(
+  reg111: reg16 port map(
     D => data_src_mux_out,
     load => load_reg7,
     Clk => Clk,
     Q => reg7_q
   );
   
-  dest_decoder : decoder port map(
+  dest_decoder : decoder_3to8 port map(
     s(0) => des_A0,
     s(1) => des_A1,
     s(2) => des_A2,
@@ -167,7 +167,7 @@ begin
     z => src_reg
   );
   
-  data_multiplexer1_16 : multiplexer2_16 port map (
+  data_multiplexer2_16 : multiplexer2_16 port map (
     s => data_src,
     in1 => data,
     in2 => src_reg,
