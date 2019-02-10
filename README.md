@@ -1,7 +1,5 @@
 # HoloLens Project
-![Build Status](http://37.228.204.28:8080/job/SWENG-Group-9/job/master/badge/icon)
-![alt text](http://37.228.204.28:8080/buildStatus/icon?job=SWENG-Group-9/master)
-
+[![Build Status](http://37.228.204.28:8080/buildStatus/icon?job=SWENG-Group-9/master)](http://37.228.204.28:8080/job/SWENG-Group-9/job/master/)
 
 _Developed by Luke Hackett, Jack Engels, Jack Gilbride, Imalia Gonzalezova, Aaron Duggan, Alex Fields & Daniel Connaughton_
 ## Developer Requirements
