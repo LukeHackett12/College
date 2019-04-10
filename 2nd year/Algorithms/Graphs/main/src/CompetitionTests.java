@@ -2,6 +2,24 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 
+/*
+ *  Choice of data structures:
+ *     - For the adjacency table in the Graph class I used an array of Hashsets
+ *       as this results in a faster runtime due to accesses.
+ *     - I held the distances in a 2d array as it was very easy to access and
+ *       compare values.
+ *     
+ *  Differences between Dijkstra and Floyd-Warshall
+ *      - In this problem we need to find the longest possible
+ *          time taken from any point so floyd warshall suits
+ *          better for this problem as it returns the required 2d
+ *          array
+ *      - Dijstra is not effected by the denser graphs as much as 
+ *          it uses a hashset list instead of a matrix, floyd warshall improves
+ *          on denser datasets however as it is not dependant on a queue. I would chose
+ *          mu dijkstra for both as it would beat out floyd warshall.
+ */
+
 public class CompetitionTests {
 
     @Test
