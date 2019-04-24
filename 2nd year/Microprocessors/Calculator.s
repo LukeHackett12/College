@@ -1,9 +1,6 @@
 AREA	AsmTemplate, CODE, READONLY
 	IMPORT	main
 
-; sample program makes the 4 LEDs P1.16, P1.17, P1.18, P1.19 go on and off in sequence
-; (c) Mike Brady, 2011 -- 2019.
-
 	EXPORT	start
 start
 
