@@ -7,9 +7,9 @@ class Node:
 def dagLCA(root,n1,n2):
     if root is None:
         return None
-    if root.key == n1 or root.key == n2:
-        return root
-    if n1 == n2:
+    if root.key == n1.key or root.key == n2.key:
+        return root.key
+    if n1.key == n2.key:
         return n1.key
     lca = []
     
