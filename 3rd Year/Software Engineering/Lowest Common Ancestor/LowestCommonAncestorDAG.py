@@ -4,7 +4,6 @@ class Node:
         self.pred = []
         self.succ = []
 
-#code for dag lca
 def dagLCA(root,n1,n2):
     if root is None:
         return None
