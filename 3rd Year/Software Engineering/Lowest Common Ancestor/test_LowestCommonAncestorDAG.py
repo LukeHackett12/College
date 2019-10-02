@@ -49,12 +49,16 @@ class TestLowestCommonAncestorDAG:
         r4 = Node(4)
         r5 = Node(5)
         r6 = Node(6)
-        root.succ = [r2,r3,r4,r5]
+        root.succ = [r2,r3]
         r2.succ = [r4]
         r2.pred = [root]
         r3.succ = [r4, r5]
         r3.pred = [root]
         r4.succ = [r5]
-        r4.pred = [r2,r3,root]
-        r5.pred = [r3,r4,root]
+        r4.pred = [r2]
+        r5.pred = [r3]
         r6.pred = [r4]
+
+        lca = dagLCA(root, r4, r5)
+
+        assert lca is 1
