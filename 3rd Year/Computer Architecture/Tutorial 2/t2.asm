@@ -14,8 +14,8 @@ g QWORD 4
 
 public      min
 
-;_int64 min(int a, int b, int c) {
-;	int v = a;
+;_int64 min(_int64 a, _int64 b, _int64 c) {
+;	_int64 v = a;
 ;	if (b < v)
 ;		v = b;
 ;	if (c < v)
@@ -35,7 +35,7 @@ minret:
 
 public		p
 
-;int p(int i, int j, int k, int l) {
+;_int64 p(_int64 i, _int64 j, _int64 k, _int64 l) {
 ;	return min(min(g, i, j), k, l);
 ;}
 
@@ -60,7 +60,7 @@ p:			sub		rsp, 32
 
 public		gcd
 
-;int gcd(int a, int b) {
+;_int64 gcd(_int64 a, _int64 b) {
 ;	if (b == 0) {
 ;		return a;
 ;	} else {
@@ -88,7 +88,7 @@ public		q
 
 sums db 'a = %I64d b = %I64d c = %I64d d = %I64d e = %I64d sum = %I64d\n', 0AH, 00H ; ASCII format string
 
-q:			push	rbx ; save rbx (rbx used to remember a+b across call to printf)
+q:			push	rbx ; save rbx (rbx used to remember a+b+c+d+e across call to printf)
 			sub		rsp, 56 ; allocate shadow space
 
 			mov		r10, rcx
@@ -117,5 +117,19 @@ q:			push	rbx ; save rbx (rbx used to remember a+b across call to printf)
 			add		rsp, 56 ; deallocate shadow space
 			pop		rbx ; restore rbx
 			ret		0
+
+simple db 'qns\n', 0AH, 00H ; ASCII format string
+
+public qns
+
+qns:
+			push	rbx
+			sub		rsp, 32 ; allocate shadow space
+			lea		rcx, simple ; printf parameter 1 in rcx [&simple]
+			call	printf ; call printf
+			mov		rax, rbx 
+			add		rsp, 32 ; deallocate shadow space
+			pop		rbx ; restore rbx
+			ret		0 ; return
 
 end
