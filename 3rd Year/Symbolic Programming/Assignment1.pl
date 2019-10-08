@@ -74,11 +74,10 @@ minus(p(X),s(Y)) :- minus(X,Y).
 /* End Minus */
 
 /* Start Subtract */
-subtract(-X,Y,Z) :- minus(Y,A),
+subtract2(-X,Y,Z) :- minus(X,A),
+					subtract2(A,Y,Z).
+subtract2(X,-Y,Z) :- minus(Y,A),
+					subtract2(X,A,Z).
+subtract2(X,Y,Z)  :- minus(Y,A),
 					add2(X,A,Z).
-subtract(X,-Y,Z) :- minus(X,A),
-					add2(A,Y,Z).
-subtract(X,Y,Z)  :- minus(X,A),
-					minus(Y,B),
-					add2(A,B,Z).
 /* End Subtract */
