@@ -32,3 +32,6 @@ node_modules/
 build/
 *.tmp
 *.crf
+__pycache__/
+.coverage
+htmlcov/
