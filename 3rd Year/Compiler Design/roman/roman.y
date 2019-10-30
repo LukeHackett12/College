@@ -13,6 +13,7 @@ int yyparse();
 
 
 number: thousand EOL { $$ = $1; printf("%d\n", $$); }
+;
 
 thousand: M fivehundred       { $$ = 1000 + $2; }
           | M M fivehundred   { $$ = 2000 + $3; }
@@ -38,22 +39,22 @@ fifty: L ten      { $$ = 50 + $2; }
        | ten      { $$ = $1; }
        ;
 
-ten: X five       { && = 10 + $2; }
+ten: X five       { $$ = 10 + $2; }
      | X X five   { $$ = 20 + $3; }
      | X X X five { $$ = 30 + $4; }
      | five       { $$ = $1; }
      ;
 
-five: V one { && = 5 + $2; }
-      | I V { && = 4; }
-      | I X { && = 9; }
-      | one { && = $1; }
+five: V one { $$ = 5 + $2; }
+      | I V { $$ = 4; }
+      | I X { $$ = 9; }
+      | one { $$ = $1; }
       ;
 
 one:  /*NOTHING*/ {$$ = 0}
       | I         { $$ = 1; }
-      | I I        { && = 2; }
-      | I I I       { && = 3; }
+      | I I        { $$ = 2; }
+      | I I I       { $$ = 3; }
       ;
 
 %%
