@@ -1,5 +1,5 @@
 %{
-# include "roman.h"
+# include "roman.tab.h"
 
 void yyerror(char *s);
 int yylex();
