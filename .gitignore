@@ -35,4 +35,4 @@ build/
 __pycache__/
 .coverage
 htmlcov/
-.yy.c
+*.yy.c
