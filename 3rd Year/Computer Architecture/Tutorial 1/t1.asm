@@ -54,7 +54,6 @@ p:			push	ebp
 			push	[ebp+16]
 			push	eax
 			call	min
-			add		esp, ebp
 			
 			mov		esp, ebp
 			pop		ebp
