@@ -24,7 +24,7 @@ class Login extends React.Component {
 
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        apiKey: "AIzaSyBEbt8YqA2fnYO3hft3Z6yMZVyZ6w2IWeM",
+        apiKey: REACT_APP_firebase_api_key,
         authDomain: "crest-f8474.firebaseapp.com",
         databaseURL: "https://crest-f8474.firebaseio.com",
         projectId: "crest-f8474",
