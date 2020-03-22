@@ -8,7 +8,7 @@ class Player {
     ypos=screen_y;
     vel = 0;
     lives=NUMLIVES;
-    paddle = loadImage("shovel.png");
+    paddle = loadImage("cat.png");
   }
 
   void move(float x){
