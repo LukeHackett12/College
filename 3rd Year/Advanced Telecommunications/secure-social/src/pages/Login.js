@@ -12,6 +12,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
 
+    require('dotenv').config({debug: true})
+
     this.state = ({
       loggedIn: false,
       friends: [],
@@ -23,6 +25,8 @@ class Login extends React.Component {
     });
 
     if (!firebase.apps.length) {
+      console.log(process.env.REACT_APP_firebase_api_key)
+
       firebase.initializeApp({
         apiKey: process.env.REACT_APP_firebase_api_key,
         authDomain: "crest-f8474.firebaseapp.com",
