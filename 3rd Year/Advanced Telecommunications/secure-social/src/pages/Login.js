@@ -3,18 +3,21 @@ import logo from "../assets/img/logo.png";
 import React from "react";
 import { Redirect } from "react-router-dom";
 import * as firebase from "firebase";
+import aesjs from "aes-js";
 
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login";
+import { Crypt, RSA } from "hybrid-crypto-js";
+import { init } from "../components/FirebaseInitialiser";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
 
-    require('dotenv').config({debug: true})
+    require("dotenv").config({ debug: true });
 
-    this.state = ({
+    this.state = {
       loggedIn: false,
       friends: [],
       userUid: null,
@@ -22,43 +25,57 @@ class Login extends React.Component {
       userPhoto: null,
       userEmail: null,
       userToken: null
-    });
+    };
 
-    if (!firebase.apps.length) {
-      console.log(process.env.REACT_APP_firebase_api_key)
-
-      firebase.initializeApp({
-        apiKey: process.env.REACT_APP_firebase_api_key,
-        authDomain: "crest-f8474.firebaseapp.com",
-        databaseURL: "https://crest-f8474.firebaseio.com",
-        projectId: "crest-f8474",
-        storageBucket: "crest-f8474.appspot.com",
-        messagingSenderId: "229758778420",
-        appId: "1:229758778420:web:3c4cfcf53a4634a13d1e61",
-        measurementId: "G-DC2XXBEFJK"
-      });
-    }
+    init();
   }
-  loadProfile = creds => {
+
+  loadProfile = async creds => {
     console.log(creds);
 
+    let key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    for (let i = 0; i < key.length; i++) {
+      key[i] = creds.user.uid.charCodeAt(i);
+    }
+
+    var crypt = new Crypt();
     var self = this;
     var db = firebase.firestore();
 
-    let userDoc = db.collection("users").doc(creds.user.uid);
+    let userDoc = db.collection("users").doc(creds.user.email);
     userDoc
       .get()
       .then(doc => {
         if (!doc.exists) {
-          let data = {
-            displayName: creds.user.displayName,
-            photoURL: creds.user.photoURL,
-            email: creds.user.email,
-            friends: []
-          };
+          var rsa = new RSA();
 
-          db.collection("users")
-            .doc(creds.user.uid)
+          let publicKey;
+          let privateKey;
+
+          rsa.generateKeyPairAsync().then(keyPair => {
+            publicKey = keyPair.publicKey;
+            privateKey = keyPair.privateKey;
+          }).then(() => {
+            var aesCtr = new aesjs.ModeOfOperation.ctr(key);
+            var privBytes = aesjs.utils.utf8.toBytes(privateKey);
+            var encryptedPriv = aesCtr.encrypt(privBytes);
+
+            var postKey = Array.from({length: 32}, () => Math.floor(Math.random() * 256));
+            var encryptedPostKey = crypt.encrypt(publicKey, postKey);
+
+            let data = {
+              displayName: creds.user.displayName,
+              photoURL: creds.user.photoURL,
+              email: creds.user.email,
+              publicKey: publicKey,
+              privateKey: firebase.firestore.Blob.fromUint8Array(encryptedPriv),
+              postKey : encryptedPostKey,
+              friends: [],
+              requested: []
+            };
+
+            db.collection("users")
+            .doc(creds.user.email)
             .set(data)
             .then(() =>
               self.setState({
@@ -68,11 +85,21 @@ class Login extends React.Component {
                 userPhoto: creds.user.photoURL,
                 userEmail: creds.user.email,
                 userToken: creds.credential.idToken,
-                friends: []
+                userPublicKey: publicKey,
+                userPrivateKey: privateKey,
+                postKey: postKey,
+                friends: [],
+                requested: []
               })
             );
+          })
         } else {
-          console.log("Document data:", doc.data());
+          var aesCtr = new aesjs.ModeOfOperation.ctr(key);
+          var decryptedBytes = aesCtr.decrypt(doc.data().privateKey.toUint8Array());
+          var privateKey = aesjs.utils.utf8.fromBytes(decryptedBytes)
+
+          var decryptedPostKey = crypt.decrypt(privateKey, doc.data().postKey).message.split(",").map(val => { return parseInt(val) })
+
           self.setState({
             loggedIn: true,
             userUid: creds.user.uid,
@@ -80,7 +107,11 @@ class Login extends React.Component {
             userPhoto: creds.user.photoURL,
             userEmail: creds.user.email,
             userToken: creds.credential.idToken,
-            friends: doc.data().friends
+            userPublicKey: doc.data().publicKey,
+            userPrivateKey: privateKey,
+            postKey: decryptedPostKey,
+            friends: doc.data().friends,
+            requested: doc.data().requested
           });
         }
       })
@@ -100,7 +131,7 @@ class Login extends React.Component {
     firebase
       .auth()
       .signInWithCredential(credential)
-      .then(creds => self.loadProfile(creds))
+      .then( creds => self.loadProfile(creds))
       .catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
@@ -152,7 +183,11 @@ class Login extends React.Component {
       userPhoto,
       userEmail,
       userToken,
-      friends
+      userPublicKey,
+      userPrivateKey,
+      friends,
+      requested,
+      postKey
     } = this.state;
 
     return (
@@ -167,7 +202,11 @@ class Login extends React.Component {
                 userPhoto: userPhoto,
                 userEmail: userEmail,
                 userToken: userToken,
-                friends: friends
+                userPublicKey: userPublicKey,
+                userPrivateKey: userPrivateKey,
+                postKey: postKey,
+                friends: friends,
+                requested: requested
               }
             }}
           />

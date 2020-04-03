@@ -45,3 +45,16 @@ code {
   border-radius: 18px;
   border: 1px solid #cfcece;
 }
+
+.dropdown-toggle,
+.dropdown-menu {
+  width: 100%;
+}
+
+.dropdown-item.dropdown-item {
+  padding: 0;
+}
+
+.caret {
+  display: none;
+  }
