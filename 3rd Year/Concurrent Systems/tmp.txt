@@ -1,0 +1,10 @@
+CNN: acyclic graph of "layers"
+Layers are selected from list of std layers
+
+Image has multiple channels: (rgb, or random info abt a pixel)
+
+CNN convolution is done with different conv. kernels (ie multichannel)
+
+- must work with existing data structures
+
+(╯°□°）╯︵ ┻━┻      ┬─┬ ノ( ゜-゜ノ)
