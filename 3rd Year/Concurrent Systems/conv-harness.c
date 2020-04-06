@@ -572,7 +572,7 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
   }
 
   DEBUGGING(fprintf(stderr, "w=%d, h=%d, c=%d\n", w, h, c));
-
+  //Hallo boiz
   // now compute multichannel, multikernel convolution
   // height == width
   int imgSize = height * width;
@@ -593,6 +593,8 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
       {
         int kstart = kernel->kernel_starts[m];
         int kend = kernel->kernel_starts[m + 4];
+        //lmao true why does this work matthew
+        // check why the fuck this works
         for (index = kstart; index < kend; index+=4)
         {
           int this_c = kernel->channel_numbers[index];
@@ -605,6 +607,7 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
     } // (x,y)
   } // (w,h)
 }
+ 
 
 
 int main(int argc, char **argv)
