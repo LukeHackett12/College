@@ -566,32 +566,42 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
     int kernelSize = kernel_order * kernel_order;
 
     struct sparse_matrix *kernel;
-    int wh, xy, kend;
+    int xy, tempIndex, kend;
     float *cachedImg;
+    float **outputRow;
+    int *cNumbs;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(static, 1)
     for (m = 0; m < nkernels; m++)
     {
+        outputRow = output[m];
+
         for (xy = 0; xy < kernelSize; xy++)
         {
             x = xy / kernel_order;
             y = xy % kernel_order;
             kernel = kernels[x][y];
+            index = kernel->kernel_starts[m];
 
-            for (wh = 0; wh < imgSize; wh++)
+            tempIndex = index;
+            kend = kernel->kernel_starts[m + 1];
+            cNumbs = kernel->channel_numbers;
+
+            for (w = 0; w < width; w++)
             {
-                w = wh / width;
-                h = wh % width;
-
-                cachedImg = image[w + x][h + y];
-                index = kernel->kernel_starts[m];
-                kend = kernel->kernel_starts[m + 1];
-                while (index < kend)
+                for (h = 0; h < height; h++)
                 {
-                    output[m][h][w] += cachedImg[kernel->channel_numbers[index]] * kernel->values[index];
-                    index++;
+                    cachedImg = image[w + x][h + y];
+                    tempIndex = index;
+
+                    while (tempIndex < kend)
+                    {
+                        outputRow[h][w] += cachedImg[cNumbs[tempIndex]] * kernel->values[tempIndex++];
+                    }
                 }
             }
+
+            output[m] = outputRow;
         }
     }
 }
