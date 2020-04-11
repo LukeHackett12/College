@@ -567,9 +567,11 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
 
     struct sparse_matrix *kernel;
     int xy, tempIndex, kend;
-    float *cachedImg;
+    float *cachedImg, sum;
     float **outputRow;
     int *cNumbs;
+
+    __m128 kVals, imgVals;
 
 #pragma omp parallel for schedule(static, 1)
     for (m = 0; m < nkernels; m++)
@@ -594,9 +596,26 @@ void team_conv_sparse(float ***image, struct sparse_matrix ***kernels,
                     cachedImg = image[w + x][h + y];
                     tempIndex = index;
 
-                    while (tempIndex < kend)
+                    if (kend - index == 4)
                     {
-                        outputRow[h][w] += cachedImg[cNumbs[tempIndex]] * kernel->values[tempIndex++];
+                        kVals = _mm_loadu_ps(&kernel->values[index]);
+                        imgVals = _mm_setr_ps(cachedImg[cNumbs[index]],
+                                              cachedImg[cNumbs[index + 1]],
+                                              cachedImg[cNumbs[index + 2]],
+                                              cachedImg[cNumbs[index + 3]]);
+
+                        kVals = _mm_mul_ps(kVals, imgVals);
+                        kVals = _mm_hadd_ps(kVals, kVals);
+                        kVals = _mm_hadd_ps(kVals, kVals);
+                        _mm_store_ss(&sum, kVals);
+                        output[m][h][w] += sum;
+                    }
+                    else
+                    {
+                        while (tempIndex < kend)
+                        {
+                            outputRow[h][w] += cachedImg[cNumbs[tempIndex]] * kernel->values[tempIndex++];
+                        }
                     }
                 }
             }
