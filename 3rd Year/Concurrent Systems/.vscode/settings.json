@@ -1,5 +1,19 @@
 {
   "files.associations": {
-    "chrono": "c"
+    "chrono": "c",
+    "algorithm": "c",
+    "random": "c",
+    "__locale": "c",
+    "atomic": "c",
+    "complex": "c",
+    "functional": "c",
+    "locale": "c",
+    "utility": "c",
+    "*.tcc": "c",
+    "optional": "c",
+    "limits": "c",
+    "numeric": "c",
+    "streambuf": "c",
+    "thread": "c"
   }
 }
