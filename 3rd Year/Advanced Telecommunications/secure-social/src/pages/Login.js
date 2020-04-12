@@ -123,7 +123,7 @@ class Login extends React.Component {
   responseGoogle = response => {
     console.log(response);
     var credential = firebase.auth.GoogleAuthProvider.credential(
-      response.uc.id_token
+      response.tc.id_token
     );
 
     var self = this;

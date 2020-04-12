@@ -14,6 +14,7 @@ import * as serviceWorker from "./serviceWorker";
 const routing = (
   <Router>
     <div>
+      <Route path="/" component={Login} />
       <Route path="/login" component={Login} />
       <Route path="/profile" component={Profile} />
       <Route path="/contacts" component={Contacts} />

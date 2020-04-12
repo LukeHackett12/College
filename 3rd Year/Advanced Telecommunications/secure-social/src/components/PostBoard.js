@@ -47,76 +47,121 @@ class PostBoard extends React.Component {
     this.listenForPosts();
   }
 
-  componentDidUpdate() {
-    this.listenForPosts();
+  async componentDidUpdate() {
+    await this.listenForPosts();
   }
 
-  listenForPosts() {
+  async listenForPosts() {
     let self = this;
+    let crypt = new Crypt();
 
+    const snapshot = await firebase
+      .firestore()
+      .collection("posts")
+      .get();
+    let data = snapshot.docs.map(doc => {
+      let docCon = doc.data()
+      let friendPostKey = null;
+      self.props.friends.forEach(friend => {
+        if (friend.email === docCon.poster.email) {
+          friendPostKey = crypt
+            .decrypt(self.props.userPrivateKey, friend.postKey)
+            .message.split(",")
+            .map(val => {
+              return parseInt(val);
+            });
+
+          var aesCtr = new aesjs.ModeOfOperation.ctr(friendPostKey);
+          var decryptedBytes = aesCtr.decrypt(docCon.content.toUint8Array());
+          var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
+          docCon.content = post;
+        }
+      });
+
+      if (docCon.poster.email === self.props.email) {
+        var aesCtr = new aesjs.ModeOfOperation.ctr(self.props.postKey);
+        var decryptedBytes = aesCtr.decrypt(docCon.content.toUint8Array());
+        var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
+
+        docCon.content = post;
+      } else {
+        var encrypted = docCon.content.toUint8Array();
+        var toText = new TextDecoder('utf-8').decode(encrypted);
+        docCon.content = "Encrypted: " + toText;
+      }
+
+      return docCon
+    });
+
+    this.setState({ posts: data });
+
+    /*
     this.state.collection.onSnapshot(
       collSnap => {
         let data = collSnap.docs;
         data.forEach(doc => doc.data());
         if (data.length !== self.state.posts.length) {
-          self.updatePosts(data);
+          data.forEach(async function(doc) {
+            getMarker();
+            /*
+            self.state.collection
+              .doc(doc.id)
+              .get()
+              .then(res => res.data())
+              .then(docCon => {
+                let friendPostKey = null;
+                self.props.friends.forEach(friend => {
+                  if (friend.email === docCon.poster.email) {
+                    friendPostKey = crypt
+                      .decrypt(self.props.userPrivateKey, friend.postKey)
+                      .message.split(",")
+                      .map(val => {
+                        return parseInt(val);
+                      });
+
+                    var aesCtr = new aesjs.ModeOfOperation.ctr(friendPostKey);
+                    var decryptedBytes = aesCtr.decrypt(
+                      docCon.content.toUint8Array()
+                    );
+                    var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
+                    docCon.content = post;
+                  }
+                });
+
+                if (docCon.poster.email === self.props.email) {
+                  var aesCtr = new aesjs.ModeOfOperation.ctr(
+                    self.props.postKey
+                  );
+                  var decryptedBytes = aesCtr.decrypt(
+                    docCon.content.toUint8Array()
+                  );
+                  var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
+
+                  docCon.content = post;
+                }
+
+                var contains = false;
+                for (post in posts) {
+                  if (post.timestamp === docCon.timestamp) {
+                    contains = true;
+                  }
+                }
+
+                if (!contains) posts.push(docCon);
+
+                if (posts.length === data.length) {
+                  self.setState({ posts: posts });
+                }
+              });
+          });
         }
       },
       err => {
         console.log(`Encountered error: ${err}`);
       }
     );
+    */
   }
-
-  updatePosts = data => {
-    let self = this;
-    let posts = this.state.posts;
-    let crypt = new Crypt();
-
-    data.forEach(async function(doc) {
-        await self.state.collection
-          .doc(doc.id)
-          .get()
-          .then(res => res.data())
-          .then(docCon => {
-            let friendPostKey = null;
-            self.props.friends.forEach(friend => {
-              if (friend.email === docCon.poster.email) {
-                friendPostKey = crypt
-                  .decrypt(self.props.userPrivateKey, friend.postKey)
-                  .message.split(",")
-                  .map(val => {
-                    return parseInt(val);
-                  });
-
-                var aesCtr = new aesjs.ModeOfOperation.ctr(friendPostKey);
-                var decryptedBytes = aesCtr.decrypt(
-                  docCon.content.toUint8Array()
-                );
-                var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
-
-                docCon.content = post;
-                posts.push(docCon);
-              }
-            });
-
-            if (docCon.poster.email === self.props.email) {
-              var aesCtr = new aesjs.ModeOfOperation.ctr(self.props.postKey);
-              var decryptedBytes = aesCtr.decrypt(
-                docCon.content.toUint8Array()
-              );
-              var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
-
-              docCon.content = post;
-              posts.push(docCon);
-            }
-
-            if(posts.length === data.length){
-              self.setState({ posts: posts });
-            }
-          })
-      })
-  };
 
   render() {
     const { value, posts } = this.state;
