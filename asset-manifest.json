@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/static/css/main.c13189d6.chunk.css",
-    "main.js": "/static/js/main.680ae136.chunk.js",
-    "main.js.map": "/static/js/main.680ae136.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.1eb2ed41.js",
-    "runtime-main.js.map": "/static/js/runtime-main.1eb2ed41.js.map",
-    "static/js/2.61de572a.chunk.js": "/static/js/2.61de572a.chunk.js",
-    "static/js/2.61de572a.chunk.js.map": "/static/js/2.61de572a.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.d46c8cbff5ab0d525697945e30fa0f28.js": "/precache-manifest.d46c8cbff5ab0d525697945e30fa0f28.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.c13189d6.chunk.css.map": "/static/css/main.c13189d6.chunk.css.map",
-    "static/js/2.61de572a.chunk.js.LICENSE.txt": "/static/js/2.61de572a.chunk.js.LICENSE.txt",
-    "static/media/fontawesome-all.min.css": "/static/media/fa-solid-900.f6121be5.woff2",
-    "static/media/logo.png": "/static/media/logo.bef441a2.png"
+    "main.css": "/secure-social/static/css/main.746f9012.chunk.css",
+    "main.js": "/secure-social/static/js/main.30e3636e.chunk.js",
+    "main.js.map": "/secure-social/static/js/main.30e3636e.chunk.js.map",
+    "runtime-main.js": "/secure-social/static/js/runtime-main.505f3f85.js",
+    "runtime-main.js.map": "/secure-social/static/js/runtime-main.505f3f85.js.map",
+    "static/js/2.d8ff4ea1.chunk.js": "/secure-social/static/js/2.d8ff4ea1.chunk.js",
+    "static/js/2.d8ff4ea1.chunk.js.map": "/secure-social/static/js/2.d8ff4ea1.chunk.js.map",
+    "index.html": "/secure-social/index.html",
+    "precache-manifest.a148bb0e6302cb0339aa75a27e63a1a2.js": "/secure-social/precache-manifest.a148bb0e6302cb0339aa75a27e63a1a2.js",
+    "service-worker.js": "/secure-social/service-worker.js",
+    "static/css/main.746f9012.chunk.css.map": "/secure-social/static/css/main.746f9012.chunk.css.map",
+    "static/js/2.d8ff4ea1.chunk.js.LICENSE.txt": "/secure-social/static/js/2.d8ff4ea1.chunk.js.LICENSE.txt",
+    "static/media/fontawesome-all.min.css": "/secure-social/static/media/fa-solid-900.f6121be5.woff2",
+    "static/media/logo.png": "/secure-social/static/media/logo.bef441a2.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.1eb2ed41.js",
-    "static/js/2.61de572a.chunk.js",
-    "static/css/main.c13189d6.chunk.css",
-    "static/js/main.680ae136.chunk.js"
+    "static/js/runtime-main.505f3f85.js",
+    "static/js/2.d8ff4ea1.chunk.js",
+    "static/css/main.746f9012.chunk.css",
+    "static/js/main.30e3636e.chunk.js"
   ]
 }
