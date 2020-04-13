@@ -14,6 +14,7 @@
     "limits": "c",
     "numeric": "c",
     "streambuf": "c",
-    "thread": "c"
+    "thread": "c",
+    "bitset": "c"
   }
 }

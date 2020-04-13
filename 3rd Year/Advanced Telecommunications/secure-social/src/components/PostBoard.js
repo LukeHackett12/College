@@ -76,6 +76,11 @@ class PostBoard extends React.Component {
           var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
           docCon.content = post;
         }
+        else if (docCon.poster.email !== self.props.email){
+          var encrypted = docCon.content.toUint8Array();
+          var toText = new TextDecoder('utf-8').decode(encrypted);
+          docCon.content = "Encrypted: " + toText;
+        }
       });
 
       if (docCon.poster.email === self.props.email) {
@@ -84,10 +89,6 @@ class PostBoard extends React.Component {
         var post = aesjs.utils.utf8.fromBytes(decryptedBytes);
 
         docCon.content = post;
-      } else {
-        var encrypted = docCon.content.toUint8Array();
-        var toText = new TextDecoder('utf-8').decode(encrypted);
-        docCon.content = "Encrypted: " + toText;
       }
 
       return docCon
