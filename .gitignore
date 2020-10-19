@@ -1,5 +1,6 @@
 .gradle/
 .idea/
+.vscode/
 cmake-build-debug/
 node_modules/
 *.in
@@ -39,3 +40,4 @@ htmlcov/
 *.out
 *.zip
 3rd Year/Advanced Telecommunications/secure-social/.env
+.DS_store
