@@ -1,0 +1,42 @@
+{
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "C/C++: g++-9 build active file",
+      "command": "/usr/local/bin/g++-9",
+      "args": [
+        "-g",
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build All Debug",
+      "type": "shell",
+      "command": "cd /Users/lukehackett/Documents/College/4th\\ Year/GraphicsLabPlayground/GraphicsLabPlayground/ && make",
+      "group": {
+          "kind": "build",
+          "isDefault": true
+      },
+      "presentation": {
+          "reveal": "always",
+          "panel": "new"
+      },
+      "problemMatcher": [
+          "$gcc"
+      ]
+  }
+  ],
+  "version": "2.0.0"
+}

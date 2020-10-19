@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/Cellar/glfw/3.3.2/include/",
+                "/usr/local/Cellar/glew/2.1.0_1/include/",
+                "/usr/local/Cellar/freeglut/3.2.1/include/",
+                "/usr/local/Cellar/glm/0.9.9.8/include/"
+            ],
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/local/bin/gcc-9",
+            "cStandard": "gnu18",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
