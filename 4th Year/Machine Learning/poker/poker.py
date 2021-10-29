@@ -31,4 +31,4 @@ windowLocation = getWindowLocation()
 
 gameLoop(gameWindowSize, windowLocation)
 
-#pyautogui.screenshot('my_screenshot.png', region=(x,y,int(sizes[0])*2,int(sizes[1])*2))
+pyautogui.screenshot('my_screenshot.png', region=(x,y,int(sizes[0])*2,int(sizes[1])*2))
